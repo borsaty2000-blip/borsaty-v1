@@ -210,5 +210,6 @@ export * from "./resolution";
 export * from "./providers/redis";
 export * from "./providers/retry";
 export * from "./providers/circuit-breaker";
+export * from "./providers/dlq";
 export * from "./providers/clients";
 export * from "@prisma/client";

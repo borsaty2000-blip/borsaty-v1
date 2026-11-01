@@ -1,7 +1,13 @@
 import { NextResponse } from "next/server";
 import { circuitBreaker, dlq, metricsCollector } from "@borsaty/db";
+import { validateAdminAuth } from "@/lib/admin-auth";
 
 export async function POST(request: Request) {
+  const auth = validateAdminAuth(request);
+  if (!auth.authorized) {
+    return auth.response!;
+  }
+
   const { searchParams } = new URL(request.url);
   const provider = searchParams.get("provider") || "sahmk";
   const count = parseInt(searchParams.get("count") || "5", 10);

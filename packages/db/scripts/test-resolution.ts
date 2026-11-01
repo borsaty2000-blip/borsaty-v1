@@ -13,7 +13,8 @@ const testCases: TestCase[] = [
   {
     query: "البنك الأهلي",
     expectedSymbol: "COMI",
-    minConfidence: 0.98,
+    expectedMethod: "alias_ar_exact",
+    expectedConfidence: 0.98,
     market: "EGX",
   },
   {
@@ -33,7 +34,7 @@ const testCases: TestCase[] = [
   {
     query: "cib",
     expectedSymbol: "COMI",
-    expectedMethod: "alias_ar_exact",
+    expectedMethod: "alias_en_exact",
     expectedConfidence: 0.98,
     market: "EGX",
   },
@@ -47,7 +48,8 @@ const testCases: TestCase[] = [
   {
     query: "ابو قير",
     expectedSymbol: "ABUK",
-    minConfidence: 0.85,
+    expectedMethod: "alias_ar_exact",
+    expectedConfidence: 0.98,
     market: "EGX",
   },
   {
@@ -60,17 +62,25 @@ const testCases: TestCase[] = [
   {
     query: "Apple",
     expectedSymbol: "AAPL",
-    minConfidence: 0.85,
+    expectedMethod: "name_en_exact",
+    expectedConfidence: 0.99,
     market: "US",
   },
   {
     query: "شركة غير موجودة",
     expectedSymbol: null,
   },
+  {
+    query: "ciib",
+    expectedSymbol: "COMI",
+    expectedMethod: "alias_en_fuzzy",
+    expectedConfidence: 0.85,
+    market: "EGX",
+  },
 ];
 
 console.log("═══════════════════════════════════════════════════════════════");
-console.log("RUNNING SYMBOL RESOLUTION TEST SUITE");
+console.log("RUNNING SYMBOL RESOLUTION TEST SUITE (WITH EXACT METHOD LABELS)");
 console.log("═══════════════════════════════════════════════════════════════\n");
 
 let passed = 0;

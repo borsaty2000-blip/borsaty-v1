@@ -19,10 +19,11 @@ model Instrument {
   sector         String?
   industry       String?
   currency       String      // EGP, SAR, USD
-  isActive       Boolean     @default(true)
-  dataSources    Json        // { primary: "sahmk", fallback: "eodhd" }
-  createdAt      DateTime    @default(now())
-  updatedAt      DateTime    @updatedAt
+  isActive         Boolean     @default(true)
+  dataSources      Json        // { primary: "sahmk", fallback: "eodhd" }
+  historyStartDate DateTime?
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
   prices         Price[]
   signals        Signal[]
 

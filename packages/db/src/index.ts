@@ -61,6 +61,7 @@ export async function findCompany(symbolOrQuery: string) {
       dividendYield: 3.5,
       revenue: 5000000000,
       netIncome: 800000000,
+      historyStartDate: inst.historyStartDate || "2024-11-01T00:00:00.000Z",
     };
   }
 

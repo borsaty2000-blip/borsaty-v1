@@ -7,8 +7,10 @@ export type ResolutionMethod =
   | "name_ar_exact"
   | "name_en_exact"
   | "alias_ar_exact"
+  | "alias_en_exact"
   | "name_ar_fuzzy"
-  | "name_en_fuzzy";
+  | "name_en_fuzzy"
+  | "alias_en_fuzzy";
 
 export interface ResolvedInstrument {
   symbol: string;
@@ -47,13 +49,21 @@ export function normalizeArabic(text: string): string {
     .toLowerCase();
 }
 
+export function stripCorporateSuffix(name: string): string {
+  if (!name) return "";
+  return name
+    .trim()
+    .toLowerCase()
+    .replace(/\s+(inc\.?|corp\.?|corporation|co\.?|ltd\.?|limited|plc|sae|llc|class\s+[a-z])$/i, "")
+    .trim();
+}
+
 export function levenshteinDistance(a: string, b: string): number {
   const m = a.length;
   const n = b.length;
   if (m === 0) return n;
   if (n === 0) return m;
 
-  // Optimize memory with single array
   const row: number[] = Array.from({ length: n + 1 }, (_, i) => i);
 
   for (let i = 1; i <= m; i++) {
@@ -100,9 +110,14 @@ class InstrumentResolver {
         this.nameArIndex.set(inst.nameAr.trim(), inst);
       }
 
-      // 4. Exact English Name Index (case-insensitive)
+      // 4. Exact English Name Index (verbatim and corporate suffix-stripped)
       if (inst.nameEn) {
-        this.nameEnIndex.set(inst.nameEn.trim().toLowerCase(), inst);
+        const enLower = inst.nameEn.trim().toLowerCase();
+        this.nameEnIndex.set(enLower, inst);
+        const stripped = stripCorporateSuffix(inst.nameEn);
+        if (stripped && !this.nameEnIndex.has(stripped)) {
+          this.nameEnIndex.set(stripped, inst);
+        }
       }
 
       // 5. Aliases Index
@@ -131,6 +146,7 @@ class InstrumentResolver {
     const queryUpper = cleanQuery.toUpperCase();
     const queryLower = cleanQuery.toLowerCase();
     const queryNormAr = normalizeArabic(cleanQuery);
+    const isArabicQuery = /[\u0600-\u06FF]/.test(cleanQuery);
 
     // ==========================================
     // 1. Exact Canonical Symbol Match
@@ -173,7 +189,7 @@ class InstrumentResolver {
     // ==========================================
     // 3. Exact Arabic Name Match
     // ==========================================
-    if (this.nameArIndex.has(cleanQuery)) {
+    if (isArabicQuery && this.nameArIndex.has(cleanQuery)) {
       const inst = this.nameArIndex.get(cleanQuery)!;
       return {
         resolved: {
@@ -190,9 +206,9 @@ class InstrumentResolver {
     }
 
     // ==========================================
-    // 4. Exact English Name Match (case-insensitive)
+    // 4. Exact English Name Match (case-insensitive & stripped)
     // ==========================================
-    if (this.nameEnIndex.has(queryLower)) {
+    if (!isArabicQuery && this.nameEnIndex.has(queryLower)) {
       const inst = this.nameEnIndex.get(queryLower)!;
       return {
         resolved: {
@@ -209,7 +225,7 @@ class InstrumentResolver {
     }
 
     // ==========================================
-    // 5. Exact Arabic / Curated Alias Match
+    // 5. Exact Alias Match (Differentiating AR vs EN)
     // ==========================================
     if (this.aliasIndex.has(queryLower)) {
       const matches = this.aliasIndex.get(queryLower)!;
@@ -223,6 +239,8 @@ class InstrumentResolver {
         confidence: 0.95,
       }));
 
+      const aliasMethod: ResolutionMethod = isArabicQuery ? "alias_ar_exact" : "alias_en_exact";
+
       return {
         resolved: {
           symbol: inst.symbol,
@@ -231,7 +249,7 @@ class InstrumentResolver {
           market: inst.market,
           assetClass: inst.assetClass,
           confidence: 0.98,
-          method: "alias_ar_exact",
+          method: aliasMethod,
         },
         alternatives: [
           ...otherMatches,
@@ -244,9 +262,6 @@ class InstrumentResolver {
     // 6. Fuzzy Arabic Name Match (Levenshtein <= 2)
     // ==========================================
     let bestFuzzyAr: { inst: SeedInstrument; distance: number } | null = null;
-    let bestFuzzyEn: { inst: SeedInstrument; distance: number } | null = null;
-
-    const isArabicQuery = /[\u0600-\u06FF]/.test(cleanQuery);
 
     if (isArabicQuery) {
       for (const inst of this.instruments) {
@@ -256,7 +271,7 @@ class InstrumentResolver {
         if (dist <= 2) {
           if (!bestFuzzyAr || dist < bestFuzzyAr.distance) {
             bestFuzzyAr = { inst, distance: dist };
-            if (dist === 0) break; // Perfect normalized match
+            if (dist === 0) break;
           }
         }
       }
@@ -278,33 +293,67 @@ class InstrumentResolver {
     }
 
     // ==========================================
-    // 7. Fuzzy English Name Match (Levenshtein <= 2)
+    // 7. Fuzzy English Name & Alias Matches (Levenshtein <= 2)
     // ==========================================
     if (!isArabicQuery) {
+      let bestFuzzyEnName: { inst: SeedInstrument; distance: number } | null = null;
+      let bestFuzzyEnAlias: { inst: SeedInstrument; distance: number } | null = null;
+
       for (const inst of this.instruments) {
-        if (!inst.nameEn) continue;
-        const enLower = inst.nameEn.toLowerCase();
-        const dist = levenshteinDistance(queryLower, enLower);
-        if (dist <= 2) {
-          if (!bestFuzzyEn || dist < bestFuzzyEn.distance) {
-            bestFuzzyEn = { inst, distance: dist };
-            if (dist === 0) break;
+        if (inst.nameEn) {
+          const enLower = inst.nameEn.toLowerCase();
+          const dist = levenshteinDistance(queryLower, enLower);
+          if (dist <= 2) {
+            if (!bestFuzzyEnName || dist < bestFuzzyEnName.distance) {
+              bestFuzzyEnName = { inst, distance: dist };
+              if (dist === 0) break;
+            }
+          }
+        }
+
+        // Fuzzy check aliases
+        if (inst.aliases && Array.isArray(inst.aliases)) {
+          for (const al of inst.aliases) {
+            const alLower = al.toLowerCase();
+            if (/^[a-z0-9\s.]+$/i.test(alLower)) {
+              const distAl = levenshteinDistance(queryLower, alLower);
+              if (distAl <= 2) {
+                if (!bestFuzzyEnAlias || distAl < bestFuzzyEnAlias.distance) {
+                  bestFuzzyEnAlias = { inst, distance: distAl };
+                }
+              }
+            }
           }
         }
       }
 
-      if (bestFuzzyEn) {
+      if (bestFuzzyEnName) {
         return {
           resolved: {
-            symbol: bestFuzzyEn.inst.symbol,
-            nameAr: bestFuzzyEn.inst.nameAr,
-            nameEn: bestFuzzyEn.inst.nameEn,
-            market: bestFuzzyEn.inst.market,
-            assetClass: bestFuzzyEn.inst.assetClass,
+            symbol: bestFuzzyEnName.inst.symbol,
+            nameAr: bestFuzzyEnName.inst.nameAr,
+            nameEn: bestFuzzyEnName.inst.nameEn,
+            market: bestFuzzyEnName.inst.market,
+            assetClass: bestFuzzyEnName.inst.assetClass,
             confidence: 0.85,
             method: "name_en_fuzzy",
           },
-          alternatives: this.findAlternatives(cleanQuery, bestFuzzyEn.inst.symbol),
+          alternatives: this.findAlternatives(cleanQuery, bestFuzzyEnName.inst.symbol),
+        };
+      }
+
+      if (bestFuzzyEnAlias) {
+        return {
+          resolved: {
+            symbol: bestFuzzyEnAlias.inst.symbol,
+            nameAr: bestFuzzyEnAlias.inst.nameAr,
+            nameEn: bestFuzzyEnAlias.inst.nameEn,
+            market: bestFuzzyEnAlias.inst.market,
+            assetClass: bestFuzzyEnAlias.inst.assetClass,
+            confidence: 0.85,
+            method: "alias_en_fuzzy",
+          },
+          alternatives: this.findAlternatives(cleanQuery, bestFuzzyEnAlias.inst.symbol),
         };
       }
     }
@@ -373,7 +422,6 @@ class InstrumentResolver {
 
     scored.sort((a, b) => b.score - a.score);
 
-    // If no scored matches found, pick 3 representative instruments
     if (scored.length === 0) {
       return this.instruments.slice(0, 3).map((inst) => ({
         symbol: inst.symbol,
@@ -396,7 +444,6 @@ class InstrumentResolver {
   }
 }
 
-// Singleton Resolver instance
 let defaultResolver: InstrumentResolver | null = null;
 
 export function getInstrumentResolver(): InstrumentResolver {

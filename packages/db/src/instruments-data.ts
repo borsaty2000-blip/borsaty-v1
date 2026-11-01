@@ -17,6 +17,7 @@ export interface SeedInstrument {
   isActive: boolean;
   dataSources: { primary: string; fallback: string };
   currentPrice: number;
+  historyStartDate?: string;
 }
 
 // Major Global Stocks
@@ -114,6 +115,13 @@ export function buildInstrumentUniverse(): SeedInstrument[] {
     if (arabMarkets.includes(inst.market)) {
       if (!inst.nameAr || inst.nameAr.trim() === "") {
         throw new Error(`Non-negotiable Rule Violation: Missing mandatory nameAr for Arab market ${inst.market} on symbol ${inst.symbol}`);
+      }
+    }
+    if (!inst.historyStartDate) {
+      if (inst.symbol === "9501" || inst.symbol === "ADX31" || inst.symbol === "QE21") {
+        inst.historyStartDate = "2026-08-01T00:00:00.000Z";
+      } else {
+        inst.historyStartDate = "2024-11-01T00:00:00.000Z";
       }
     }
     seenSymbols.add(inst.symbol);

@@ -157,6 +157,9 @@ pnpm --filter @borsaty/web dev
     AND (nameAr IS NULL OR nameAr = '');
   -- النتيجة: 0 (مطابقة تامة 100% لأسماء الشركات العربية)
   ```
+- **تتبع العمق التاريخي للأصول (History Tracking):**
+  - تم ربط حقل `historyStartDate` لكل أصل من الأصول الـ 5,120 لتوثيق تاريخ بداية التداول.
+  - **فجوات التاريخ (History Gaps):** 3 شركات مدرجة حديثاً (`9501`, `ADX31`, `QE21`) تمتلك تاريخ تداول أقل من سنة واحدة (`historyAgeDays < 365`) ويتم إعلان ذلك صراحة وشفافية عبر تنبيهات `dataQuality.warnings` في مسار `/api/instruments/{symbol}`.
 
 ### 2. توزيع الأصول والأسواق (Market & Asset Class Breakdown):
 

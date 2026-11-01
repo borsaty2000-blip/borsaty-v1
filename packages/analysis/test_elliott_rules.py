@@ -195,6 +195,83 @@ def test_hard_rule_bearish_wave3_is_shortest_rejected():
     assert res["primary_count"] is None
     assert any(r["hard_rule_failed"] == "wave3_not_shortest" for r in res["rejected_counts"])
 
+# ==============================================================================
+# PART C: ZIGZAG (A-B-C) TESTS
+# ==============================================================================
+
+def test_hand_crafted_downward_zigzag():
+    detector = ElliottDetector()
+    pivots = [
+        make_pivot(10, 100.0, "peak"),
+        make_pivot(20, 80.0, "trough"),
+        make_pivot(30, 92.0, "peak"),
+        make_pivot(40, 68.0, "trough"),
+    ]
+    res = detector.detect("TEST", "1D", pivots, min_degree=2)
+    assert res["primary_count"] is not None
+    assert res["primary_count"]["pattern"] == "zigzag"
+    assert len(res["primary_count"]["waves"]) == 3
+    assert res["primary_count"]["waves"][0]["number"] == "A"
+    assert res["primary_count"]["waves"][1]["number"] == "B"
+    assert res["primary_count"]["waves"][2]["number"] == "C"
+
+def test_hand_crafted_upward_zigzag():
+    detector = ElliottDetector()
+    pivots = [
+        make_pivot(10, 50.0, "trough"),
+        make_pivot(20, 70.0, "peak"),
+        make_pivot(30, 58.0, "trough"),
+        make_pivot(40, 78.0, "peak"),
+    ]
+    res = detector.detect("TEST", "1D", pivots, min_degree=2)
+    assert res["primary_count"] is not None
+    assert res["primary_count"]["pattern"] == "zigzag"
+    assert res["primary_count"]["waves"][0]["direction"] == "up"
+
+def test_zigzag_hard_rule_waveB_retraces_100pct_rejected():
+    detector = ElliottDetector()
+    # Wave B rises to 102.0 (exceeds start of Wave A at 100.0) -> VIOLATION!
+    pivots = [
+        make_pivot(10, 100.0, "peak"),
+        make_pivot(20, 80.0, "trough"),
+        make_pivot(30, 102.0, "peak"), # VIOLATION!
+        make_pivot(40, 68.0, "trough"),
+    ]
+    res = detector.detect("TEST", "1D", pivots, min_degree=2)
+    assert res["primary_count"] is None
+    assert any(r["hard_rule_failed"] == "waveB_retracement < 1.0" for r in res["rejected_counts"])
+
+def test_zigzag_hard_rule_waveC_not_extending_beyond_A_rejected():
+    detector = ElliottDetector()
+    # Wave C stops at 82.0 (fails to exceed Wave A low of 80.0) -> VIOLATION!
+    pivots = [
+        make_pivot(10, 100.0, "peak"),
+        make_pivot(20, 80.0, "trough"),
+        make_pivot(30, 92.0, "peak"),
+        make_pivot(40, 82.0, "trough"), # VIOLATION! 82 >= 80
+    ]
+    res = detector.detect("TEST", "1D", pivots, min_degree=2)
+    assert res["primary_count"] is None
+    assert any(r["hard_rule_failed"] == "waveC_extends_beyond_A" for r in res["rejected_counts"])
+
+def test_ambiguity_impulse_and_zigzag_both_reported():
+    detector = ElliottDetector()
+    # 6 pivots forming an impulse, where subsets also form zigzags
+    pivots = [
+        make_pivot(0, 100.0, "trough"),
+        make_pivot(10, 110.0, "peak"),
+        make_pivot(20, 104.0, "trough"),
+        make_pivot(30, 130.0, "peak"),
+        make_pivot(40, 122.0, "trough"),
+        make_pivot(50, 145.0, "peak"),
+    ]
+    res = detector.detect("TEST", "1D", pivots, min_degree=2)
+    assert res["primary_count"] is not None
+    assert res["primary_count"]["pattern"] == "impulse"
+    assert res["alternative_count"] is not None
+    assert res["alternative_count"]["pattern"] in ["impulse", "zigzag"]
+
+
 
 
 # ==============================================================================

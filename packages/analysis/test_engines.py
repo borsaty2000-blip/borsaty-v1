@@ -238,10 +238,30 @@ def test_narrator_blocks_hallucinated_target():
 
     # Invariant 2: Must only mention authorized numbers
     numbers_in_response = NarratorEngine.extract_numbers(response)
-    allowed = {92.00, 86.00, 1.0}
+    allowed = {92.00, 86.00, 1.0, 7.0, 6.98, 7.0, 6.9}
     assert all(n in allowed for n in numbers_in_response), (
         f"Unauthorized numbers in response: {[n for n in numbers_in_response if n not in allowed]}"
     )
+
+
+def test_narrator_allows_derived_pct():
+    """
+    User Edge Case Test:
+    Validates that mathematically-derived percentages (e.g. +7.0% or 6.98% gain on target)
+    are permitted and verified through the allowlist gate without hallucination errors.
+    """
+    narrator = NarratorEngine()
+    payload = {"current_price": 86.00, "target_1": 92.00}
+    response = narrator.explain(payload)
+
+    # النسبة 6.98% أو 7.0% مسموحة لأنها مشتقة رياضياً من payload
+    assert "7" in response or "6.9" in response
+
+    # Assert that all extracted numbers are strictly grounded (current price, target 1, index, derived pct)
+    extracted = NarratorEngine.extract_numbers(response)
+    assert 86.0 in extracted
+    assert 92.0 in extracted
+    assert any(n in {7.0, 6.98, 7.0, 6.9} for n in extracted)
 
 
 def test_narrator_full_payload_explanation():

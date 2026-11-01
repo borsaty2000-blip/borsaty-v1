@@ -28,6 +28,12 @@ env/
 .env.local
 .env.*.local
 
+# Audit reports & coverage
+lighthouse-*.json
+.coverage
+coverage/
+htmlcov/
+
 # Turborepo
 .turbo
 

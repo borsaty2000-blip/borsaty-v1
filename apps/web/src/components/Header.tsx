@@ -75,6 +75,12 @@ export default function Header() {
             >
               1120 (الراجحي)
             </Link>
+            <Link
+              href="/signals"
+              className="px-3 py-1.5 rounded-lg text-emerald-400 hover:text-white hover:bg-[#1a2337] transition-colors flex items-center gap-1 font-semibold"
+            >
+              سجل الإشارات (Hit Rate)
+            </Link>
           </nav>
         </div>
 

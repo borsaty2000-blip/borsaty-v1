@@ -1,10 +1,19 @@
 import type { Metadata } from "next";
+import { Cairo } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
+
+const cairo = Cairo({
+  subsets: ["arabic", "latin"],
+  weight: ["300", "400", "500", "600", "700", "800"],
+  display: "swap",
+  variable: "--font-cairo",
+});
 
 export const metadata: Metadata = {
   title: "بورصتي | Borsaty — Arabic-First Global Financial Markets Platform",
   description: "المنصة العربية الأولى للأسواق المالية العالمية مدعومة بالذكاء الاصطناعي ومحركات التحليل الحتمية",
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({
@@ -13,13 +22,22 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ar" dir="rtl" className="dark">
+    <html lang="ar" dir="rtl" className={`dark ${cairo.variable}`}>
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap"
-          rel="stylesheet"
+        <meta name="theme-color" content="#10b981" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                  navigator.serviceWorker.register('/sw.js').then(
+                    function(reg) { console.log('Borsaty PWA SW Registered: ', reg.scope); },
+                    function(err) { console.log('Borsaty PWA SW Registration failed: ', err); }
+                  );
+                });
+              }
+            `,
+          }}
         />
       </head>
       <body className="min-h-screen bg-[#0b0f19] text-gray-100 flex flex-col font-arabic">

@@ -13,6 +13,7 @@ from engines.confluence import calculate_confluence_score
 from engines.data_quality import validate_data_quality
 from engines.signal_store import global_signal_store, SignalStore
 from engines.indicator_engine import global_indicator_engine, IndicatorEngine
+from engines.hspd import global_hspd_engine, HSPDEngine
 from screener.nlu import global_screener_nlu
 from screener.builder import global_screener_engine
 from datetime import datetime, timezone
@@ -160,6 +161,33 @@ class IndicatorComputeRequest(BaseModel):
     timeframe: Optional[str] = "1D"
     indicators: Optional[str] = "all"
     candles: List[Candle]
+
+class PivotDetectRequest(BaseModel):
+    symbol: str
+    timeframe: Optional[str] = "1D"
+    min_degree: Optional[int] = 0
+    max_degree: Optional[int] = 3
+    candles: List[Candle]
+
+@app.post("/pivots/detect")
+def detect_pivots_endpoint(payload: PivotDetectRequest):
+    if not payload.candles:
+        raise HTTPException(status_code=400, detail="Candles cannot be empty")
+
+    raw_candles = [c.model_dump() for c in payload.candles]
+    sym = payload.symbol.upper()
+    tf = payload.timeframe or "1D"
+    min_d = max(0, min(3, payload.min_degree if payload.min_degree is not None else 0))
+    max_d = max(0, min(3, payload.max_degree if payload.max_degree is not None else 3))
+
+    res = global_hspd_engine.detect(
+        candles=raw_candles,
+        min_degree=min_d,
+        max_degree=max_d,
+        symbol=sym,
+        timeframe=tf
+    )
+    return res
 
 class ScreenerApiRequest(BaseModel):
     query: str

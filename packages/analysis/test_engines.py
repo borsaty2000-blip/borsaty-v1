@@ -468,3 +468,27 @@ def test_analysis_pipeline_sanity_50_instruments():
     assert success_count >= 45, f"Expected >= 45 successes, got {success_count}/50"
     print(f"\n[SANITY PASS] Successfully analyzed {success_count}/{total_tested} instruments across 5 markets with full data_quality metadata.")
 
+def test_fastapi_pivots_detect_endpoint(sample_candles):
+    from fastapi.testclient import TestClient
+    from main import app
+    client = TestClient(app)
+
+    payload = {
+        "symbol": "COMI",
+        "timeframe": "1D",
+        "min_degree": 0,
+        "max_degree": 3,
+        "candles": sample_candles
+    }
+
+    resp = client.post("/pivots/detect", json=payload)
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["symbol"] == "COMI"
+    assert "pivots" in data
+    assert "by_degree" in data
+    assert "rejected_candidates" in data
+    assert "data_quality" in data
+    assert data["version"] == "1.0.0"
+
+

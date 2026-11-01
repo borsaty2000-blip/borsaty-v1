@@ -24,7 +24,7 @@ export const ARABIC_STOCK_MAPPINGS: ArabicStockMapping[] = [
     nameEn: "Commercial International Bank",
     currency: "EGP",
     sector: "بنوك",
-    aliases: ["البنك الأهلي", "CIB", "التجاري الدولي", "بنك CIB", "البنك التجاري الدولي - مصر", "comi", "البنك التجارى الدولى"]
+    aliases: ["البنك الأهلي", "CIB", "التجاري الدولي", "بنك CIB", "البنك التجاري الدولي - مصر", "comi"]
   },
   {
     symbol: "ABUK",

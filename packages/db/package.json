@@ -10,9 +10,11 @@
     "generate": "prisma generate",
     "db:push": "prisma db push",
     "seed": "tsx src/seed.ts",
-    "seed:instruments": "tsx scripts/seed-instruments.ts"
+    "seed:instruments": "tsx scripts/seed-instruments.ts",
+    "test:resolution": "tsx scripts/test-resolution.ts"
   },
   "dependencies": {
+    "@borsaty/shared": "workspace:*",
     "@prisma/client": "^6.4.1"
   },
   "devDependencies": {

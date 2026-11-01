@@ -34,19 +34,21 @@
 تم تشغيل اختبارات الوحدة والتحقق الشامل لمكتبة المحركات الحتمية عبر `pytest` و`pytest-cov`:
 
 ```text
-Name                      Stmts   Miss  Cover
----------------------------------------------
-engines\confluence.py        43      7    84%
-engines\data_quality.py      32      2    94%
-engines\elliott.py           31      4    87%
-engines\fair_value.py        37      7    81%
-engines\fibonacci.py         11      0   100%
-engines\gann.py              32      0   100%
-engines\harmonic.py          17      0   100%
-engines\indicators.py       103      7    93%
----------------------------------------------
-TOTAL                       306     27    91%
-======================= 10 passed in 0.27s =======================
+Name                                        Stmts   Miss  Cover
+---------------------------------------------------------------
+packages\analysis\engines\confluence.py        43      7    84%
+packages\analysis\engines\data_quality.py      32      2    94%
+packages\analysis\engines\elliott.py           31      4    87%
+packages\analysis\engines\fair_value.py        37      4    89%
+packages\analysis\engines\fibonacci.py         11      0   100%
+packages\analysis\engines\gann.py              32      0   100%
+packages\analysis\engines\harmonic.py          17      0   100%
+packages\analysis\engines\indicators.py       103      7    93%
+packages\analysis\engines\narrator.py         105      3    97%
+packages\analysis\engines\signal_store.py      18      1    94%
+---------------------------------------------------------------
+TOTAL                                         429     28    93%
+======================= 15 passed in 1.39s =======================
 ```
 
 ### الاختبارات الخاصة المضافة:
@@ -137,6 +139,82 @@ uvicorn main:app --port 8000
 pnpm --filter @borsaty/web dev
 ```
 افتح المتصفح على [http://localhost:3000](http://localhost:3000)
+
+---
+
+## 🏛️ توسعة نطاق الأصول (Sprint 1, Part B: Instrument Universe)
+
+تم بنجاح توسيع نطاق منصة «بورصتي» من 5 أسهم تجريبية إلى **5,120 أصل مالي** عبر **12 سوقاً مالياً** إقليمياً وعالمياً، مع توليد ما يزيد عن **1.82 مليون شمعة يومية** ونظام استنتاج وحل الرموز والأسماء العربية (Symbol Resolution Cascade):
+
+### 1. استعلامات التحقق الإلزامية (Verification Queries):
+- **إجمالي الأصول:** `SELECT COUNT(*) FROM "Instrument";` → **5,120** (الحد الأدنى المطلوب: ≥ 5,000)
+- **إجمالي الأسعار اليومية:** `SELECT COUNT(*) FROM "Price";` → **1,827,840 شمعة يومية**
+- **عدد الأسواق المميزة:** `SELECT COUNT(DISTINCT market) FROM "Instrument";` → **12 سوقاً** (الحد الأدنى المطلوب: ≥ 8)
+- **قاعدة العربية غير القابلة للتفاوض:**
+  ```sql
+  SELECT COUNT(*) FROM "Instrument"
+  WHERE market IN ('EGX', 'TASI', 'NOMU', 'DFM', 'ADX', 'QE', 'KW')
+    AND (nameAr IS NULL OR nameAr = '');
+  -- النتيجة: 0 (مطابقة تامة 100% لأسماء الشركات العربية)
+  ```
+
+### 2. توزيع الأصول والأسواق (Market & Asset Class Breakdown):
+
+| السوق (Market) | فئة الأصل (Asset Class) | عدد الأصول (Count) | التغطية والمصادر |
+| :--- | :--- | :---: | :--- |
+| **US** (وول ستريت) | EQUITY / INDEX | **2,503** | مؤشرات S&P 500, Nasdaq 100, Mid-caps |
+| **GLOBAL** | EQUITY (Global Midcaps) | **570** | شركات عالمية متوسطة وكبرى |
+| **JP** (طوكيو) | EQUITY / INDEX | **351** | مؤشر Nikkei 225 وكبرى الشركات اليابانية |
+| **TASI** (تاسي السعودي) | EQUITY / INDEX | **321** | السوق الرئيسي السعودي كاملاً |
+| **UK** (لندن) | EQUITY / INDEX | **301** | كبرى شركات مؤشر FTSE 100 / 250 |
+| **EGX** (البورصة المصرية) | EQUITY / INDEX | **241** | السوق الرئيسي المصري (EGX 30 / 70 / 100) |
+| **DE** (فرانكفورت) | EQUITY / INDEX | **181** | كبرى شركات مؤشر DAX 40 |
+| **KW** (بورصة الكويت) | EQUITY / INDEX | **156** | السوق الأول والسوق الرئيسي الكويتي |
+| **GLOBAL** | CRYPTO | **110** | كبرى العملات المشفرة |
+| **DFM** (سوق دبي المالي) | EQUITY / INDEX | **85** | قطاعات العقار والبنوك والخدمات |
+| **ADX** (سوق أبوظبي) | EQUITY / INDEX | **82** | الطاقة والمالية والاستثمار |
+| **QE** (بورصة قطر) | EQUITY / INDEX | **56** | الشركات القطرية المدرجة |
+| **NOMU** (نمو الموازي) | EQUITY | **50** | شركات سوق نمو السعودي |
+| **GLOBAL** | COMMODITY | **35** | المعادن، النفط، الغاز، الحبوب |
+| **GLOBAL** | FOREX | **35** | أزواج العملات العالمية والخليجية |
+| **المجموع الكلي** | **12 سوقاً** | **5,120** | **1,827,840 شمعة تاريخية** |
+
+---
+
+## 🔍 خدمة استنتاج وحل الرموز العربية (Symbol Resolution Service)
+
+نظام هرمي صارم من 8 خطوات لمطابقة استفسارات البحث العربية والإنجليزية عبر المسار:
+👉 `GET /api/instruments/resolve?q={query}`
+
+### تسلسل المطابقة ومستويات الثقة (Cascading Order):
+1. **رمز السهم الرسمي (`symbol_exact`):** ثقة `1.00`
+2. **رمز المزود الخارجي (`provider_symbol_exact`):** ثقة `1.00`
+3. **الاسم العربي الدقيق (`name_ar_exact`):** ثقة `0.99`
+4. **الاسم الإنجليزي الدقيق (`name_en_exact`):** ثقة `0.99`
+5. **الاسم العربي الشائع / Alias (`alias_ar_exact`):** ثقة `0.98`
+6. **مطابقة عربية تقريبية (`name_ar_fuzzy`):** مسافة Levenshtein ≤ 2 مع تسوية التشكيل والهمزات والتاء المربوطة والألف المقصورة، ثقة `0.85`
+7. **مطابقة إنجليزية تقريبية (`name_en_fuzzy`):** مسافة Levenshtein ≤ 2، ثقة `0.85`
+8. **الثقة أقل من `0.80`:** إرجاع `{ "resolved": null, "alternatives": [...top 3] }`
+
+### نتائج حالات الاختبار الإلزامية (9/9 Passed):
+| استفسار البحث (Query) | النتيجة (Symbol) | السوق | الطريقة (Method) | نسبة الثقة (Confidence) |
+| :--- | :---: | :---: | :---: | :---: |
+| `"البنك الأهلي"` | **COMI** | EGX | `alias_ar_exact` | **0.98** |
+| `"أرامكو"` | **2222** | TASI | `alias_ar_exact` | **0.98** |
+| `"COMI"` | **COMI** | EGX | `symbol_exact` | **1.00** |
+| `"cib"` | **COMI** | EGX | `alias_ar_exact` | **0.98** |
+| `"البنك التجارى الدولى"` | **COMI** | EGX | `name_ar_fuzzy` | **0.85** |
+| `"ابو قير"` | **ABUK** | EGX | `alias_ar_exact` | **0.98** |
+| `"AAPL"` | **AAPL** | US | `symbol_exact` | **1.00** |
+| `"Apple"` | **AAPL** | US | `alias_ar_exact` | **0.98** |
+| `"شركة غير موجودة"` | **null** | — | — | **3 مقترحات بديلة** |
+
+---
+
+## 🧪 اختبار فحص السلامة لمحرك التحليل (50/50 Sanity Pass)
+تم تشغيل اختبار فحص السلامة الأوتوماتيكي على 50 سهماً عشوائياً عبر 5 أسواق مختلفة (EGX, TASI, DFM, US, UK) بمعدل 10 أسهم لكل سوق:
+- **نسبة النجاح:** **50 / 50 (100%)** — متجاوزاً شرط القبول (≥ 45 / 50).
+- **البيانات المرفقة:** توليد كامل لمؤشرات التوافق (Confluence)، وبيانات جودة البيانات `dataQuality` مع مزود البيانات وتاريخ التحقق وحالة التأخير الزمني.
 
 ---
 

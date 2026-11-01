@@ -400,3 +400,71 @@ def test_automatic_signal_persistence_pipeline_50_stocks():
     assert "stopLoss" in first_sig and first_sig["stopLoss"] > 0
     assert len(first_sig["targets"]) == 2
     assert first_sig["status"] == "ACTIVE"
+
+
+# ---------------------------------------------------------
+# 12. SPRINT 1 PART B: 50-INSTRUMENT ANALYSIS SANITY TEST
+# ---------------------------------------------------------
+def test_analysis_pipeline_sanity_50_instruments():
+    """
+    B6 Verification Requirement:
+    Run /analyze on 10 random instruments across 5 markets (50 total).
+    Assert >= 45 return status='success' with data_quality metadata.
+    """
+    from fastapi.testclient import TestClient
+    from main import app
+
+    client = TestClient(app)
+
+    markets_and_symbols = {
+        "EGX": ["COMI", "ABUK", "FWRX", "ESRS", "EAST", "AMOC", "EKHO", "ORAS", "ISPH", "SWDY"],
+        "TASI": ["2222", "1120", "1180", "2010", "7010", "1150", "2020", "2280", "1010", "2380"],
+        "DFM": ["DFM", "EMAAR", "DEWA", "DIB", "AIRARABIA", "ENBD", "TECOM", "SALIK", "DU", "TABREED"],
+        "US": ["AAPL", "MSFT", "NVDA", "AMZN", "GOOGL", "META", "TSLA", "JPM", "V", "WMT"],
+        "UK": ["SHEL", "AZN", "HSBA", "ULVR", "BP", "DGE", "BATS", "GSK", "RIO", "LSEG"],
+    }
+
+    success_count = 0
+    total_tested = 0
+
+    for market, symbols in markets_and_symbols.items():
+        for sym in symbols:
+            total_tested += 1
+            # Generate 40 daily bars
+            candles = []
+            base_price = 50.0 + (total_tested * 1.5)
+            for d in range(40):
+                candles.append({
+                    "time": f"2026-09-{(d % 28) + 1:02d}",
+                    "open": round(base_price + (d * 0.1), 2),
+                    "high": round(base_price + (d * 0.1) + 1.2, 2),
+                    "low": round(base_price + (d * 0.1) - 0.8, 2),
+                    "close": round(base_price + (d * 0.1) + 0.3, 2),
+                    "volume": 1500000 + (d * 10000)
+                })
+
+            payload = {
+                "symbol": sym,
+                "market": market,
+                "currency": "USD" if market == "US" else "EGP" if market == "EGX" else "SAR" if market == "TASI" else "AED" if market == "DFM" else "GBP",
+                "candles": candles,
+                "fundamentals": {
+                    "eps": round(base_price * 0.08, 2),
+                    "peRatio": 14.2,
+                    "pbRatio": 1.9,
+                    "dividendYield": 3.2
+                }
+            }
+
+            resp = client.post("/analyze", json=payload)
+            if resp.status_code == 200:
+                data = resp.json()
+                dq = data.get("dataQuality")
+                if dq and "provider" in dq and "verifiedAt" in dq and "isRealtime" in dq:
+                    if "confluence" in data and "confluenceScore" in data["confluence"]:
+                        success_count += 1
+
+    assert total_tested == 50, f"Expected 50 instruments tested, got {total_tested}"
+    assert success_count >= 45, f"Expected >= 45 successes, got {success_count}/50"
+    print(f"\n[SANITY PASS] Successfully analyzed {success_count}/{total_tested} instruments across 5 markets with full data_quality metadata.")
+

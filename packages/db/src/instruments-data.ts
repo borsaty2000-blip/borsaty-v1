@@ -279,7 +279,14 @@ export function buildInstrumentUniverse(): SeedInstrument[] {
       providerSymbol: `${s.symbol}.US`,
       nameAr: s.symbol === "AAPL" ? "شركة أبل" : s.symbol === "MSFT" ? "مايكروسوفت" : s.symbol === "NVDA" ? "إنفيديا" : s.nameEn,
       nameEn: s.nameEn,
-      aliases: [s.symbol.toLowerCase(), s.nameEn.toLowerCase()],
+      aliases: [
+        s.symbol.toLowerCase(),
+        s.nameEn.toLowerCase(),
+        ...(s.symbol === "AAPL" ? ["apple", "ابل", "أبل"] : []),
+        ...(s.symbol === "MSFT" ? ["microsoft", "ميكروسوفت", "مايكروسوفت"] : []),
+        ...(s.symbol === "NVDA" ? ["nvidia", "انفيديا"] : []),
+        ...(s.symbol === "TSLA" ? ["tesla", "تسلا"] : [])
+      ],
       assetClass: "EQUITY",
       market: "US",
       sector: s.sector,

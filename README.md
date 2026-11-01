@@ -199,18 +199,117 @@ pnpm --filter @borsaty/web dev
 7. **مطابقة إنجليزية تقريبية (`name_en_fuzzy`):** مسافة Levenshtein ≤ 2، ثقة `0.85`
 8. **الثقة أقل من `0.80`:** إرجاع `{ "resolved": null, "alternatives": [...top 3] }`
 
-### نتائج حالات الاختبار الإلزامية (9/9 Passed):
+### نتائج حالات الاختبار الإلزامية (10/10 Passed):
 | استفسار البحث (Query) | النتيجة (Symbol) | السوق | الطريقة (Method) | نسبة الثقة (Confidence) |
 | :--- | :---: | :---: | :---: | :---: |
 | `"البنك الأهلي"` | **COMI** | EGX | `alias_ar_exact` | **0.98** |
 | `"أرامكو"` | **2222** | TASI | `alias_ar_exact` | **0.98** |
 | `"COMI"` | **COMI** | EGX | `symbol_exact` | **1.00** |
-| `"cib"` | **COMI** | EGX | `alias_ar_exact` | **0.98** |
+| `"cib"` | **COMI** | EGX | `alias_en_exact` | **0.98** |
 | `"البنك التجارى الدولى"` | **COMI** | EGX | `name_ar_fuzzy` | **0.85** |
 | `"ابو قير"` | **ABUK** | EGX | `alias_ar_exact` | **0.98** |
 | `"AAPL"` | **AAPL** | US | `symbol_exact` | **1.00** |
-| `"Apple"` | **AAPL** | US | `alias_ar_exact` | **0.98** |
+| `"Apple"` | **AAPL** | US | `name_en_exact` | **0.99** |
+| `"ciib"` | **COMI** | EGX | `alias_en_fuzzy` | **0.85** |
 | `"شركة غير موجودة"` | **null** | — | — | **3 مقترحات بديلة** |
+
+---
+
+## 🛡️ صلابة خط البيانات والإنتاجية (Sprint 1, Part C: Pipeline Hardening)
+
+تم تطبيق منظومة إنتاجية عسكرية لمنع الأعطال الصامتة، وضمان التوافر المستمر للبيانات حتى في حال انقطاع المزودين الأساسيين (SAHMK / EODHD / Younit / Binance).
+
+### 1. معمارية منظومة الصلابة (Resilience Stack Architecture):
+
+```mermaid
+flowchart TD
+    Client["Client / API Route"] --> CB{"Circuit Breaker (Redis)"}
+    CB -- "CLOSED / HALF_OPEN" --> Retry["withRetry (Exp Backoff + Jitter)"]
+    CB -- "OPEN" --> DLQ["Dead Letter Queue (DLQ)"]
+
+    Retry -- "Call Provider" --> Provider["Market Data Provider (SAHMK / EODHD)"]
+    Provider -- "Success (200)" --> Gates["Data Quality Gates (8 Rules)"]
+    Gates -- "Valid Bar" --> Store[("Database / Memory Store")]
+    Gates -- "Corrupt Bar" --> RejectionLog["Quality Metrics Rejection"]
+
+    Provider -- "Fail (5xx / 429 / Timeout)" --> Retry
+    Retry -- "Max Retries (x3) Exhausted" --> RecordFailure["CB Record Failure (5 in 60s -> OPEN)"]
+    RecordFailure --> DLQ
+    DLQ -- "Auto-Replay on Recovery" --> CB
+```
+
+### 2. المكونات والخصائص المنفذة:
+
+#### أ. إعادة المحاولة التلقائية (Retry with Exponential Backoff):
+- **المسار:** `packages/db/src/providers/retry.ts`
+- **القواعد:** الحد الأقصى 3 محاولات، تأخير أسي: `1000ms`, `2000ms`, `4000ms` مع عشوائية Jitter `(0-500ms)`.
+- **أخطاء مسموحة بإعادة المحاولة:** `[5xx, 429, timeout, network error]`.
+- **أخطاء غير مسموحة:** `[400, 401, 403, 404]` (فشل فوري دون إهدار موارد).
+- **عند استنفاد المحاولات:** إلقاء خطأ مهيكل `RetryExhaustedError` مع سجل المحاولات الزمني.
+
+#### ب. قاطع الدائرة المعتمد على Redis (Redis-Backed Circuit Breaker):
+- **المسار:** `packages/db/src/providers/circuit-breaker.ts`
+- **حالات القاطع:**
+  - `CLOSED`: تشغيل طبيعي ومراقبة معدل الفشل.
+  - `OPEN`: فتح القاطع ورفض الطلبات فوراً مع خطأ `CircuitOpenError` وتحديد ثواني الانتظار `retry_after_s`.
+  - `HALF_OPEN`: بعد فترة تبريد 30 ثانية لاختبار استعادة المزود.
+- **الانتقالات:**
+  - `CLOSED → OPEN`: عند وقوع 5 إخفاقات خلال 60 ثانية.
+  - `OPEN → HALF_OPEN`: تلقائياً بعد مرور 30 ثانية من الهدوء.
+  - `HALF_OPEN → CLOSED`: بعد 3 نجاحات متتالية.
+  - `HALF_OPEN → OPEN`: عند حدوث فشل واحد فقط أثناء الاختبار.
+
+#### ج. طابور الرسائل الميتة وإعادة التشغيل (Dead Letter Queue & Replay):
+- **المسار:** `packages/db/src/providers/dlq.ts`
+- **التخزين:** قوائم Redis `dlq:fetch:{provider}` وقائمة الموت النهائي `dlq:dead:{provider}` بعد 5 محاولات فاشلة.
+- **مسارات الإدارة (Admin Endpoints):**
+  - `GET /api/admin/dlq?provider=&limit=50` (استعراض الطلبات العالقة مع الترقيم).
+  - `GET /api/admin/dlq/stats` (إحصائيات فورية لحجم الطوابير وعمر أقدم رسالة).
+  - `POST /api/admin/dlq/replay?provider=&limit=10` (إعادة تشغيل الدفعات عند تعافي المزود).
+
+#### د. مقاييس بروميثيوس الموحدة (Prometheus Metrics):
+- **المسار:** `GET /api/metrics`
+- **الصيغة:** Prometheus Text Format (v0.0.4)
+- **المقاييس المعروضة:**
+  - عدادات الجلب: `fetch_success_total`, `fetch_failure_total`, `fetch_retry_total`
+  - زمن الاستجابة: `fetch_duration_seconds{quantile="0.5|0.9|0.99"}`
+  - حالات قاطع الدائرة: `circuit_breaker_state`, `circuit_breaker_failures_60s`
+  - طابور الرسائل الميتة: `dlq_size`, `dlq_replay_success_total`
+  - صحة ونضارة البيانات: `last_successful_fetch_timestamp`, `instruments_stale_24h_total`
+  - حجم الكون المالي: `instruments_total`, `price_bars_total`, `markets_total{market}`
+  - **حماية المعدل (Rate Limiting):** 60 طلب / دقيقة لكل عنوان IP.
+
+#### هـ. بوابات جودة البيانات الصارمة (Data Quality Gates):
+- **المسار:** `packages/db/src/quality/gates.ts`
+- **القواعد الثماني قبل حفظ أي شمعة:**
+  1. `high >= low`
+  2. `high >= close >= low`
+  3. `high >= open >= low`
+  4. `volume >= 0`
+  5. `price > 0`
+  6. تاريخ الشمعة يقع داخل `[now - 5 years, now + 1 hour]`
+  7. مدة الشمعة تطابق الفاصل الزمني `(±10%)`
+  8. عدم التكرار (منع إدخال نفس الرمز + الفاصل + التاريخ)
+- **السلوك عند الرفض:** تسجيل تحذير JSON منظم، زيادة مقياس `quality_rejections_total`، وتخطي الشمعة المعيبة دون تعطيل المعالجة الجماعية.
+
+#### و. فحص صحة وتوافر البيانات (Data Health Check Endpoint):
+- **المسار:** `GET /api/health/data`
+- **زمن الكاش:** 30 ثانية لتجنب الضغط على قواعد البيانات.
+- **الحالات الكلية:**
+  - `healthy`: جميع المزودين بحالة `CLOSED`.
+  - `degraded`: مزود واحد بحالة `OPEN` أو تجاوز نسبة البيانات الراكدة 5%.
+  - `unhealthy`: مزودان أو أكثر بحالة `OPEN`.
+
+---
+
+### 🔍 نتائج التحقق من معايير الإنتاجية (Verification Results):
+1. **محاكاة أخطاء 500 على SAHMK (x5):** تحول القاطع إلى `OPEN` فوراً خلال أقل من ثانية.
+2. **انتقال التبريد والتعافي:** الانتقال إلى `HALF_OPEN` بعد انقضاء المهلة، ثم العودة التامة إلى `CLOSED` بعد 3 نجاحات متتالية.
+3. **التقاط الطابور الميت:** تخزين كل فشل مستمر في Redis DLQ بنجاح والتحقق من نقله إلى `dlq:dead` بعد 5 محاولات.
+4. **فحص `GET /api/metrics`:** مطابقة جميع الـ 18 سلسلة مقاييس المطلوبة.
+5. **فحص `GET /api/health/data`:** قراءة دقيقة لحالة المزودين وسلامة الأصول.
+6. **فحص بوابات الجودة:** رفض تلقائي للشمعات ذات `high < low` أو التواريخ المستقبلية مع تسجيل التحذيرات.
+7. **فحص الرموز الإنجليزية:** مطابقة `"cib"` إلى `alias_en_exact` ومطابقة `"Apple"` إلى `name_en_exact` بنجاح تام.
 
 ---
 

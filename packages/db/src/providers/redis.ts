@@ -171,7 +171,7 @@ export class RedisClient implements IRedisClient {
     const map = globalStore.hashes.get(key);
     const obj: Record<string, string> = {};
     if (map) {
-      map.forEach((v, k) => {
+      map.forEach((v: string, k: string) => {
         obj[k] = v;
       });
     }

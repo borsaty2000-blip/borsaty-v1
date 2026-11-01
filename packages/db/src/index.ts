@@ -207,6 +207,8 @@ export async function getStockCandles(symbol: string) {
 
 export { SEED_COMPANIES, generateCandles, buildInstrumentUniverse };
 export * from "./resolution";
+export * from "./providers/redis";
 export * from "./providers/retry";
+export * from "./providers/circuit-breaker";
 export * from "./providers/clients";
 export * from "@prisma/client";

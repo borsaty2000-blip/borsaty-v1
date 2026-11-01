@@ -238,8 +238,7 @@ def test_zigzag_hard_rule_waveB_retraces_100pct_rejected():
         make_pivot(40, 68.0, "trough"),
     ]
     res = detector.detect("TEST", "1D", pivots, min_degree=2)
-    assert res["primary_count"] is None
-    assert any(r["hard_rule_failed"] == "waveB_retracement < 1.0" for r in res["rejected_counts"])
+    assert any(r["pattern"] == "zigzag" and r["hard_rule_failed"] == "waveB_retracement < 1.0" for r in res["rejected_counts"])
 
 def test_zigzag_hard_rule_waveC_not_extending_beyond_A_rejected():
     detector = ElliottDetector()
@@ -270,6 +269,111 @@ def test_ambiguity_impulse_and_zigzag_both_reported():
     assert res["primary_count"]["pattern"] == "impulse"
     assert res["alternative_count"] is not None
     assert res["alternative_count"]["pattern"] in ["impulse", "zigzag"]
+
+# ==============================================================================
+# PART D: FLAT (A-B-C, 3-3-5) TESTS
+# ==============================================================================
+
+def test_hand_crafted_regular_flat():
+    detector = ElliottDetector()
+    # Wave A: 100 to 80 (20 pts)
+    # Wave B: 80 to 99 (19 pts -> 95% retracement)
+    # Wave C: 99 to 79 (20 pts -> 100% of Wave A)
+    pivots = [
+        make_pivot(10, 100.0, "peak"),
+        make_pivot(20, 80.0, "trough"),
+        make_pivot(30, 99.0, "peak"),
+        make_pivot(40, 79.0, "trough"),
+    ]
+    res = detector.detect("TEST", "1D", pivots, min_degree=2)
+    assert res["primary_count"] is not None
+    assert res["primary_count"]["pattern"] == "flat"
+    assert res["primary_count"]["subtype"] == "regular_flat"
+
+def test_hand_crafted_expanded_flat():
+    detector = ElliottDetector()
+    # Wave A: 100 to 80 (20 pts)
+    # Wave B: 80 to 104 (24 pts -> 120% of Wave A, exceeds Wave A start)
+    # Wave C: 104 to 76 (28 pts -> 140% of Wave A, exceeds Wave A end)
+    pivots = [
+        make_pivot(10, 100.0, "peak"),
+        make_pivot(20, 80.0, "trough"),
+        make_pivot(30, 104.0, "peak"),
+        make_pivot(40, 76.0, "trough"),
+    ]
+    res = detector.detect("TEST", "1D", pivots, min_degree=2)
+    assert res["primary_count"] is not None
+    assert res["primary_count"]["pattern"] == "flat"
+    assert res["primary_count"]["subtype"] == "expanded_flat"
+
+def test_flat_hard_rule_waveB_under_90pct_rejected():
+    detector = ElliottDetector()
+    # Wave B only retraces 70% (80 to 94) -> ZigZag, NOT Flat!
+    pivots = [
+        make_pivot(10, 100.0, "peak"),
+        make_pivot(20, 80.0, "trough"),
+        make_pivot(30, 94.0, "peak"),
+        make_pivot(40, 75.0, "trough"),
+    ]
+    res = detector.detect("TEST", "1D", pivots, min_degree=2)
+    # Must reject as flat
+    assert any(r["pattern"] == "flat" and r["hard_rule_failed"] == "waveB_retraces_at_least_90pct_A" for r in res["rejected_counts"])
+
+# ==============================================================================
+# PART E: TRIANGLE (A-B-C-D-E, 3-3-3-3-3) TESTS
+# ==============================================================================
+
+def test_hand_crafted_contracting_triangle():
+    detector = ElliottDetector()
+    # Alternating contracting swings:
+    # A: 100 to 70 (30 pts)
+    # B: 70 to 90 (20 pts)
+    # C: 90 to 76 (14 pts)
+    # D: 76 to 85 (9 pts)
+    # E: 85 to 80 (5 pts)
+    pivots = [
+        make_pivot(10, 100.0, "peak"),
+        make_pivot(20, 70.0, "trough"),
+        make_pivot(30, 90.0, "peak"),
+        make_pivot(40, 76.0, "trough"),
+        make_pivot(50, 85.0, "peak"),
+        make_pivot(60, 80.0, "trough"),
+    ]
+    res = detector.detect("TEST", "1D", pivots, min_degree=2)
+    assert res["primary_count"] is not None
+    assert res["primary_count"]["pattern"] == "triangle"
+    assert res["primary_count"]["subtype"] == "contracting"
+    assert len(res["primary_count"]["waves"]) == 5
+
+def test_triangle_hard_rule_non_contracting_rejected():
+    detector = ElliottDetector()
+    # Non-monotonic wave lengths: A=30, B=20, C=25 (C > B!) -> VIOLATION
+    pivots = [
+        make_pivot(10, 100.0, "peak"),
+        make_pivot(20, 70.0, "trough"), # 30
+        make_pivot(30, 90.0, "peak"),   # 20
+        make_pivot(40, 65.0, "trough"), # 25 (VIOLATION)
+        make_pivot(50, 80.0, "peak"),
+        make_pivot(60, 75.0, "trough"),
+    ]
+    res = detector.detect("TEST", "1D", pivots, min_degree=2)
+    assert any(r["pattern"] == "triangle" and r["hard_rule_failed"] == "each_wave_contracts_or_expands_consistently" for r in res["rejected_counts"])
+
+def test_triangle_hard_rule_waveE_outside_waveA_range_rejected():
+    detector = ElliottDetector()
+    # Expanding triangle where waves expand: A=10, B=15, C=20, D=25, E=30
+    # Wave A range is [90, 100]. Wave E terminates at 80.0 (outside [90, 100]) -> VIOLATION!
+    pivots = [
+        make_pivot(10, 100.0, "peak"),
+        make_pivot(20, 90.0, "trough"), # Wave A is [90, 100] (10 pts)
+        make_pivot(30, 105.0, "peak"),   # B = 15 pts
+        make_pivot(40, 85.0, "trough"),  # C = 20 pts
+        make_pivot(50, 110.0, "peak"),   # D = 25 pts
+        make_pivot(60, 80.0, "trough"),  # E = 30 pts (terminates at 80 < 90, outside Wave A range)
+    ]
+    res = detector.detect("TEST", "1D", pivots, min_degree=2)
+    assert any(r["pattern"] == "triangle" and r["hard_rule_failed"] == "waveE_inside_waveA_range" for r in res["rejected_counts"])
+
 
 
 

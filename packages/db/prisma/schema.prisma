@@ -7,6 +7,29 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Instrument {
+  id             String      @id @default(cuid())
+  symbol         String      @unique // canonical: "COMI"
+  providerSymbol String      @unique // "COMI.CA" for EODHD
+  nameAr         String
+  nameEn         String
+  aliases        String[]    // ["البنك الأهلي", "CIB", "Commercial International Bank"]
+  assetClass     AssetClass
+  market         Market
+  sector         String?
+  industry       String?
+  currency       String      // EGP, SAR, USD
+  isActive       Boolean     @default(true)
+  dataSources    Json        // { primary: "sahmk", fallback: "eodhd" }
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  prices         Price[]
+  signals        Signal[]
+
+  @@index([market, assetClass, isActive])
+  @@index([symbol])
+}
+
 model Company {
   id           String        @id @default(cuid())
   symbol       String        @unique // COMI, 2222
@@ -24,18 +47,21 @@ model Company {
 }
 
 model Price {
-  id        String   @id @default(cuid())
-  companyId String
-  company   Company  @relation(fields: [companyId], references: [id])
-  timeframe String   // 1m, 5m, 1h, 4h, 1d, 1w, 1mo
-  timestamp DateTime
-  open      Float
-  high      Float
-  low       Float
-  close     Float
-  volume    BigInt?
+  id           String      @id @default(cuid())
+  companyId    String?
+  company      Company?    @relation(fields: [companyId], references: [id])
+  instrumentId String?
+  instrument   Instrument? @relation(fields: [instrumentId], references: [id])
+  timeframe    String      // 1m, 5m, 1h, 4h, 1d, 1w, 1mo
+  timestamp    DateTime
+  open         Float
+  high         Float
+  low          Float
+  close        Float
+  volume       BigInt?
 
   @@index([companyId, timeframe, timestamp])
+  @@index([instrumentId, timeframe, timestamp])
 }
 
 model Fundamental {
@@ -58,8 +84,10 @@ model Fundamental {
 
 model Signal {
   id              String       @id @default(cuid())
-  companyId       String
-  company         Company      @relation(fields: [companyId], references: [id])
+  companyId       String?
+  company         Company?     @relation(fields: [companyId], references: [id])
+  instrumentId    String?
+  instrument      Instrument?  @relation(fields: [instrumentId], references: [id])
   timeframe       String
   type            SignalType   // STRONG_BULLISH, BULLISH, NEUTRAL, etc.
   entry           Float
@@ -75,6 +103,15 @@ model Signal {
   resultPct       Float?
 
   @@index([companyId, status, createdAt])
+  @@index([instrumentId, status, createdAt])
+}
+
+enum AssetClass {
+  EQUITY
+  FOREX
+  CRYPTO
+  COMMODITY
+  INDEX
 }
 
 enum Market {
@@ -86,6 +123,9 @@ enum Market {
   QE
   KW
   US
+  UK
+  DE
+  JP
   GLOBAL
 }
 

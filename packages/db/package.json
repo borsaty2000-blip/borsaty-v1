@@ -9,7 +9,8 @@
   "scripts": {
     "generate": "prisma generate",
     "db:push": "prisma db push",
-    "seed": "tsx src/seed.ts"
+    "seed": "tsx src/seed.ts",
+    "seed:instruments": "tsx scripts/seed-instruments.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.4.1"

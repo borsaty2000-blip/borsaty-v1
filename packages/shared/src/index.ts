@@ -1,5 +1,6 @@
 // Markets
-export type Market = 'EGX' | 'TASI' | 'NOMU' | 'DFM' | 'ADX' | 'QE' | 'KW' | 'US' | 'GLOBAL';
+export type Market = 'EGX' | 'TASI' | 'NOMU' | 'DFM' | 'ADX' | 'QE' | 'KW' | 'US' | 'UK' | 'DE' | 'JP' | 'GLOBAL';
+export type AssetClass = 'EQUITY' | 'FOREX' | 'CRYPTO' | 'COMMODITY' | 'INDEX';
 
 export type SignalType = 'STRONG_BULLISH' | 'BULLISH' | 'NEUTRAL' | 'BEARISH' | 'STRONG_BEARISH';
 export type SignalStatus = 'ACTIVE' | 'HIT_T1' | 'HIT_T2' | 'HIT_T3' | 'STOPPED' | 'INVALIDATED';
@@ -200,3 +201,5 @@ export function resolveStockAlias(query: string): { symbol: string; market: Mark
   const normalized = query.trim().toLowerCase();
   return ARABIC_STOCK_ALIASES[normalized] || null;
 }
+
+export * from "./aliases/arabic-aliases";

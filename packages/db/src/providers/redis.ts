@@ -30,8 +30,8 @@ export class RedisClient implements IRedisClient {
   private restToken?: string;
 
   constructor() {
-    this.restUrl = process.env.UPSTASH_REDIS_REST_URL;
-    this.restToken = process.env.UPSTASH_REDIS_REST_TOKEN;
+    this.restUrl = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
+    this.restToken = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
   }
 
   private cleanExpired(key: string): boolean {

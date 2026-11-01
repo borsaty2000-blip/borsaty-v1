@@ -8,11 +8,17 @@ import {
 
 let cachedResponse: { data: any; expiresAt: number } | null = null;
 
-export async function GET() {
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const bypassCache =
+    searchParams.get("fresh") === "true" ||
+    searchParams.get("bypassCache") === "true" ||
+    request.headers.get("cache-control")?.includes("no-cache");
+
   const now = Date.now();
 
   // 30s Cache TTL to prevent hammering DB/Redis
-  if (cachedResponse && now < cachedResponse.expiresAt) {
+  if (!bypassCache && cachedResponse && now < cachedResponse.expiresAt) {
     return NextResponse.json(cachedResponse.data, {
       headers: {
         "X-Cache": "HIT",

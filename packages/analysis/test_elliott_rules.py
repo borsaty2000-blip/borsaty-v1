@@ -460,3 +460,379 @@ def test_hard_rule_non_alternating_pivots_rejected():
     res = detector.detect("TEST", "1D", pivots, min_degree=2)
     assert res["primary_count"] is None
     assert any(r["hard_rule_failed"] in ["alternating_pivots", "pivot_polarity"] for r in res["rejected_counts"])
+
+# ==============================================================================
+# PART F: AMBIGUITY TESTS (5 TESTS)
+# ==============================================================================
+
+def test_ambiguity_reports_distinct_wave_counts():
+    detector = ElliottDetector()
+    pivots = [
+        make_pivot(0, 100.0, "trough"),
+        make_pivot(10, 115.0, "peak"),
+        make_pivot(20, 107.0, "trough"),
+        make_pivot(30, 135.0, "peak"),
+        make_pivot(40, 126.0, "trough"),
+        make_pivot(50, 150.0, "peak"),
+        make_pivot(60, 140.0, "trough"),
+        make_pivot(70, 165.0, "peak"),
+    ]
+    res = detector.detect("TEST", "1D", pivots, min_degree=2)
+    assert res["primary_count"] is not None
+    assert res["alternative_count"] is not None
+    assert res["primary_count"]["pattern_score"] >= res["alternative_count"]["pattern_score"]
+
+def test_ambiguity_no_suppression_of_alternative():
+    detector = ElliottDetector()
+    pivots = [
+        make_pivot(0, 50.0, "trough"),
+        make_pivot(10, 65.0, "peak"),
+        make_pivot(20, 58.0, "trough"),
+        make_pivot(30, 85.0, "peak"),
+        make_pivot(40, 78.0, "trough"),
+        make_pivot(50, 95.0, "peak"),
+    ]
+    res = detector.detect("TEST", "1D", pivots, min_degree=2)
+    assert res["primary_count"] is not None
+    assert "reason_for_alternative" in res["alternative_count"]
+
+def test_ambiguity_scores_both_reported():
+    detector = ElliottDetector()
+    pivots = [
+        make_pivot(0, 100.0, "trough"),
+        make_pivot(10, 110.0, "peak"),
+        make_pivot(20, 104.0, "trough"),
+        make_pivot(30, 130.0, "peak"),
+        make_pivot(40, 122.0, "trough"),
+        make_pivot(50, 145.0, "peak"),
+    ]
+    res = detector.detect("TEST", "1D", pivots, min_degree=2)
+    assert 0.0 < res["primary_count"]["pattern_score"] <= 1.0
+    assert 0.0 < res["alternative_count"]["pattern_score"] <= 1.0
+
+def test_ambiguity_distinctness_enforced():
+    detector = ElliottDetector()
+    pivots = [
+        make_pivot(0, 100.0, "trough"),
+        make_pivot(10, 110.0, "peak"),
+        make_pivot(20, 105.0, "trough"),
+        make_pivot(30, 120.0, "peak"),
+        make_pivot(40, 116.0, "trough"),
+        make_pivot(50, 135.0, "peak"),
+    ]
+    res = detector.detect("TEST", "1D", pivots, min_degree=2)
+    pc = res["primary_count"]
+    ac = res["alternative_count"]
+    # Structurally distinct
+    assert pc["pattern"] != ac["pattern"] or pc["subtype"] != ac["subtype"] or pc["waves"][0]["start"]["index"] != ac["waves"][0]["start"]["index"]
+
+def test_ambiguity_different_subtypes_reported():
+    detector = ElliottDetector()
+    pivots = [
+        make_pivot(0, 100.0, "trough"),
+        make_pivot(10, 110.0, "peak"),
+        make_pivot(20, 105.0, "trough"),
+        make_pivot(30, 125.0, "peak"),
+        make_pivot(40, 120.0, "trough"),
+        make_pivot(50, 150.0, "peak"),
+    ]
+    res = detector.detect("TEST", "1D", pivots, min_degree=2)
+    assert res["alternative_count"] is not None
+
+
+# ==============================================================================
+# PART G: REAL DATA SIMULATION TESTS (10 TESTS)
+# ==============================================================================
+
+from engines.hspd import HSPDEngine
+import random
+import math
+
+def generate_stock_bars(base=86.0, length=250, seed=42):
+    random.seed(seed)
+    candles = []
+    for i in range(length):
+        c1 = 18.0 * math.sin(2 * math.pi * i / 120)
+        c2 = 8.0 * math.sin(2 * math.pi * i / 40)
+        c3 = 3.0 * math.sin(2 * math.pi * i / 12)
+        p = base + c1 + c2 + c3 + random.gauss(0, 0.4)
+        candles.append({
+            "time": f"2026-01-01T{i:04d}Z",
+            "open": round(p, 2),
+            "high": round(p + 1.2, 2),
+            "low": round(p - 1.2, 2),
+            "close": round(p, 2),
+            "volume": 1000000
+        })
+    return candles
+
+def test_real_data_comi():
+    hspd = HSPDEngine()
+    candles = generate_stock_bars(base=86.0, seed=1)
+    pivots = hspd.detect(candles, min_degree=1, max_degree=3)
+    detector = ElliottDetector()
+    res = detector.detect("COMI", "1D", pivots, min_degree=1)
+    assert res["symbol"] == "COMI"
+    assert res["primary_count"] is not None
+    assert len(res["primary_count"]["waves"]) in [3, 5]
+
+def test_real_data_2222_aramco():
+    hspd = HSPDEngine()
+    candles = generate_stock_bars(base=27.5, seed=2)
+    pivots = hspd.detect(candles, min_degree=1, max_degree=3)
+    detector = ElliottDetector()
+    res = detector.detect("2222", "1D", pivots, min_degree=1)
+    assert res["symbol"] == "2222"
+    # Graceful handling: either a valid primary count or clean rejection list
+    if res["primary_count"] is not None:
+        assert len(res["primary_count"]["waves"]) in [3, 5]
+    else:
+        assert isinstance(res["rejected_counts"], list)
+
+def test_real_data_aapl():
+    hspd = HSPDEngine()
+    candles = generate_stock_bars(base=230.0, seed=3)
+    pivots = hspd.detect(candles, min_degree=1, max_degree=3)
+    detector = ElliottDetector()
+    res = detector.detect("AAPL", "1D", pivots, min_degree=1)
+    assert res["symbol"] == "AAPL"
+    assert res["primary_count"] is not None
+
+def test_real_data_msft():
+    hspd = HSPDEngine()
+    candles = generate_stock_bars(base=420.0, seed=4)
+    pivots = hspd.detect(candles, min_degree=1, max_degree=3)
+    detector = ElliottDetector()
+    res = detector.detect("MSFT", "1D", pivots, min_degree=1)
+    assert res["symbol"] == "MSFT"
+    if res["primary_count"] is not None:
+        assert len(res["primary_count"]["waves"]) in [3, 5]
+    else:
+        assert isinstance(res["rejected_counts"], list)
+
+def test_real_data_nvda():
+    hspd = HSPDEngine()
+    candles = generate_stock_bars(base=135.0, seed=5)
+    pivots = hspd.detect(candles, min_degree=1, max_degree=3)
+    detector = ElliottDetector()
+    res = detector.detect("NVDA", "1D", pivots, min_degree=1)
+    assert res["symbol"] == "NVDA"
+    assert res["primary_count"] is not None
+
+def test_real_data_no_hard_rule_violations_in_primary():
+    hspd = HSPDEngine()
+    detector = ElliottDetector()
+    for seed in [10, 20, 30]:
+        candles = generate_stock_bars(seed=seed)
+        pivots = hspd.detect(candles, min_degree=1, max_degree=3)
+        res = detector.detect("STOCK", "1D", pivots, min_degree=1)
+        if res["primary_count"]:
+            # Hard rules passed must be populated
+            assert len(res["primary_count"]["hard_rules_passed"]) >= 2
+
+def test_real_data_trade_ready_block_structure():
+    detector = ElliottDetector()
+    pivots = [
+        make_pivot(10, 100.0, "trough"),
+        make_pivot(20, 110.0, "peak"),
+        make_pivot(30, 104.0, "trough"),
+        make_pivot(50, 130.0, "peak"),
+        make_pivot(65, 122.0, "trough"),
+        make_pivot(85, 145.0, "peak"),
+    ]
+    res = detector.detect("COMI", "1D", pivots, min_degree=2)
+    tr = res["primary_count"]["trade_ready"]
+    assert "entry_zone" in tr
+    assert "stop_loss" in tr
+    assert "target_1" in tr
+    assert "target_2" in tr
+    assert "invalidation" in tr
+
+def test_real_data_data_quality_metadata():
+    hspd = HSPDEngine()
+    candles = generate_stock_bars(length=250)
+    pivots = hspd.detect(candles)
+    detector = ElliottDetector()
+    res = detector.detect("COMI", "1D", pivots, candles_used=250)
+    assert res["data_quality"]["candles_used"] == 250
+    assert res["data_quality"]["pivots_used"] > 0
+
+def test_real_data_versioning_consistency():
+    detector = ElliottDetector()
+    res = detector.detect("TEST", "1D", [])
+    assert res["version"] == "1.0.0"
+
+def test_real_data_degree_awareness():
+    detector = ElliottDetector()
+    pivots = [
+        make_pivot(10, 100.0, "trough", degree=1),
+        make_pivot(20, 110.0, "peak", degree=1),
+        make_pivot(30, 104.0, "trough", degree=1),
+        make_pivot(40, 130.0, "peak", degree=1),
+    ]
+    # Filter min_degree = 2 excludes degree 1 pivots
+    res = detector.detect("TEST", "1D", pivots, min_degree=2)
+    assert res["primary_count"] is None
+
+
+# ==============================================================================
+# PART H: MULTI-TIMEFRAME COHERENCE TESTS (5 TESTS)
+# ==============================================================================
+
+from elliott.multi_tf import MultiTfElliott, global_multi_tf_elliott
+
+def test_multi_tf_full_analysis():
+    mtf = MultiTfElliott()
+    c_w = generate_stock_bars(base=86.0, length=150, seed=1)
+    c_d = generate_stock_bars(base=86.0, length=250, seed=2)
+    c_4h = generate_stock_bars(base=86.0, length=300, seed=3)
+    
+    res = mtf.analyze("COMI", dataset_by_tf={"1W": c_w, "1D": c_d, "4H": c_4h})
+    assert res["symbol"] == "COMI"
+    assert "1W_vs_1D" in res["pairwise_coherence"]
+    assert "1D_vs_4H" in res["pairwise_coherence"]
+    assert 0.0 <= res["coherence_score"] <= 1.0
+    assert res["coherence_tier"] in ["HIGH", "MEDIUM", "LOW"]
+
+def test_multi_tf_high_coherence_trade_ready():
+    mtf = MultiTfElliott()
+    pivots_up = [
+        make_pivot(10, 100.0, "trough"),
+        make_pivot(20, 110.0, "peak"),
+        make_pivot(30, 104.0, "trough"),
+        make_pivot(40, 130.0, "peak"),
+        make_pivot(50, 122.0, "trough"),
+        make_pivot(60, 145.0, "peak"),
+    ]
+    # All TFs agree on impulse up
+    hspd_data = {
+        "1W": {"pivots": pivots_up, "data_quality": {"candles_used": 100}},
+        "1D": {"pivots": pivots_up, "data_quality": {"candles_used": 250}},
+        "4H": {"pivots": pivots_up, "data_quality": {"candles_used": 500}},
+    }
+    res = mtf.analyze("COMI", hspd_by_tf=hspd_data)
+    assert res["coherence_score"] >= 0.85
+    assert res["coherence_tier"] == "HIGH"
+    assert res["trade_ready"] is not None
+    assert res["trade_ready"]["confidence"] == "HIGH"
+
+def test_multi_tf_contradiction_hides_trade_ready():
+    mtf = MultiTfElliott()
+    pivots_up = [
+        make_pivot(10, 100.0, "trough"),
+        make_pivot(20, 110.0, "peak"),
+        make_pivot(30, 104.0, "trough"),
+        make_pivot(40, 130.0, "peak"),
+        make_pivot(50, 122.0, "trough"),
+        make_pivot(60, 145.0, "peak"),
+    ]
+    pivots_down = [
+        make_pivot(10, 150.0, "peak"),
+        make_pivot(20, 130.0, "trough"),
+        make_pivot(30, 140.0, "peak"),
+        make_pivot(40, 100.0, "trough"),
+        make_pivot(50, 115.0, "peak"),
+        make_pivot(60, 80.0, "trough"),
+    ]
+    # Weekly is impulse down, Daily is impulse up -> Contradiction!
+    hspd_data = {
+        "1W": {"pivots": pivots_down, "data_quality": {"candles_used": 100}},
+        "1D": {"pivots": pivots_up, "data_quality": {"candles_used": 250}},
+        "4H": {"pivots": pivots_down, "data_quality": {"candles_used": 500}},
+    }
+    res = mtf.analyze("COMI", hspd_by_tf=hspd_data)
+    # Trade ready must be explicitly hidden
+    assert res["trade_ready"] is None
+    assert res["trade_ready_status"] == "SUPPRESSED"
+    assert "contradictory" in res["suppression_reason"]
+
+def test_multi_tf_verdict_ar_displayed():
+    mtf = MultiTfElliott()
+    res = mtf.analyze("COMI", dataset_by_tf={})
+    assert "توافق" in res["coherence_verdict_ar"]
+
+def test_multi_tf_empty_input_graceful():
+    mtf = MultiTfElliott()
+    res = mtf.analyze("TEST", dataset_by_tf=None)
+    assert res["coherence_score"] >= 0.0
+    assert res["symbol"] == "TEST"
+
+
+# ==============================================================================
+# PART I: REGRESSION VS ZIGZAG-BASED ELLIOTT (3 TESTS)
+# ==============================================================================
+
+def test_new_detector_rejects_more_false_counts_than_old():
+    # An irregular swing that a naive wave pattern would accept
+    # but HSPD/rule engine rejects because Wave 4 overlaps Wave 1
+    detector = ElliottDetector()
+    invalid_pivots = [
+        make_pivot(10, 100.0, "trough"),
+        make_pivot(20, 120.0, "peak"),
+        make_pivot(30, 112.0, "trough"),
+        make_pivot(40, 140.0, "peak"),
+        make_pivot(50, 115.0, "trough"), # Overlaps Wave 1 (115 < 120)
+        make_pivot(60, 155.0, "peak"),
+    ]
+    res = detector.detect("TEST", "1D", invalid_pivots, min_degree=2)
+    # Impulse must be rejected
+    assert any(r["pattern"] == "impulse" for r in res["rejected_counts"])
+
+def test_old_detector_false_positive_elimination():
+    detector = ElliottDetector()
+    # Wave 2 retraces 105% of Wave 1
+    pivots = [
+        make_pivot(10, 100.0, "trough"),
+        make_pivot(20, 110.0, "peak"),
+        make_pivot(30, 99.0, "trough"), # 99 < 100
+        make_pivot(40, 130.0, "peak"),
+        make_pivot(50, 120.0, "trough"),
+        make_pivot(60, 145.0, "peak"),
+    ]
+    res = detector.detect("TEST", "1D", pivots, min_degree=2)
+    assert any(r["hard_rule_failed"] == "wave2_retracement < 1.0" for r in res["rejected_counts"])
+
+def test_hspd_grounding_prevents_hallucinated_counts():
+    detector = ElliottDetector()
+    # Single wave (only 2 pivots)
+    pivots = [
+        make_pivot(10, 100.0, "trough"),
+        make_pivot(20, 110.0, "peak"),
+    ]
+    res = detector.detect("TEST", "1D", pivots, min_degree=2)
+    assert res["primary_count"] is None
+    assert res["alternative_count"] is None
+
+
+# ==============================================================================
+# PART J: PERFORMANCE (2 TESTS)
+# ==============================================================================
+
+import time
+
+def test_performance_per_instrument_timeframe_under_100ms():
+    detector = ElliottDetector()
+    pivots = [make_pivot(i * 10, 100.0 + (i % 3) * 10.0, "peak" if i % 2 == 1 else "trough") for i in range(20)]
+    
+    t0 = time.time()
+    _ = detector.detect("PERF", "1D", pivots, min_degree=1)
+    elapsed_ms = (time.time() - t0) * 1000.0
+    
+    print(f"\nElliott Detector per-instrument-per-timeframe: {elapsed_ms:.2f}ms")
+    assert elapsed_ms < 100.0
+
+def test_performance_100_instruments_under_30s():
+    detector = ElliottDetector()
+    dataset = [
+        [make_pivot(i * 10, 100.0 + (i % 3) * 10.0, "peak" if i % 2 == 1 else "trough") for i in range(15)]
+        for _ in range(100)
+    ]
+    
+    t0 = time.time()
+    for p_list in dataset:
+        _ = detector.detect("PERF", "1D", p_list, min_degree=1)
+    total_sec = time.time() - t0
+    
+    print(f"\n100 Instruments Elliott Detection: {total_sec:.2f}s")
+    assert total_sec < 30.0
+

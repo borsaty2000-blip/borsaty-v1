@@ -5,32 +5,41 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (pathname.startsWith("/api/admin")) {
-    // 1. In production, disable test endpoints completely unless explicitly permitted
-    if (process.env.NODE_ENV === "production" && !process.env.ALLOW_ADMIN_TESTS) {
+    const isProduction = process.env.NODE_ENV === "production";
+    const allowAdminTests = process.env.ALLOW_ADMIN_TESTS === "true";
+
+    // 1. In production, hide and disable admin test endpoints unless explicitly enabled
+    if (isProduction && !allowAdminTests) {
       return new NextResponse(JSON.stringify({ error: "Not Found" }), {
         status: 404,
         headers: { "Content-Type": "application/json" },
       });
     }
 
-    // 2. Token authentication
-    const expectedToken =
-      process.env.ADMIN_TOKEN ||
-      (process.env.NODE_ENV !== "production" ? "borsaty_admin_dev_secret" : null);
-
-    if (!expectedToken) {
+    // 2. Fail-closed: In production, ADMIN_TOKEN must be explicitly set and non-empty
+    const rawAdminToken = process.env.ADMIN_TOKEN?.trim();
+    if (isProduction && (!rawAdminToken || rawAdminToken.length === 0)) {
       return new NextResponse(
-        JSON.stringify({ error: "Unauthorized: ADMIN_TOKEN is not configured on server" }),
+        JSON.stringify({ error: "Unauthorized: ADMIN_TOKEN is not configured on server (fail-closed)" }),
         { status: 401, headers: { "Content-Type": "application/json" } }
       );
     }
 
-    const headerToken = request.headers.get("x-admin-token");
-    const authHeader = request.headers.get("authorization");
-    const bearerToken = authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : null;
+    const expectedToken = rawAdminToken || "borsaty_admin_dev_secret";
+    if (!expectedToken || expectedToken.trim().length === 0) {
+      return new NextResponse(
+        JSON.stringify({ error: "Unauthorized: Server authentication is misconfigured (fail-closed)" }),
+        { status: 401, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    // 3. Extract and validate client token
+    const headerToken = request.headers.get("x-admin-token")?.trim();
+    const authHeader = request.headers.get("authorization")?.trim();
+    const bearerToken = authHeader?.startsWith("Bearer ") ? authHeader.slice(7).trim() : null;
     const provided = headerToken || bearerToken;
 
-    if (!provided || provided !== expectedToken) {
+    if (!provided || provided.length === 0 || provided !== expectedToken) {
       return new NextResponse(
         JSON.stringify({ error: "Unauthorized: Invalid or missing admin credentials" }),
         { status: 401, headers: { "Content-Type": "application/json" } }

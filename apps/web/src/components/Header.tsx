@@ -81,6 +81,12 @@ export default function Header() {
             >
               سجل الإشارات (Hit Rate)
             </Link>
+            <Link
+              href="/screener"
+              className="px-3 py-1.5 rounded-lg text-cyan-400 hover:text-white hover:bg-[#1a2337] transition-colors flex items-center gap-1 font-semibold"
+            >
+              مصفاة الأسهم (Screener)
+            </Link>
           </nav>
         </div>
 

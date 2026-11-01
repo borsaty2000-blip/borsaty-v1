@@ -13,6 +13,8 @@ from engines.confluence import calculate_confluence_score
 from engines.data_quality import validate_data_quality
 from engines.signal_store import global_signal_store, SignalStore
 from engines.indicator_engine import global_indicator_engine, IndicatorEngine
+from screener.nlu import global_screener_nlu
+from screener.builder import global_screener_engine
 from datetime import datetime, timezone
 
 app = FastAPI(
@@ -158,6 +160,27 @@ class IndicatorComputeRequest(BaseModel):
     timeframe: Optional[str] = "1D"
     indicators: Optional[str] = "all"
     candles: List[Candle]
+
+class ScreenerApiRequest(BaseModel):
+    query: str
+
+@app.post("/screener/query")
+def screener_query_endpoint(payload: ScreenerApiRequest):
+    try:
+        screen_query, explanation = global_screener_nlu.parse(payload.query)
+        execution_res = global_screener_engine.execute(screen_query)
+        return {
+            "interpreted": screen_query.model_dump(),
+            "interpreted_ar": explanation,
+            "results": execution_res["results"],
+            "total_matches": execution_res["total_matches"],
+            "execution_ms": execution_res["execution_ms"],
+            "data_quality": execution_res["data_quality"]
+        }
+    except ValueError as ve:
+        raise HTTPException(status_code=400, detail=str(ve))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"خطأ أثناء تنفيذ البحث: {str(e)}")
 
 @app.post("/indicators/compute")
 def compute_indicators_endpoint(payload: IndicatorComputeRequest):

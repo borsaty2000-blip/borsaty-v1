@@ -491,4 +491,45 @@ def test_fastapi_pivots_detect_endpoint(sample_candles):
     assert "data_quality" in data
     assert data["version"] == "1.0.0"
 
+def test_fastapi_elliott_detect_endpoint(sample_candles):
+    from fastapi.testclient import TestClient
+    from main import app
+    client = TestClient(app)
+
+    # 1. Single timeframe with candles
+    payload = {
+        "symbol": "COMI",
+        "timeframe": "1D",
+        "min_degree": 0,
+        "candles": sample_candles
+    }
+
+    resp = client.post("/elliott/detect", json=payload)
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["symbol"] == "COMI"
+    assert data["timeframe"] == "1D"
+    assert "version" in data
+    assert "data_quality" in data
+    assert "rejected_counts" in data
+
+    # 2. Multi timeframe
+    mtf_payload = {
+        "symbol": "COMI",
+        "timeframe": "1D",
+        "multi_tf_candles": {
+            "weekly": sample_candles,
+            "daily": sample_candles,
+            "h4": sample_candles
+        }
+    }
+    mtf_resp = client.post("/elliott/detect", json=mtf_payload)
+    assert mtf_resp.status_code == 200
+    mtf_data = mtf_resp.json()
+    assert mtf_data["symbol"] == "COMI"
+    assert "timeframes" in mtf_data
+    assert "coherence_score" in mtf_data
+    assert "coherence_tier" in mtf_data
+
+
 

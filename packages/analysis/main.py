@@ -14,6 +14,8 @@ from engines.data_quality import validate_data_quality
 from engines.signal_store import global_signal_store, SignalStore
 from engines.indicator_engine import global_indicator_engine, IndicatorEngine
 from engines.hspd import global_hspd_engine, HSPDEngine
+from elliott.detector import global_elliott_detector, ElliottDetector
+from elliott.multi_tf import MultiTfElliott
 from screener.nlu import global_screener_nlu
 from screener.builder import global_screener_engine
 from datetime import datetime, timezone
@@ -186,6 +188,57 @@ def detect_pivots_endpoint(payload: PivotDetectRequest):
         max_degree=max_d,
         symbol=sym,
         timeframe=tf
+    )
+    return res
+
+class ElliottDetectRequest(BaseModel):
+    symbol: str
+    timeframe: Optional[str] = "1D"
+    candles: Optional[List[Candle]] = None
+    pivots: Optional[List[Dict[str, Any]]] = None
+    min_degree: Optional[int] = 1
+    multi_tf_candles: Optional[Dict[str, List[Candle]]] = None
+
+@app.post("/elliott/detect")
+def detect_elliott_endpoint(payload: ElliottDetectRequest):
+    sym = payload.symbol.upper()
+    tf = payload.timeframe or "1D"
+    min_d = max(0, min(3, payload.min_degree if payload.min_degree is not None else 1))
+
+    # Multi-timeframe execution if multi_tf_candles dictionary supplied
+    if payload.multi_tf_candles and ("weekly" in payload.multi_tf_candles or "daily" in payload.multi_tf_candles):
+        multi_engine = MultiTfElliott()
+        tf_candles = {}
+        for k, v in payload.multi_tf_candles.items():
+            tf_candles[k] = [c.model_dump() if hasattr(c, "model_dump") else c for c in v]
+        res = multi_engine.analyze(sym, tf_candles)
+        return res
+
+    # Single-timeframe execution
+    pivots_data = payload.pivots
+    candles_used = 0
+    if not pivots_data:
+        if not payload.candles:
+            raise HTTPException(status_code=400, detail="Either candles or pivots must be provided")
+        raw_candles = [c.model_dump() for c in payload.candles]
+        candles_used = len(raw_candles)
+        hspd_res = global_hspd_engine.detect(
+            candles=raw_candles,
+            min_degree=min_d,
+            max_degree=3,
+            symbol=sym,
+            timeframe=tf
+        )
+        pivots_data = hspd_res.get("pivots", [])
+    else:
+        candles_used = len(payload.candles) if payload.candles else len(pivots_data)
+
+    res = global_elliott_detector.detect(
+        symbol=sym,
+        timeframe=tf,
+        pivots=pivots_data,
+        min_degree=min_d,
+        candles_used=candles_used
     )
     return res
 

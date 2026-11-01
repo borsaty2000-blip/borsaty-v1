@@ -1,0 +1,24 @@
+{
+  "mcpServers": {
+    "sahmk-saudi-market": {
+      "command": "python",
+      "args": ["-m", "agents.data_agent.sahmk_mcp"],
+      "description": "SAHMK official Saudi Market (TASI/NOMU) quotes, historical data & webhooks"
+    },
+    "egx-egypt-market": {
+      "command": "python",
+      "args": ["-m", "agents.data_agent.egx_mcp"],
+      "description": "Younit & EGX.news Egyptian Market API gateway & proxy"
+    },
+    "eodhd-global-market": {
+      "command": "python",
+      "args": ["-m", "agents.data_agent.eodhd_mcp"],
+      "description": "EODHD Global Markets (150,000+ tickers, 60+ exchanges)"
+    },
+    "redis-cache": {
+      "command": "python",
+      "args": ["-m", "agents.data_agent.redis_mcp"],
+      "description": "High-speed in-memory pricing cache (TTL 5-30 seconds)"
+    }
+  }
+}

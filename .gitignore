@@ -1,0 +1,36 @@
+# Dependencies
+node_modules
+.pnpm-store
+
+# Next.js
+.next/
+out/
+
+# Build artifacts
+dist/
+build/
+*.tsbuildinfo
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+env/
+.pytest_cache/
+
+# Databases & local env
+*.sqlite
+*.sqlite3
+*.db
+.env
+.env.local
+.env.*.local
+
+# Turborepo
+.turbo
+
+# OS metadata
+.DS_Store
+Thumbs.db

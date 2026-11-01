@@ -1,0 +1,19 @@
+{
+  "name": "borsaty-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Borsaty — Arabic-First Global Financial Markets Platform",
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "db:generate": "turbo run db:generate",
+    "db:push": "turbo run db:push",
+    "seed": "pnpm --filter @borsaty/db seed"
+  },
+  "devDependencies": {
+    "turbo": "^2.4.4",
+    "typescript": "^5.7.3"
+  },
+  "packageManager": "pnpm@9.12.0"
+}

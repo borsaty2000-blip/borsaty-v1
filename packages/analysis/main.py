@@ -12,6 +12,8 @@ from engines.fair_value import calculate_fair_value
 from engines.confluence import calculate_confluence_score
 from engines.data_quality import validate_data_quality
 from engines.signal_store import global_signal_store, SignalStore
+from engines.indicator_engine import global_indicator_engine, IndicatorEngine
+from datetime import datetime, timezone
 
 app = FastAPI(
     title="Borsaty Deterministic Analysis Engine",
@@ -149,6 +151,36 @@ def run_full_analysis(payload: AnalysisRequest):
         "fairValue": fair_value,
         "dataQuality": data_quality,
         "persistedSignalId": persisted_signal["id"] if persisted_signal else None
+    }
+
+class IndicatorComputeRequest(BaseModel):
+    symbol: str
+    timeframe: Optional[str] = "1D"
+    indicators: Optional[str] = "all"
+    candles: List[Candle]
+
+@app.post("/indicators/compute")
+def compute_indicators_endpoint(payload: IndicatorComputeRequest):
+    if not payload.candles:
+        raise HTTPException(status_code=400, detail="Candles cannot be empty")
+
+    raw_candles = [c.model_dump() for c in payload.candles]
+    sym = payload.symbol.upper()
+    tf = payload.timeframe or "1D"
+
+    if not payload.indicators or payload.indicators == "all":
+        results = global_indicator_engine.compute_all(sym, tf, raw_candles)
+    else:
+        req_list = [i.strip() for i in payload.indicators.split(",")]
+        results = {}
+        for ind_name in req_list:
+            results[ind_name] = global_indicator_engine.compute(sym, tf, raw_candles, ind_name)
+
+    return {
+        "symbol": sym,
+        "timeframe": tf,
+        "computed_at": datetime.now(timezone.utc).isoformat(),
+        "indicators": results
     }
 
 if __name__ == "__main__":

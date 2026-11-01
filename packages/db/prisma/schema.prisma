@@ -146,3 +146,29 @@ enum SignalStatus {
   STOPPED
   INVALIDATED
 }
+
+model IndicatorValue {
+  instrumentId     String
+  timeframe        String
+  indicator        String
+  paramsHash       String
+  indicatorVersion String
+  timestamp        DateTime
+  value            Float
+  metadata         Json?
+
+  @@id([instrumentId, timeframe, indicator, paramsHash, timestamp])
+  @@index([instrumentId, timeframe, indicator])
+}
+
+model ScreenerQuery {
+  id          String   @id @default(cuid())
+  userId      String?
+  queryAr     String
+  parsedDsl   Json
+  resultCount Int
+  executionMs Int
+  createdAt   DateTime @default(now())
+
+  @@index([userId, createdAt])
+}

@@ -61,22 +61,28 @@ TOTAL                       306     27    91%
 تم إنشاء وتفعيل صفحة سجل الإشارات بالكامل على الرابط:
 👉 **`/signals`**
 
-### الخصائص:
-- **Hit Rate Dashboard:** عرض النسبة المئوية للنجاح لكل نوع إشارة (`STRONG_BULLISH`, `BULLISH`, `NEUTRAL`, `BEARISH`, `STRONG_BEARISH`).
-- **Signal History:** تتبع كل إشارة وسعر الدخول، الأهداف المعلنة، وقف الخسارة، النتيجة الفعلية المحققة (`result_pct`)، وحالتها (`ACTIVE`, `HIT_T1`, `HIT_T2`, `STOPPED`).
+### الخصائص والقواعد الإحصائية الصارمة:
+- **حماية العينة الإحصائية الصغرى (Minimum Sample Size Threshold):**
+  - **القاعدة الصارمة:** إذا كان عدد الإشارات المغلقة `closed_signals < 30`، يتم حجب النسبة المئوية المضللة، وعرض تحذير واضح: `بيانات غير كافية (n = X)`. هذا الإجراء يمنع خداع التسويق الزائف ويحمي مصداقية المنصة أمام المتداولين المحترفين والمؤسسات.
+- **فترة ثقة ويلسون (Wilson Score Interval 95%):**
+  - عند تجاوز العتبة (`n ≥ 30`)، لا تُعرض نسبة النجاح مجردة، بل مع نطاق فترة الثقة الثنائية `95% CI: [Lower% - Upper%]` لحساب هامش الخطأ الإحصائي بدقة.
+- **Auto-Persistence Hook:**
+  - كل إشارة تولدها محركات التحليل الحتمي ذات توافق مرتفع تُسجل تلقائياً في الـ Signal Store مع التاريخ وسعر الدخول والأهداف ووقف الخسارة وحالة `ACTIVE`.
 - **SQL Signal Store:** استعلام تجميعي فوري:
 ```sql
 SELECT 
-  type AS signal_type,
+  type,
   COUNT(*) AS total_signals,
-  COUNT(CASE WHEN status IN ('HIT_T1', 'HIT_T2', 'HIT_T3') THEN 1 END) AS successful_hits,
-  ROUND(
-    (COUNT(CASE WHEN status IN ('HIT_T1', 'HIT_T2', 'HIT_T3') THEN 1 END)::numeric / NULLIF(COUNT(CASE WHEN status != 'ACTIVE' THEN 1 END), 0)) * 100, 
-    1
-  ) AS hit_rate_pct,
-  ROUND(AVG(result_pct)::numeric, 2) AS avg_result_pct
+  COUNT(CASE WHEN status != 'ACTIVE' THEN 1 END) AS closed_signals,
+  COUNT(CASE WHEN status IN ('HIT_T1', 'HIT_T2', 'HIT_T3') THEN 1 END) AS hits,
+  CASE 
+    WHEN COUNT(CASE WHEN status != 'ACTIVE' THEN 1 END) < 30 
+    THEN 'بيانات غير كافية (n=' || COUNT(CASE WHEN status != 'ACTIVE' THEN 1 END) || ')'
+    ELSE ROUND((COUNT(CASE WHEN status IN ('HIT_T1', 'HIT_T2', 'HIT_T3') THEN 1 END)::numeric / COUNT(CASE WHEN status != 'ACTIVE' THEN 1 END)) * 100, 1) || '%'
+  END AS reporting_verdict
 FROM "Signal"
-GROUP BY type;
+GROUP BY type
+ORDER BY total_signals DESC;
 ```
 
 ---

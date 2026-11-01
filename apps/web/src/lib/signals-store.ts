@@ -239,18 +239,69 @@ export const SIGNALS_STORE: StoredSignal[] = [
   }
 ];
 
+// Non-negotiable Sample Size Threshold: minimum 30 closed trades to report statistical win rates
+export const MIN_STATISTICAL_SAMPLE_SIZE = 30;
+
+/**
+ * Wilson Score Interval for Binomial Proportions (95% Confidence Interval)
+ * Provides mathematically sound confidence bands and prevents misleading claims on small samples.
+ */
+export function calculateWilsonScoreInterval(hits: number, n: number, z: number = 1.96): { lower: number; upper: number } {
+  if (n <= 0) return { lower: 0, upper: 0 };
+  const p = hits / n;
+  const z2 = z * z;
+  const denominator = 1 + z2 / n;
+  const center = (p + z2 / (2 * n)) / denominator;
+  const spread = (z / denominator) * Math.sqrt((p * (1 - p)) / n + z2 / (4 * n * n));
+
+  const lower = Math.max(0, Number(((center - spread) * 100).toFixed(1)));
+  const upper = Math.min(100, Number(((center + spread) * 100).toFixed(1)));
+
+  return { lower, upper };
+}
+
+// Automatic Signal Persistence Hook (Section 2.1 & Point 3 Requirement)
+export function saveGeneratedSignal(newSignal: Omit<StoredSignal, "id" | "createdAt">): StoredSignal {
+  const signalId = `SIG-${newSignal.symbol}-${Date.now()}`;
+  const stored: StoredSignal = {
+    ...newSignal,
+    id: signalId,
+    createdAt: new Date().toISOString(),
+  };
+  SIGNALS_STORE.unshift(stored);
+  return stored;
+}
+
+// Calculation of Hit Rate per Signal Type with Wilson Score Interval & Sample Size Protection
 export function calculateSignalMetrics(signals: StoredSignal[]) {
   const closedSignals = signals.filter((s) => s.status !== "ACTIVE");
   const successfulSignals = closedSignals.filter(
     (s) => s.status === "HIT_T1" || s.status === "HIT_T2" || s.status === "HIT_T3"
   );
 
-  const overallHitRate = closedSignals.length > 0
-    ? Math.round((successfulSignals.length / closedSignals.length) * 100)
+  const totalClosedCount = closedSignals.length;
+  const overallSignificant = totalClosedCount >= MIN_STATISTICAL_SAMPLE_SIZE;
+  const overallHitRate = totalClosedCount > 0
+    ? Math.round((successfulSignals.length / totalClosedCount) * 100)
     : 0;
 
+  const overallWilson = calculateWilsonScoreInterval(successfulSignals.length, totalClosedCount);
+
+  // Breakdown by signal type
   const types = ["STRONG_BULLISH", "BULLISH", "NEUTRAL", "BEARISH", "STRONG_BEARISH"] as const;
-  const breakdown: Record<string, { total: number; closed: number; hits: number; hitRate: number; avgReturn: number }> = {};
+  const breakdown: Record<
+    string,
+    {
+      total: number;
+      closed: number;
+      hits: number;
+      hitRate: number;
+      isSignificant: boolean;
+      wilsonInterval: { lower: number; upper: number };
+      statusLabelAr: string;
+      avgReturn: number;
+    }
+  > = {};
 
   types.forEach((t) => {
     const ofType = signals.filter((s) => s.type === t);
@@ -260,12 +311,21 @@ export function calculateSignalMetrics(signals: StoredSignal[]) {
     );
     const returns = closedOfType.map((s) => s.resultPct || 0);
     const avgReturn = returns.length > 0 ? Number((returns.reduce((a, b) => a + b, 0) / returns.length).toFixed(1)) : 0;
+    const closedCount = closedOfType.length;
+    const isSignificant = closedCount >= MIN_STATISTICAL_SAMPLE_SIZE;
+    const rawHitRate = closedCount > 0 ? Math.round((hits.length / closedCount) * 100) : 0;
+    const wilson = calculateWilsonScoreInterval(hits.length, closedCount);
 
     breakdown[t] = {
       total: ofType.length,
-      closed: closedOfType.length,
+      closed: closedCount,
       hits: hits.length,
-      hitRate: closedOfType.length > 0 ? Math.round((hits.length / closedOfType.length) * 100) : 0,
+      hitRate: rawHitRate,
+      isSignificant,
+      wilsonInterval: wilson,
+      statusLabelAr: isSignificant
+        ? `${rawHitRate}% (95% CI: ${wilson.lower}% - ${wilson.upper}%)`
+        : `بيانات غير كافية (n=${closedCount})`,
       avgReturn,
     };
   });
@@ -273,10 +333,15 @@ export function calculateSignalMetrics(signals: StoredSignal[]) {
   return {
     totalSignals: signals.length,
     activeSignals: signals.filter((s) => s.status === "ACTIVE").length,
-    closedSignals: closedSignals.length,
+    closedSignals: totalClosedCount,
+    overallSignificant,
     overallHitRate,
-    avgReturnOverall: closedSignals.length > 0
-      ? Number((closedSignals.reduce((acc, s) => acc + (s.resultPct || 0), 0) / closedSignals.length).toFixed(1))
+    overallWilson,
+    overallStatusLabelAr: overallSignificant
+      ? `${overallHitRate}% (95% CI: ${overallWilson.lower}% - ${overallWilson.upper}%)`
+      : `بيانات غير كافية (n=${totalClosedCount})`,
+    avgReturnOverall: totalClosedCount > 0
+      ? Number((closedSignals.reduce((acc, s) => acc + (s.resultPct || 0), 0) / totalClosedCount).toFixed(1))
       : 0,
     breakdown,
   };

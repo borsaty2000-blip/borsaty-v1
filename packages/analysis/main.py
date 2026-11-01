@@ -11,6 +11,7 @@ from engines.harmonic import detect_harmonic_patterns
 from engines.fair_value import calculate_fair_value
 from engines.confluence import calculate_confluence_score
 from engines.data_quality import validate_data_quality
+from engines.signal_store import global_signal_store, SignalStore
 
 app = FastAPI(
     title="Borsaty Deterministic Analysis Engine",
@@ -114,6 +115,26 @@ def run_full_analysis(payload: AnalysisRequest):
     # 8. Data Quality Gate
     data_quality = validate_data_quality(symbol, market, raw_candles)
 
+    # 9. Automated Signal Persistence Hook (Section 2.1 & Point 3 Requirement)
+    persisted_signal = None
+    if confluence.get("confluenceScore", 0) >= 60:
+        targets_list = [t["price"] for t in confluence.get("targets", [])]
+        stop_loss_val = confluence.get("stopLoss", {}).get("price", current_price * 0.95)
+        persisted_signal = global_signal_store.save_signal(
+            symbol=symbol,
+            market=market,
+            timeframe="1D",
+            signal_type="STRONG_BULLISH" if confluence["confluenceScore"] >= 80 else "BULLISH",
+            entry=current_price,
+            stop_loss=stop_loss_val,
+            targets=targets_list,
+            confluence_score=confluence["confluenceScore"],
+            reasons=confluence.get("supportingEvidence", []),
+            contradicting=confluence.get("contradictingEvidence", []),
+            data_quality=data_quality,
+            status="ACTIVE"
+        )
+
     return {
         "symbol": symbol,
         "market": market,
@@ -126,7 +147,8 @@ def run_full_analysis(payload: AnalysisRequest):
         "fibonacci": fib_levels,
         "harmonics": harmonic_results,
         "fairValue": fair_value,
-        "dataQuality": data_quality
+        "dataQuality": data_quality,
+        "persistedSignalId": persisted_signal["id"] if persisted_signal else None
     }
 
 if __name__ == "__main__":

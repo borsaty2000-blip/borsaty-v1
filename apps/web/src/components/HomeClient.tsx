@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { DataWrapper } from '@/components/ui/DataWrapper';
+import SectorHeatmap from '@/components/SectorHeatmap';
 
 interface MarketIndexItem {
   symbol: string;
@@ -141,6 +142,9 @@ export default function HomeClient() {
           </div>
         )}
       </DataWrapper>
+
+      {/* Finviz-Style Cross-Market Sector Heatmap */}
+      <SectorHeatmap />
 
       {/* SECTION 2: Top Gainers & Top Losers (Two Clean Columns) */}
       {overviewData && (

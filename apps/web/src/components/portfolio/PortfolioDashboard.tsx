@@ -14,6 +14,11 @@ import {
   YAxis,
   CartesianGrid,
   Legend,
+  RadarChart,
+  Radar,
+  PolarGrid,
+  PolarAngleAxis,
+  PolarRadiusAxis,
 } from 'recharts';
 import {
   Briefcase,
@@ -29,6 +34,8 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   RefreshCw,
+  Compass,
+  ShieldAlert,
 } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { toast } from 'sonner';
@@ -143,6 +150,47 @@ export default function PortfolioDashboard() {
     MarketValue: Math.round(h.marketValue),
     CostBasis: Math.round(h.totalCost),
   }));
+
+  // Portfolio X-Ray Radar Diversification Data (Spider Chart)
+  const CORE_RADAR_SECTORS = [
+    { key: 'finance', labelEn: 'Financials', labelAr: 'البنوك والمالية' },
+    { key: 'tech', labelEn: 'Technology', labelAr: 'التكنولوجيا' },
+    { key: 'energy', labelEn: 'Energy', labelAr: 'الطاقة' },
+    { key: 'estate', labelEn: 'Real Estate', labelAr: 'العقارات' },
+    { key: 'materials', labelEn: 'Materials', labelAr: 'المعادن' },
+    { key: 'consumer', labelEn: 'Consumer', labelAr: 'الاستهلاك' },
+  ];
+
+  const radarData = CORE_RADAR_SECTORS.map((sec) => {
+    const match = sectorAllocation.find((s) => s.name.toLowerCase().includes(sec.key));
+    return {
+      sector: isAr ? sec.labelAr : sec.labelEn,
+      exposure: match ? Math.round(match.percentage) : 0,
+      target: 20,
+    };
+  });
+
+  // Calculate Risk Score: 0 to 100
+  const maxSectorWeight = sectorAllocation.length > 0
+    ? Math.max(...sectorAllocation.map((s) => s.percentage))
+    : 0;
+  const positionCount = holdings.length;
+
+  let riskScore = 0;
+  if (positionCount === 1) {
+    riskScore = 85;
+  } else if (positionCount === 2) {
+    riskScore = 68;
+  } else if (positionCount >= 3) {
+    riskScore = Math.min(92, Math.max(22, Math.round(maxSectorWeight * 0.65 + (5 - Math.min(positionCount, 5)) * 5)));
+  }
+
+  const riskLabelEn =
+    riskScore === 0 ? 'No Active Assets' : riskScore > 70 ? 'High Concentration Risk' : riskScore > 40 ? 'Moderate Balanced Risk' : 'Low Diversified Risk';
+  const riskLabelAr =
+    riskScore === 0 ? 'لا توجد أصول نشطة' : riskScore > 70 ? 'مخاطرة تركيز مرتفعة' : riskScore > 40 ? 'مخاطرة متوازنة معتدلة' : 'مخاطرة منخفضة منوّعة';
+  const riskColor =
+    riskScore === 0 ? 'text-slate-400 bg-slate-500/10 border-slate-500/20' : riskScore > 70 ? 'text-rose-500 bg-rose-500/10 border-rose-500/20' : riskScore > 40 ? 'text-amber-500 bg-amber-500/10 border-amber-500/20' : 'text-emerald-500 bg-emerald-500/10 border-emerald-500/20';
 
   return (
     <div className="w-full space-y-6 pb-16">
@@ -271,14 +319,14 @@ export default function PortfolioDashboard() {
         </motion.div>
       </div>
 
-      {/* 2. Middle Row: Visual X-Ray Charts (Grid 2 cols) */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* 2. Middle Row: Visual X-Ray Charts (Grid 3 cols) */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Sector Allocation Pie Chart */}
         <ErrorBoundary fallbackTitleEn="Allocation Chart Error" fallbackTitleAr="تعذر عرض رسم التوزيع">
-          <div className="p-5 rounded-2xl bg-white dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 shadow-sm transition-colors">
-            <h3 className="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-2 mb-4">
+          <div className="p-5 rounded-2xl bg-white dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 shadow-sm transition-colors flex flex-col justify-between">
+            <h3 className="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-2 mb-2">
               <PieIcon className="w-4 h-4 text-emerald-600" />
-              <span>{isAr ? 'التوزيع القطاعي للمحفظة (Sector Breakdown)' : 'Sector Allocation'}</span>
+              <span>{isAr ? 'التوزيع القطاعي للمحفظة' : 'Sector Breakdown'}</span>
             </h3>
 
             {sectorAllocation.length > 0 ? (
@@ -289,8 +337,8 @@ export default function PortfolioDashboard() {
                       data={sectorAllocation}
                       cx="50%"
                       cy="50%"
-                      innerRadius={55}
-                      outerRadius={85}
+                      innerRadius={50}
+                      outerRadius={75}
                       paddingAngle={4}
                       dataKey="value"
                     >
@@ -315,7 +363,7 @@ export default function PortfolioDashboard() {
                     <Legend
                       verticalAlign="bottom"
                       height={36}
-                      formatter={(value) => <span className="text-xs font-bold text-slate-500">{value}</span>}
+                      formatter={(value) => <span className="text-[11px] font-bold text-slate-500">{value}</span>}
                     />
                   </PieChart>
                 </ResponsiveContainer>
@@ -329,12 +377,59 @@ export default function PortfolioDashboard() {
           </div>
         </ErrorBoundary>
 
+        {/* Portfolio X-Ray: Diversification Spider / Radar Chart */}
+        <ErrorBoundary fallbackTitleEn="Portfolio X-Ray Error" fallbackTitleAr="تعذر عرض الرادار الفني للمحفظة">
+          <div className="p-5 rounded-2xl bg-white dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 shadow-sm transition-colors flex flex-col justify-between">
+            <div className="flex items-center justify-between mb-2">
+              <h3 className="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-2">
+                <Compass className="w-4 h-4 text-[#00D9FF]" />
+                <span>{isAr ? 'أشعة إكس وتنويع المحفظة' : 'Portfolio X-Ray (Spider)'}</span>
+              </h3>
+
+              {/* Dynamic Risk Score Badge */}
+              <span className={`px-2 py-0.5 rounded-full text-[10px] font-black border uppercase tracking-wider ${riskColor}`}>
+                {riskScore > 0 ? `${riskScore}/100 ` : ''}{isAr ? riskLabelAr : riskLabelEn}
+              </span>
+            </div>
+
+            {holdings.length > 0 ? (
+              <div className="w-full h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <RadarChart cx="50%" cy="50%" outerRadius={70} data={radarData}>
+                    <PolarGrid stroke="#334155" opacity={0.3} />
+                    <PolarAngleAxis dataKey="sector" tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 'bold' }} />
+                    <PolarRadiusAxis angle={30} domain={[0, 100]} stroke="#475569" fontSize={9} />
+                    <Radar name={isAr ? 'التعرض الحالي %' : 'Actual Weight %'} dataKey="exposure" stroke="#00D9FF" fill="#00D9FF" fillOpacity={0.4} />
+                    <Radar name={isAr ? 'الوزن المثالي %' : 'Benchmark %'} dataKey="target" stroke="#64748b" fill="#64748b" fillOpacity={0.15} />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: '#0f172a',
+                        borderColor: '#334155',
+                        borderRadius: '12px',
+                        color: '#ffffff',
+                        fontSize: '12px',
+                        fontWeight: 'bold',
+                      }}
+                      formatter={(val) => [`${val}%`]}
+                    />
+                  </RadarChart>
+                </ResponsiveContainer>
+              </div>
+            ) : (
+              <div className="h-64 flex flex-col items-center justify-center text-slate-400 text-xs font-semibold gap-2">
+                <Compass className="w-8 h-8 stroke-[1.5] text-slate-300 dark:text-slate-600" />
+                <span>{isAr ? 'سجل صفقات لتفعيل فحص الأشعة X-Ray' : 'Record trades to activate X-Ray analysis'}</span>
+              </div>
+            )}
+          </div>
+        </ErrorBoundary>
+
         {/* Asset Value vs Cost Bar Chart */}
         <ErrorBoundary fallbackTitleEn="Asset Chart Error" fallbackTitleAr="تعذر عرض رسم الأصول">
-          <div className="p-5 rounded-2xl bg-white dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 shadow-sm transition-colors">
-            <h3 className="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-2 mb-4">
+          <div className="p-5 rounded-2xl bg-white dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 shadow-sm transition-colors flex flex-col justify-between">
+            <h3 className="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-2 mb-2">
               <BarChart2 className="w-4 h-4 text-cyan-600" />
-              <span>{isAr ? 'القيمة السوقية مقابل التكلفة (Market Value vs Cost)' : 'Market Value vs Cost Basis'}</span>
+              <span>{isAr ? 'القيمة مقابل التكلفة' : 'Value vs Cost Basis'}</span>
             </h3>
 
             {assetBarData.length > 0 ? (
@@ -342,7 +437,7 @@ export default function PortfolioDashboard() {
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={assetBarData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.2} />
-                    <XAxis dataKey="symbol" tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 'bold' }} />
+                    <XAxis dataKey="symbol" tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 'bold' }} />
                     <YAxis tick={{ fill: '#94a3b8', fontSize: 10 }} />
                     <Tooltip
                       contentStyle={{
@@ -361,10 +456,10 @@ export default function PortfolioDashboard() {
                     <Legend
                       verticalAlign="bottom"
                       height={36}
-                      formatter={(val) => <span className="text-xs font-bold text-slate-500">{val}</span>}
+                      formatter={(val) => <span className="text-[11px] font-bold text-slate-500">{val}</span>}
                     />
-                    <Bar dataKey="MarketValue" fill="#10b981" radius={[4, 4, 0, 0]} name={isAr ? 'القيمة الحالية' : 'Market Value'} />
-                    <Bar dataKey="CostBasis" fill="#64748b" radius={[4, 4, 0, 0]} name={isAr ? 'تكلفة الشراء' : 'Cost Basis'} />
+                    <Bar dataKey="MarketValue" fill="#10b981" radius={[4, 4, 0, 0]} name={isAr ? 'القيمة' : 'Market Value'} />
+                    <Bar dataKey="CostBasis" fill="#64748b" radius={[4, 4, 0, 0]} name={isAr ? 'التكلفة' : 'Cost Basis'} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>

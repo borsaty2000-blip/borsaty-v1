@@ -523,3 +523,293 @@ def test_confidence_interval_narrower_when_high_confidence():
 
     assert width_high < width_low
 
+
+# ==============================================================================
+# PART F: ORCHESTRATOR INTEGRATION TESTS (7 tests)
+# ==============================================================================
+
+from orchestrator import AnalysisOrchestrator, global_orchestrator
+import time
+
+
+def test_orchestrator_full_analysis_comi():
+    random.seed(1)
+    candles = []
+    base = 86.0
+    for i in range(150):
+        c1 = 15.0 * math.sin(2 * math.pi * i / 80)
+        p = base + c1 + random.gauss(0, 0.3)
+        candles.append(make_candle(i, p - 0.2, p + 0.8, p - 0.8, p, 1200000.0))
+
+    orch = AnalysisOrchestrator()
+    res = orch.run("COMI", "1D", candles)
+
+    assert res["symbol"] == "COMI"
+    assert res["timeframe"] == "1D"
+    assert res["status"] == "available"
+    assert "regime" in res
+    assert "pivots" in res
+    assert "elliott" in res
+    assert "harmonic" in res
+    assert "classical" in res
+    assert "indicators" in res
+    assert "confluence" in res
+
+
+def test_orchestrator_full_analysis_2222_aramco():
+    random.seed(2)
+    candles = []
+    base = 27.5
+    for i in range(150):
+        c1 = 2.0 * math.sin(2 * math.pi * i / 60)
+        p = base + c1 + random.gauss(0, 0.1)
+        candles.append(make_candle(i, p - 0.1, p + 0.2, p - 0.2, p, 2000000.0))
+
+    orch = AnalysisOrchestrator()
+    res = orch.run("2222", "1D", candles)
+
+    assert res["symbol"] == "2222"
+    assert res["status"] == "available"
+    assert "confluence" in res
+    assert res["confluence"]["direction"] in ["bullish", "bearish", "neutral"]
+
+
+def test_orchestrator_full_analysis_aapl():
+    random.seed(3)
+    candles = []
+    base = 230.0
+    for i in range(150):
+        c1 = 20.0 * math.sin(2 * math.pi * i / 70)
+        p = base + c1 + random.gauss(0, 0.5)
+        candles.append(make_candle(i, p - 0.3, p + 1.0, p - 1.0, p, 3000000.0))
+
+    orch = AnalysisOrchestrator()
+    res = orch.run("AAPL", "1D", candles)
+
+    assert res["symbol"] == "AAPL"
+    assert "confluence" in res
+    assert "confidence_interval" in res["confluence"]
+
+
+def test_orchestrator_all_sub_results_present():
+    candles = generate_trending_candles(length=80, slope=0.8, base=100.0)
+    orch = AnalysisOrchestrator()
+    res = orch.run("TEST", "1D", candles)
+
+    # All 6 sub-results verified present
+    assert res["regime"] is not None
+    assert isinstance(res["pivots"], (list, dict))
+    assert res["elliott"] is not None
+    assert res["harmonic"] is not None
+    assert res["classical"] is not None
+    assert res["indicators"] is not None
+    assert res["confluence"] is not None
+
+
+def test_orchestrator_handles_empty_or_short_candles():
+    orch = AnalysisOrchestrator()
+    # Empty
+    res_empty = orch.run("EMPTY", "1D", [])
+    assert res_empty["status"] == "unavailable"
+    assert res_empty["status_reason"] == "insufficient_candles"
+    assert "غير كافية" in res_empty["status_message_ar"]
+
+    # Short (< 5 bars)
+    res_short = orch.run("SHORT", "1D", [make_candle(0, 100, 101, 99, 100)])
+    assert res_short["status"] == "unavailable"
+
+
+def test_orchestrator_execution_timing_under_two_seconds():
+    candles = generate_trending_candles(length=200, slope=0.5, base=100.0)
+    orch = AnalysisOrchestrator()
+
+    t0 = time.time()
+    res = orch.run("PERF", "1D", candles)
+    elapsed_sec = time.time() - t0
+
+    print(f"\nAnalysis Orchestrator total execution time: {elapsed_sec:.3f}s")
+    assert elapsed_sec < 2.0
+    assert "execution_ms" in res
+    assert res["execution_ms"] < 2000.0
+
+
+def test_orchestrator_missing_engine_handled_gracefully():
+    # Synthetic flat candles where Harmonic and Classical find no confirmed patterns
+    candles = generate_ranging_candles(length=60, base=100.0, amplitude=0.1)
+    orch = AnalysisOrchestrator()
+    res = orch.run("CONSOL", "1D", candles)
+
+    assert res["status"] == "available"
+    confluence = res["confluence"]
+    assert "missing_engines" in confluence
+    assert confluence["data_quality"]["coverage_pct"] <= 100
+
+
+# ==============================================================================
+# PART G: REGRESSION & IMMUTABILITY TESTS (5 tests)
+# ==============================================================================
+
+from elliott.detector import ElliottDetector
+from harmonic.detector import HarmonicDetector
+from classical.detector import ClassicalPatternDetector
+from engines.hspd import HSPDEngine
+
+
+def test_regression_elliott_unchanged_by_orchestrator():
+    candles = generate_trending_candles(length=80, slope=1.0, base=100.0)
+    pivots = HSPDEngine().detect(candles)
+
+    # Standalone Elliott run
+    res_direct = ElliottDetector().detect("TEST", "1D", pivots)
+
+    # Run through Orchestrator
+    res_orch = AnalysisOrchestrator().run("TEST", "1D", candles)
+
+    assert res_direct["status"] == res_orch["elliott"]["status"]
+    if res_direct["primary_count"] and res_orch["elliott"]["primary_count"]:
+        assert res_direct["primary_count"]["pattern"] == res_orch["elliott"]["primary_count"]["pattern"]
+
+
+def test_regression_harmonic_unchanged_by_orchestrator():
+    candles = generate_trending_candles(length=80, slope=1.0, base=100.0)
+    pivots = HSPDEngine().detect(candles)
+
+    res_direct = HarmonicDetector().detect("TEST", "1D", pivots, candles=candles)
+    res_orch = AnalysisOrchestrator().run("TEST", "1D", candles)
+
+    assert res_direct["status"] == res_orch["harmonic"]["status"]
+    assert len(res_direct["patterns"]) == len(res_orch["harmonic"]["patterns"])
+
+
+def test_regression_classical_unchanged_by_orchestrator():
+    candles = generate_trending_candles(length=80, slope=1.0, base=100.0)
+    pivots = HSPDEngine().detect(candles)
+
+    res_direct = ClassicalPatternDetector().detect("TEST", "1D", pivots, candles=candles)
+    res_orch = AnalysisOrchestrator().run("TEST", "1D", candles)
+
+    assert res_direct["status"] == res_orch["classical"]["status"]
+    assert len(res_direct["patterns"]) == len(res_orch["classical"]["patterns"])
+
+
+def test_regression_all_previous_engines_read_only():
+    # Verify orchestrator does not mutate candles or input pivots
+    candles = generate_trending_candles(length=50, slope=0.8, base=100.0)
+    orig_close = candles[-1]["close"]
+    orig_len = len(candles)
+
+    _ = AnalysisOrchestrator().run("TEST", "1D", candles)
+
+    assert len(candles) == orig_len
+    assert candles[-1]["close"] == orig_close
+
+
+def test_fastapi_full_analysis_endpoint():
+    from fastapi.testclient import TestClient
+    from main import app
+    client = TestClient(app)
+
+    candles = generate_trending_candles(length=60, slope=0.8, base=100.0)
+    payload = {
+        "symbol": "COMI",
+        "timeframe": "1D",
+        "min_degree": 1,
+        "candles": candles,
+    }
+    resp = client.post("/analysis/full", json=payload)
+    assert resp.status_code == 200
+    data = resp.json()
+
+    assert data["symbol"] == "COMI"
+    assert data["status"] == "available"
+    assert "confluence" in data
+    assert "regime" in data
+    assert "execution_ms" in data
+
+
+# ==============================================================================
+# PART H: ADDITIONAL COVERAGE & GRANULAR TESTS (6 tests)
+# ==============================================================================
+
+def test_confluence_weak_bullish_and_bearish_classification():
+    engine = ConfluenceEngine()
+    # Light positive score ~ 0.25
+    mock_weak_bull = {
+        "indicators": {"indicators": {"rsi": 55, "macd": {"histogram": 0.5}}},
+    }
+    res_b = engine.compute("TEST", "1D", mock_weak_bull, regime="ranging")
+    assert res_b["strength"] in ["weak", "neutral"]
+    if res_b["score"] >= 0.15:
+        assert res_b["direction"] == "bullish"
+
+    # Light negative score ~ -0.25
+    mock_weak_bear = {
+        "indicators": {"indicators": {"rsi": 42, "macd": {"histogram": -0.5}}},
+    }
+    res_bear = engine.compute("TEST", "1D", mock_weak_bear, regime="ranging")
+    assert res_bear["strength"] in ["weak", "neutral"]
+    if res_bear["score"] <= -0.15:
+        assert res_bear["direction"] == "bearish"
+
+
+def test_confluence_classical_forming_pattern_handling():
+    engine = ConfluenceEngine()
+    mock = {
+        "classical": {"status": "available", "patterns": [{"pattern": "head_and_shoulders", "status": "forming"}]},
+    }
+    res = engine.compute("TEST", "1D", mock, regime="trending_strong")
+    cl = res["engines"]["classical"]
+    assert cl["raw_score"] == 0.0
+    assert "قيد التكوين" in cl["rationale_ar"]
+
+
+def test_confluence_structure_bearish_lower_highs_and_lows():
+    engine = ConfluenceEngine()
+    mock = {
+        "hspd": {"pivots": [
+            {"type": "peak", "price": 120},
+            {"type": "trough", "price": 105},
+            {"type": "peak", "price": 110},
+            {"type": "trough", "price": 95},
+        ]}
+    }
+    res = engine.compute("TEST", "1D", mock, regime="trending_strong")
+    st = res["engines"]["structure"]
+    assert st["raw_score"] < -0.80
+    assert "هابط" in st["rationale_ar"]
+
+
+def test_confluence_volume_heavy_decline_confirms_bearish():
+    engine = ConfluenceEngine()
+    candles = [make_candle(i, 100.0, 101.0, 99.0, 100.0, 1000000.0) for i in range(20)]
+    # Last candle drops sharply from 100 to 95 with 2.5x volume
+    candles.append(make_candle(20, 100.0, 100.5, 94.5, 95.0, 2500000.0))
+
+    mock = {"candles": candles}
+    res = engine.compute("TEST", "1D", mock, regime="breakout", candles=candles)
+    vol = res["engines"]["volume"]
+    assert vol["raw_score"] < -0.50
+    assert "هبوط" in vol["rationale_ar"]
+
+
+def test_confluence_indicators_oversold_extreme():
+    engine = ConfluenceEngine()
+    mock = {
+        "indicators": {"indicators": {"rsi": 22, "macd": {"histogram": -0.2}, "supertrend": {"direction": -1}}}
+    }
+    res = engine.compute("TEST", "1D", mock, regime="mean_reversion")
+    ind = res["engines"]["indicators"]
+    assert "تشبع بيعي" in ind["rationale_ar"]
+
+
+def test_confluence_indicators_overbought_extreme():
+    engine = ConfluenceEngine()
+    mock = {
+        "indicators": {"indicators": {"rsi": 78, "macd": {"histogram": 0.5}, "supertrend": {"direction": 1}}}
+    }
+    res = engine.compute("TEST", "1D", mock, regime="mean_reversion")
+    ind = res["engines"]["indicators"]
+    assert "تشبع شرائي" in ind["rationale_ar"]
+
+
+

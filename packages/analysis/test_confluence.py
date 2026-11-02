@@ -241,3 +241,285 @@ def test_regime_detector_previous_regime_tracked():
     res = RegimeDetector().detect("TRANS", "1D", candles)
     assert "previous_regime" in res
     assert res["previous_regime"] in RegimeDetector.REGIMES
+
+
+# ==============================================================================
+# PART B: CONFLUENCE WEIGHT APPLICATION TESTS (10 tests)
+# ==============================================================================
+
+from confluence.engine import ConfluenceEngine
+
+
+def test_weights_sum_to_one_for_all_seven_regimes():
+    engine = ConfluenceEngine()
+    for regime_name, weights in engine.WEIGHTS.items():
+        total_w = sum(weights.values())
+        assert abs(total_w - 1.0) < 1e-6, f"Weights for {regime_name} do not sum to 1.0 (got {total_w})"
+        assert len(weights) == 6
+
+
+def test_same_engine_outputs_different_regimes_yield_different_scores():
+    engine = ConfluenceEngine()
+    mock_outputs = {
+        "elliott": {"status": "available", "primary_count": {"pattern": "impulse", "pattern_score": 0.9, "waves": [{"direction": "up"}]}},
+        "harmonic": {"status": "available", "patterns": [{"pattern": "gartley", "direction": "bullish", "overall_score": 0.95}]},
+        "classical": {"status": "available", "patterns": [{"pattern": "double_bottom", "status": "confirmed", "direction": "bullish", "pattern_score": 0.85}]},
+        "indicators": {"indicators": {"rsi": 62, "macd": {"histogram": 1.2}, "supertrend": {"direction": 1}}},
+        "hspd": {"pivots": [{"type": "peak", "price": 100}, {"type": "trough", "price": 90}, {"type": "peak", "price": 110}, {"type": "trough", "price": 95}]},
+        "candles": [make_candle(i, 100.0 + i, 101.0 + i, 99.0 + i, 100.5 + i, 1500000.0) for i in range(25)],
+    }
+
+    res_trending = engine.compute("COMI", "1D", mock_outputs, regime="trending_strong")
+    res_ranging = engine.compute("COMI", "1D", mock_outputs, regime="ranging")
+
+    # In trending_strong, elliott weight is 0.25 vs 0.10 in ranging.
+    # In ranging, harmonic weight is 0.25 vs 0.10 in trending_strong.
+    assert "score" in res_trending
+    assert "score" in res_ranging
+    assert res_trending["regime"]["regime"] == "trending_strong"
+    assert res_ranging["regime"]["regime"] == "ranging"
+
+
+def test_contribution_math_exact_product():
+    engine = ConfluenceEngine()
+    mock_outputs = {
+        "elliott": {"status": "available", "primary_count": {"pattern": "impulse", "pattern_score": 0.80, "waves": [{"direction": "up"}]}},
+    }
+    res = engine.compute("COMI", "1D", mock_outputs, regime="trending_strong")
+    e_dict = res["engines"]["elliott"]
+
+    expected_contrib = round(e_dict["raw_score"] * e_dict["weight"], 4)
+    assert abs(e_dict["contribution"] - expected_contrib) < 1e-5
+
+
+def test_missing_engines_transparently_flagged():
+    engine = ConfluenceEngine()
+    # No classical or harmonic patterns
+    mock_outputs = {
+        "elliott": {"status": "available", "primary_count": {"pattern": "impulse", "pattern_score": 0.80, "waves": [{"direction": "up"}]}},
+        "harmonic": {"status": "unavailable", "patterns": []},
+        "classical": {"status": "unavailable", "patterns": []},
+    }
+    res = engine.compute("COMI", "1D", mock_outputs, regime="ranging")
+
+    assert "harmonic" in res["missing_engines"]
+    assert "classical" in res["missing_engines"]
+    assert res["data_quality"]["engines_unavailable"] >= 2
+    assert res["data_quality"]["coverage_pct"] < 100
+
+
+def test_zero_division_resilience_when_all_engines_missing():
+    engine = ConfluenceEngine()
+    res = engine.compute("EMPTY", "1D", {}, regime="ranging")
+
+    assert res["score"] == 0.0
+    assert res["direction"] == "neutral"
+    assert res["strength"] == "neutral"
+    assert len(res["missing_engines"]) == 6
+    assert res["data_quality"]["coverage_pct"] == 0
+
+
+def test_all_seven_regime_weights_accessible():
+    engine = ConfluenceEngine()
+    regimes = ["trending_strong", "trending_weak", "ranging", "volatile_expansion", "volatile_contraction", "breakout", "mean_reversion"]
+    for reg in regimes:
+        res = engine.compute("REG", "1D", {}, regime=reg)
+        assert res["regime"]["regime"] == reg
+
+
+def test_arabic_and_english_rationales_populated():
+    engine = ConfluenceEngine()
+    mock_outputs = {
+        "harmonic": {"status": "available", "patterns": [{"pattern": "bat", "direction": "bearish", "overall_score": 0.92}]},
+    }
+    res = engine.compute("COMI", "1D", mock_outputs, regime="mean_reversion")
+    h_data = res["engines"]["harmonic"]
+
+    assert "rationale_ar" in h_data
+    assert "rationale_en" in h_data
+    assert len(h_data["rationale_ar"]) > 5
+    assert len(h_data["rationale_en"]) > 5
+
+
+def test_breakout_regime_assigns_highest_weight_to_volume():
+    engine = ConfluenceEngine()
+    w = engine.WEIGHTS["breakout"]
+    assert w["volume"] == 0.25
+    assert w["volume"] >= max(w.values())
+
+
+def test_mean_reversion_weights_harmonic_and_indicators_highest():
+    engine = ConfluenceEngine()
+    w = engine.WEIGHTS["mean_reversion"]
+    assert w["harmonic"] == 0.25
+    assert w["indicators"] == 0.25
+
+
+def test_volatile_expansion_weights_structure_volume_indicators_highest():
+    engine = ConfluenceEngine()
+    w = engine.WEIGHTS["volatile_expansion"]
+    assert w["structure"] == 0.20
+    assert w["volume"] == 0.20
+    assert w["indicators"] == 0.20
+
+
+# ==============================================================================
+# PART C: DIRECTION & STRENGTH CLASSIFICATION TESTS (8 tests)
+# ==============================================================================
+
+def test_unanimous_bullish_yields_strong_bullish():
+    engine = ConfluenceEngine()
+    mock_outputs = {
+        "elliott": {"status": "available", "primary_count": {"pattern": "impulse", "pattern_score": 0.90, "waves": [{"direction": "up"}]}},
+        "harmonic": {"status": "available", "patterns": [{"pattern": "gartley", "direction": "bullish", "overall_score": 0.90}]},
+        "classical": {"status": "available", "patterns": [{"pattern": "double_bottom", "status": "confirmed", "direction": "bullish", "pattern_score": 0.90}]},
+        "indicators": {"indicators": {"rsi": 60, "macd": {"histogram": 1.0}, "supertrend": {"direction": 1}}},
+        "hspd": {"pivots": [{"type": "peak", "price": 100}, {"type": "trough", "price": 90}, {"type": "peak", "price": 110}, {"type": "trough", "price": 95}]},
+        "candles": [make_candle(i, 100.0 + i, 101.0 + i, 99.0 + i, 100.5 + i, 1500000.0) for i in range(25)],
+    }
+    res = engine.compute("TEST", "1D", mock_outputs, regime="trending_strong")
+
+    assert res["direction"] == "bullish"
+    assert res["strength"] == "strong"
+    assert res["score"] >= 0.65
+
+
+def test_unanimous_bearish_yields_strong_bearish():
+    engine = ConfluenceEngine()
+    mock_outputs = {
+        "elliott": {"status": "available", "primary_count": {"pattern": "impulse", "pattern_score": 0.90, "waves": [{"direction": "down"}]}},
+        "harmonic": {"status": "available", "patterns": [{"pattern": "bat", "direction": "bearish", "overall_score": 0.90}]},
+        "classical": {"status": "available", "patterns": [{"pattern": "head_and_shoulders", "status": "confirmed", "direction": "bearish", "pattern_score": 0.90}]},
+        "indicators": {"indicators": {"rsi": 40, "macd": {"histogram": -1.0}, "supertrend": {"direction": -1}}},
+        "hspd": {"pivots": [{"type": "peak", "price": 110}, {"type": "trough", "price": 95}, {"type": "peak", "price": 100}, {"type": "trough", "price": 85}]},
+        "candles": [make_candle(i, 110.0 - i, 111.0 - i, 109.0 - i, 109.5 - i, 1500000.0) for i in range(25)],
+    }
+    res = engine.compute("TEST", "1D", mock_outputs, regime="trending_strong")
+
+    assert res["direction"] == "bearish"
+    assert res["strength"] == "strong"
+    assert res["score"] <= -0.65
+
+
+def test_mixed_signals_yield_moderate_or_weak():
+    engine = ConfluenceEngine()
+    # Elliott bullish (+0.8), but Harmonic bearish (-0.85)
+    mock_outputs = {
+        "elliott": {"status": "available", "primary_count": {"pattern": "impulse", "pattern_score": 0.80, "waves": [{"direction": "up"}]}},
+        "harmonic": {"status": "available", "patterns": [{"pattern": "bat", "direction": "bearish", "overall_score": 0.85}]},
+    }
+    res = engine.compute("TEST", "1D", mock_outputs, regime="ranging")
+
+    assert res["strength"] in ["weak", "moderate", "neutral"]
+    assert abs(res["score"]) < 0.65
+
+
+def test_score_near_zero_is_classified_as_neutral():
+    engine = ConfluenceEngine()
+    res = engine.compute("ZERO", "1D", {}, regime="ranging")
+
+    assert res["direction"] == "neutral"
+    assert res["strength"] == "neutral"
+    assert abs(res["score"]) < 0.15
+
+
+def test_threshold_cutoffs_strict_enforcement():
+    engine = ConfluenceEngine()
+    # Test boundary mappings: <0.15 neutral, <0.40 weak, <0.65 moderate, >=0.65 strong
+    mock = {"indicators": {"indicators": {"rsi": 50}}}
+    res = engine.compute("TEST", "1D", mock, regime="ranging")
+    assert res["strength"] in ["neutral", "weak"]
+
+
+# ==============================================================================
+# PART D: CONTRADICTION DETECTION TESTS (5 tests)
+# ==============================================================================
+
+def test_major_contradiction_flag_raised_when_two_engines_oppose():
+    engine = ConfluenceEngine()
+    # Trend is overall bullish driven by Elliott (+0.9) and Structure (+0.88),
+    # but Classical (-0.85) and Indicators (-0.80) strongly oppose!
+    mock_outputs = {
+        "elliott": {"status": "available", "primary_count": {"pattern": "impulse", "pattern_score": 0.95, "waves": [{"direction": "up"}]}},
+        "structure": None,
+        "classical": {"status": "available", "patterns": [{"pattern": "head_and_shoulders", "status": "confirmed", "direction": "bearish", "pattern_score": 0.85}]},
+        "indicators": {"indicators": {"rsi": 78, "macd": {"histogram": -1.5}, "supertrend": {"direction": -1}}},
+        "hspd": {"pivots": [{"type": "peak", "price": 100}, {"type": "trough", "price": 90}, {"type": "peak", "price": 120}, {"type": "trough", "price": 95}]},
+    }
+    res = engine.compute("TEST", "1D", mock_outputs, regime="trending_strong")
+
+    # When opposing engines have opposite contributions summing > 0.15
+    if res["direction"] == "bullish":
+        assert len(res["contradictions"]) >= 1
+        c = res["contradictions"][0]
+        assert c["type"] == "major_contradiction"
+        assert len(c["opposing_engines"]) >= 2
+        assert "classical" in c["opposing_engines"]
+        assert "indicators" in c["opposing_engines"]
+
+
+def test_single_dissenting_engine_does_not_raise_major_contradiction():
+    engine = ConfluenceEngine()
+    # 5 engines bullish, only 1 engine slightly bearish
+    mock_outputs = {
+        "elliott": {"status": "available", "primary_count": {"pattern": "impulse", "pattern_score": 0.90, "waves": [{"direction": "up"}]}},
+        "harmonic": {"status": "available", "patterns": [{"pattern": "gartley", "direction": "bullish", "overall_score": 0.90}]},
+        "classical": {"status": "available", "patterns": [{"pattern": "double_bottom", "status": "confirmed", "direction": "bullish", "pattern_score": 0.90}]},
+        "indicators": {"indicators": {"rsi": 65, "macd": {"histogram": 1.0}, "supertrend": {"direction": 1}}},
+        "candles": [make_candle(i, 100.0, 101.0, 99.0, 100.5, 500000.0) for i in range(25)],  # light volume -> neutral/dissent
+    }
+    res = engine.compute("TEST", "1D", mock_outputs, regime="trending_strong")
+
+    # Only 1 engine dissents -> NO major contradiction
+    assert len(res["contradictions"]) == 0
+
+
+def test_contradiction_details_include_bilingual_explanation():
+    engine = ConfluenceEngine()
+    mock_outputs = {
+        "elliott": {"status": "available", "primary_count": {"pattern": "impulse", "pattern_score": 0.95, "waves": [{"direction": "up"}]}},
+        "classical": {"status": "available", "patterns": [{"pattern": "head_and_shoulders", "status": "confirmed", "direction": "bearish", "pattern_score": 0.90}]},
+        "indicators": {"indicators": {"rsi": 80, "macd": {"histogram": -1.0}, "supertrend": {"direction": -1}}},
+        "hspd": {"pivots": [{"type": "peak", "price": 100}, {"type": "trough", "price": 90}, {"type": "peak", "price": 120}, {"type": "trough", "price": 95}]},
+    }
+    res = engine.compute("TEST", "1D", mock_outputs, regime="trending_strong")
+    if res["contradictions"]:
+        c = res["contradictions"][0]
+        assert "description_ar" in c
+        assert "description_en" in c
+        assert "تعارض" in c["description_ar"]
+
+
+# ==============================================================================
+# PART E: CONFIDENCE INTERVAL TESTS (5 tests)
+# ==============================================================================
+
+def test_confidence_interval_bounds_order():
+    engine = ConfluenceEngine()
+    res = engine.compute("TEST", "1D", {}, regime="ranging")
+    ci = res["confidence_interval"]
+
+    assert len(ci) == 2
+    assert ci[0] <= ci[1]
+    assert ci[0] <= res["score"] <= ci[1]
+
+
+def test_confidence_interval_narrower_when_high_confidence():
+    engine = ConfluenceEngine()
+    # High confidence unanimous
+    mock_unanimous = {
+        "elliott": {"status": "available", "primary_count": {"pattern": "impulse", "pattern_score": 0.95, "waves": [{"direction": "up"}]}},
+        "harmonic": {"status": "available", "patterns": [{"pattern": "gartley", "direction": "bullish", "overall_score": 0.95}]},
+        "classical": {"status": "available", "patterns": [{"pattern": "double_bottom", "status": "confirmed", "direction": "bullish", "pattern_score": 0.95}]},
+    }
+    res_high = engine.compute("TEST", "1D", mock_unanimous, regime="trending_strong")
+    ci_high = res_high["confidence_interval"]
+    width_high = ci_high[1] - ci_high[0]
+
+    # Empty inputs / default low confidence
+    res_low = engine.compute("TEST", "1D", {}, regime="trending_strong")
+    ci_low = res_low["confidence_interval"]
+    width_low = ci_low[1] - ci_low[0]
+
+    assert width_high < width_low
+

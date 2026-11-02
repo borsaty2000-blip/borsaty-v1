@@ -14,7 +14,9 @@ import {
   History,
   Layers,
   ChevronDown,
-  Star
+  Star,
+  Briefcase,
+  Calendar,
 } from "lucide-react";
 import AuthButton from "@/components/AuthButton";
 import { resolveStockAlias } from "@borsaty/shared";
@@ -105,6 +107,20 @@ export default function Header() {
             >
               <BarChart3 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
               {t("nav.signals")}
+            </Link>
+            <Link
+              href="/portfolio"
+              className="px-3 py-2 rounded-md hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors flex items-center gap-1.5"
+            >
+              <Briefcase className="w-3.5 h-3.5 text-indigo-500" />
+              {language === "ar" ? "المحفظة" : "Portfolio"}
+            </Link>
+            <Link
+              href="/calendar"
+              className="px-3 py-2 rounded-md hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors flex items-center gap-1.5"
+            >
+              <Calendar className="w-3.5 h-3.5 text-rose-500" />
+              {language === "ar" ? "الأجندة" : "Calendar"}
             </Link>
             <Link
               href="/watchlist"

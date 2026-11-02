@@ -10,6 +10,8 @@ import {
   Search,
   BarChart3,
   Star,
+  Briefcase,
+  Calendar,
 } from 'lucide-react';
 import { useBorsaty } from '@/context/BorsatyContext';
 import { useApp } from '@/context/AppContext';
@@ -41,16 +43,16 @@ export default function MobileBottomNav() {
       icon: Search,
     },
     {
-      label: isAr ? 'إشارات' : 'Signals',
-      href: '/signals',
-      icon: BarChart3,
-      isActive: pathname.startsWith('/signals'),
+      label: isAr ? 'المحفظة' : 'Portfolio',
+      href: '/portfolio',
+      icon: Briefcase,
+      isActive: pathname.startsWith('/portfolio'),
     },
     {
-      label: isAr ? 'المتابعة' : 'Watchlist',
-      href: '/watchlist',
-      icon: Star,
-      isActive: pathname.startsWith('/watchlist'),
+      label: isAr ? 'الأجندة' : 'Calendar',
+      href: '/calendar',
+      icon: Calendar,
+      isActive: pathname.startsWith('/calendar'),
     },
   ];
 

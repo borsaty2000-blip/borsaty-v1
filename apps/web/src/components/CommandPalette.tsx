@@ -15,6 +15,8 @@ import {
   FileDown,
   ArrowRight,
   Sparkles,
+  Briefcase,
+  Calendar,
 } from 'lucide-react';
 import { useBorsaty } from '@/context/BorsatyContext';
 import { useApp } from '@/context/AppContext';
@@ -215,6 +217,30 @@ export default function CommandPalette() {
                   <BarChart3 className="w-4 h-4 text-indigo-600" />
                   <span>{isAr ? 'الإشارات والفرص الفنية' : 'Trading Signals & Confluence'}</span>
                 </div>
+              </Command.Item>
+
+              <Command.Item
+                value="portfolio holdings stocks tracker المحفظة الصفقات"
+                onSelect={() => handleNavigate('/portfolio')}
+                className="flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors aria-selected:bg-emerald-50 dark:aria-selected:bg-emerald-500/10"
+              >
+                <div className="flex items-center gap-3">
+                  <Briefcase className="w-4 h-4 text-indigo-500" />
+                  <span>{isAr ? 'محفظة الأوراق المالية (Portfolio)' : 'Portfolio Terminal'}</span>
+                </div>
+                <kbd className="text-[10px] text-slate-400 font-mono">G + P</kbd>
+              </Command.Item>
+
+              <Command.Item
+                value="calendar economic events macro cpi fed الأجندة الاقتصادية"
+                onSelect={() => handleNavigate('/calendar')}
+                className="flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors aria-selected:bg-emerald-50 dark:aria-selected:bg-emerald-500/10"
+              >
+                <div className="flex items-center gap-3">
+                  <Calendar className="w-4 h-4 text-rose-500" />
+                  <span>{isAr ? 'الأجندة الاقتصادية والمؤشرات (Calendar)' : 'Economic Calendar'}</span>
+                </div>
+                <kbd className="text-[10px] text-slate-400 font-mono">G + C</kbd>
               </Command.Item>
 
               <Command.Item

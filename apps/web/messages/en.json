@@ -1,7 +1,7 @@
 {
   "common": {
-    "appName": "Borsaty AI",
-    "tagline": "Intelligent Quantitative & Technical Analysis for Arab and Global Markets",
+    "appName": "Borsaty",
+    "tagline": "",
     "searchPlaceholder": "Search ticker, company, or index (e.g., COMI, 1120, AAPL)...",
     "loading": "Loading...",
     "error": "An unexpected error occurred",
@@ -16,18 +16,18 @@
     "disclaimer": "This analysis is strictly educational and quantitative, and does not constitute financial or investment advice. All trading decisions remain the sole responsibility of the user."
   },
   "home": {
-    "heroTitle": "Deterministic AI-Powered Market Decisions",
-    "heroSubtitle": "Multi-engine quantitative analysis combining Elliott Wave, Harmonics, Classical Patterns with unified trade plans and historical evidence.",
-    "exploreScreener": "Try Natural Language Screener",
-    "exploreEgyptian": "Explore Egyptian Market (COMI)",
+    "heroTitle": "Market Intelligence & Technical Analysis",
+    "heroSubtitle": "Multi-engine quantitative analysis combining Elliott Wave, Harmonics, and Classical Patterns with historical evidence.",
+    "exploreScreener": "Market Screener",
+    "exploreEgyptian": "Egyptian Market (COMI)",
     "marketIndices": "Market Indices & Commodities",
     "topGainers": "Top Gainers",
     "topLosers": "Top Losers",
-    "featuredAnalyses": "Latest Technical Decisions",
-    "viewAnalysis": "View Full Analysis"
+    "featuredAnalyses": "Technical Overview",
+    "viewAnalysis": "View Analysis"
   },
   "screener": {
-    "title": "Natural Language AI Screener",
+    "title": "Market Screener",
     "subtitle": "Search in natural language: Show me Egyptian stocks above 200 SMA and RSI below 30",
     "inputPlaceholder": "Enter query (e.g., Egyptian stocks with RSI below 30)...",
     "searchBtn": "Screen Stocks",

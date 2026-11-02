@@ -147,11 +147,68 @@ export async function GET() {
     },
   ];
 
+  const priorityStocks = allStocks.map((s) => ({
+    symbol: s.symbol,
+    nameAr: s.nameAr,
+    nameEn: s.nameEn,
+    market: s.market,
+    currency: s.currency,
+    price: s.currentPrice,
+    change: s.change || 0,
+    changePct: s.changePct || 0,
+    volume: (s as any).volume || 1450000,
+  }));
+
+  const newsHeadlines = [
+    {
+      id: "news_1",
+      titleEn: "EGX 30 tests 30,800 resistance supported by strong foreign institutional net buying",
+      titleAr: "مؤشر EGX 30 يختبر مقاومة 30,800 نقطة بدعم من مشتريات صافية للمؤسسات الأجنبية",
+      source: "Enterprise Egypt",
+      timeAgoEn: "1 hour ago",
+      timeAgoAr: "منذ ساعة",
+      url: "https://enterprise.press",
+      sentiment: "bullish",
+    },
+    {
+      id: "news_2",
+      titleEn: "TASI extends weekly advance past 12,150 points as banking and energy sectors gain",
+      titleAr: "تاسي يواصل صعوده الأسبوعي فوق 12,150 نقطة مع مكاسب قطاعي البنوك والطاقة",
+      source: "Argaam",
+      timeAgoEn: "2 hours ago",
+      timeAgoAr: "منذ ساعتين",
+      url: "https://argaam.com",
+      sentiment: "bullish",
+    },
+    {
+      id: "news_3",
+      titleEn: "Federal Reserve policy expectations remain focused on labor market and CPI data",
+      titleAr: "توقعات سياسة الاحتياطي الفيدرالي تركز على بيانات سوق العمل والتضخم القادمة",
+      source: "Reuters",
+      timeAgoEn: "3 hours ago",
+      timeAgoAr: "منذ 3 ساعات",
+      url: "https://reuters.com",
+      sentiment: "neutral",
+    },
+    {
+      id: "news_4",
+      titleEn: "Gold prices consolidate near record highs amid global central bank accumulation",
+      titleAr: "أسعار الذهب تتماسك قرب مستويات قياسية مع استمرار مشتريات البنوك المركزية",
+      source: "Bloomberg",
+      timeAgoEn: "5 hours ago",
+      timeAgoAr: "منذ 5 ساعات",
+      url: "https://bloomberg.com",
+      sentiment: "bullish",
+    },
+  ];
+
   const payload = {
     indices: liveIndices,
     topGainers,
     topLosers,
+    priorityStocks,
     featuredAnalyses,
+    news: newsHeadlines,
     updatedAt: new Date().toISOString(),
   };
 

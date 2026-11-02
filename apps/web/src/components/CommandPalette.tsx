@@ -307,7 +307,7 @@ export default function CommandPalette() {
           {/* Footer Bar */}
           <div className="px-4 py-2 bg-slate-50 dark:bg-[#0b1120] border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
             <div className="flex items-center gap-2">
-              <span className="font-bold text-emerald-600">Borsaty AI</span>
+              <span className="font-bold text-emerald-600">Borsaty</span>
               <span>•</span>
               <span>Command Palette</span>
             </div>

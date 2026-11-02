@@ -29,6 +29,7 @@ export default function Header() {
   const router = useRouter();
   const { language, setLanguage, theme, toggleTheme, t } = useApp();
   const { setIsCommandPaletteOpen } = useBorsaty();
+  const isAr = language === "ar";
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,47 +44,48 @@ export default function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-white/95 dark:bg-[#0b0f19]/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors duration-200">
-      {/* Top Banner / Ticker bar */}
-      <div className="bg-slate-900 text-white dark:bg-slate-950 py-1 px-4 text-[11px] font-medium tracking-wide">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-6 overflow-x-auto no-scrollbar">
-            <span className="flex items-center gap-1.5 text-emerald-400 font-bold">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              {t("common.appName")} Pro
+    <header className="sticky top-0 z-50 bg-white/95 dark:bg-[#0B1120]/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors duration-200">
+      {/* Top Banner / Ticker bar: Thin (h-8), Clean, Data-First */}
+      <div className="relative bg-slate-900 text-white dark:bg-slate-950 h-8 px-4 text-[11px] font-medium tracking-wide flex items-center overflow-hidden border-b border-slate-800">
+        {/* Subtle gradient fades at edges */}
+        <div className="pointer-events-none absolute inset-y-0 start-0 w-8 bg-gradient-to-r from-slate-900 dark:from-slate-950 to-transparent z-10" />
+        <div className="pointer-events-none absolute inset-y-0 end-0 w-8 bg-gradient-to-l from-slate-900 dark:from-slate-950 to-transparent z-10" />
+
+        <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
+          <div className="flex items-center gap-6 overflow-x-auto no-scrollbar whitespace-nowrap">
+            <span className="hover:text-emerald-400 cursor-pointer font-bold transition-colors">
+              EGX 30: <span className="text-emerald-400 tabular-nums">+1.24%</span>
             </span>
-            <div className="flex items-center gap-4 text-slate-300">
-              <span className="hover:text-white cursor-pointer">EGX 30: +1.24%</span>
-              <span className="hover:text-white cursor-pointer">TASI: +0.68%</span>
-              <span className="hover:text-white cursor-pointer">S&P 500: +0.35%</span>
-              <span className="hover:text-white cursor-pointer">BTC/USD: +2.10%</span>
-            </div>
-          </div>
-          <div className="hidden sm:flex items-center gap-2 text-slate-400 text-[10px]">
-            <span>{t("common.tagline")}</span>
+            <span className="hover:text-emerald-400 cursor-pointer font-bold transition-colors">
+              TASI: <span className="text-emerald-400 tabular-nums">+0.68%</span>
+            </span>
+            <span className="hover:text-emerald-400 cursor-pointer font-bold transition-colors">
+              S&P 500: <span className="text-emerald-400 tabular-nums">+0.35%</span>
+            </span>
+            <span className="hover:text-emerald-400 cursor-pointer font-bold transition-colors">
+              Gold: <span className="text-emerald-400 tabular-nums">+0.54%</span>
+            </span>
+            <span className="hover:text-emerald-400 cursor-pointer font-bold transition-colors">
+              BTC/USD: <span className="text-emerald-400 tabular-nums">+2.10%</span>
+            </span>
+            <span className="hover:text-rose-400 cursor-pointer font-bold transition-colors">
+              EUR/USD: <span className="text-rose-400 tabular-nums">-0.17%</span>
+            </span>
           </div>
         </div>
       </div>
 
       {/* Main Header Container */}
       <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
-        {/* Brand Logo & Title */}
+        {/* Brand Logo: Clean, horizontal, single-line layout [Icon] Borsaty */}
         <div className="flex items-center gap-6">
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-9 h-9 rounded-lg bg-emerald-600 flex items-center justify-center text-white shadow-sm shadow-emerald-500/20 group-hover:bg-emerald-700 transition-colors">
-              <TrendingUp className="w-5 h-5" />
+          <Link href="/" className="flex items-center gap-2.5 whitespace-nowrap group">
+            <div className="w-8 h-8 rounded-lg bg-emerald-600 flex items-center justify-center text-white shadow-sm shadow-emerald-500/20 group-hover:bg-emerald-700 transition-colors">
+              <TrendingUp className="w-4 h-4" />
             </div>
-            <div>
-              <div className="text-xl font-extrabold tracking-tight text-slate-900 dark:text-white flex items-center gap-1.5">
-                {t("common.appName")}
-                <span className="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20">
-                  v2.0
-                </span>
-              </div>
-              <div className="text-[10px] font-medium text-slate-500 dark:text-gray-400">
-                Investing-Grade Quantitative Engine
-              </div>
-            </div>
+            <span className="text-xl font-black tracking-tight text-slate-900 dark:text-white">
+              {isAr ? "بورصتي" : "Borsaty"}
+            </span>
           </Link>
 
           {/* Navigation Links */}
@@ -128,24 +130,6 @@ export default function Header() {
             >
               <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500/20" />
               {language === "ar" ? "المتابعة" : "Watchlist"}
-            </Link>
-            <Link
-              href="/stock/COMI"
-              className="px-3 py-2 rounded-md text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 hover:bg-emerald-100 dark:hover:bg-emerald-500/20 transition-colors"
-            >
-              COMI
-            </Link>
-            <Link
-              href="/stock/2222"
-              className="px-3 py-2 rounded-md hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors"
-            >
-              2222 (أرامكو)
-            </Link>
-            <Link
-              href="/stock/AAPL"
-              className="px-3 py-2 rounded-md hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors"
-            >
-              AAPL
             </Link>
           </nav>
         </div>

@@ -23,8 +23,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Borsaty AI | بورصتي AI — Institutional Quantitative Intelligence Platform",
-  description: "Borsaty AI is the premier quantitative and technical market intelligence platform powered by deterministic AI engines.",
+  title: "Borsaty | بورصتي — Financial Markets Intelligence Platform",
+  description: "Real-time market quotes, technical indicators, portfolio tracker, and economic calendar on Borsaty.",
   manifest: "/manifest.json",
 };
 
@@ -50,7 +50,7 @@ export default function RootLayout({
               <MobileBottomNav />
               <footer className="border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#0B1120]/80 py-6 px-4 pb-20 md:pb-6 text-center text-xs text-slate-500 dark:text-gray-500">
                 <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-                  <p>Borsaty AI (بورصتي AI) © 2026 — Quantitative multi-engine platform for institutional research and education.</p>
+                  <p>Borsaty (بورصتي) © 2026 — Financial markets data and quantitative intelligence platform.</p>
                   <div className="flex items-center gap-4 text-slate-400">
                     <span>EGX</span>
                     <span>•</span>

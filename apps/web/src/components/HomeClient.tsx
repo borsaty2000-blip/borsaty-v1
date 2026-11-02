@@ -248,7 +248,49 @@ export default function HomeClient() {
             </Link>
           </div>
 
-          <div className="overflow-x-auto no-scrollbar">
+          {/* Mobile Card List (< sm screens) */}
+          <div className="sm:hidden divide-y divide-slate-100 dark:divide-slate-800/60">
+            {(overviewData.priorityStocks || overviewData.topGainers).map((stock) => {
+              const isGain = stock.change >= 0;
+              return (
+                <Link
+                  key={stock.symbol}
+                  href={`/stock/${stock.symbol}`}
+                  className="py-3 flex items-center justify-between group active:bg-slate-50 dark:active:bg-slate-900/40 rounded-lg px-1 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-black text-xs text-slate-800 dark:text-slate-200">
+                      {stock.symbol.slice(0, 3)}
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-1.5">
+                        <span className="font-extrabold text-sm text-slate-900 dark:text-white group-hover:text-emerald-600 transition-colors">
+                          {stock.symbol}
+                        </span>
+                        <span className="px-1.5 py-0.2 rounded text-[9px] font-mono font-bold bg-slate-100 dark:bg-slate-800 text-slate-500">
+                          {stock.market}
+                        </span>
+                      </div>
+                      <div className="text-xs text-slate-400 truncate max-w-[150px]">
+                        {isAr ? stock.nameAr : stock.nameEn}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-end">
+                    <div className="font-bold tabular-nums text-sm text-slate-900 dark:text-white">
+                      {stock.price.toFixed(2)} <span className="text-[10px] text-slate-400">{stock.currency}</span>
+                    </div>
+                    <div className={`text-xs font-black tabular-nums ${isGain ? 'text-emerald-600' : 'text-rose-600'}`}>
+                      {isGain ? '+' : ''}{stock.changePct.toFixed(2)}%
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+
+          {/* Desktop & Tablet Dense Table (>= sm screens) */}
+          <div className="hidden sm:block overflow-x-auto no-scrollbar">
             <table className="w-full text-start text-xs">
               <thead>
                 <tr className="border-b border-slate-100 dark:border-slate-800 text-slate-400 font-bold">

@@ -5,42 +5,40 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
 import {
+  Home,
   TrendingUp,
   SlidersHorizontal,
-  Search,
-  BarChart3,
-  Star,
   Briefcase,
-  Calendar,
+  User,
 } from 'lucide-react';
-import { useBorsaty } from '@/context/BorsatyContext';
+import { useAuth, UserButton, SignInButton } from '@clerk/nextjs';
 import { useApp } from '@/context/AppContext';
 
 export default function MobileBottomNav() {
   const pathname = usePathname();
   const { language } = useApp();
-  const { setIsCommandPaletteOpen } = useBorsaty();
+  const { isSignedIn, isLoaded } = useAuth();
 
   const isAr = language === 'ar';
 
   const navItems = [
     {
-      label: isAr ? 'الأسواق' : 'Markets',
+      label: isAr ? 'الرئيسية' : 'Home',
       href: '/',
-      icon: TrendingUp,
+      icon: Home,
       isActive: pathname === '/',
     },
     {
-      label: isAr ? 'الفلتر' : 'Screener',
+      label: isAr ? 'الأسواق' : 'Markets',
+      href: '/signals',
+      icon: TrendingUp,
+      isActive: pathname.startsWith('/signals'),
+    },
+    {
+      label: isAr ? 'المصفي' : 'Screener',
       href: '/screener',
       icon: SlidersHorizontal,
       isActive: pathname.startsWith('/screener'),
-    },
-    {
-      label: isAr ? 'بحث' : 'Search',
-      isAction: true,
-      onClick: () => setIsCommandPaletteOpen(true),
-      icon: Search,
     },
     {
       label: isAr ? 'المحفظة' : 'Portfolio',
@@ -48,49 +46,23 @@ export default function MobileBottomNav() {
       icon: Briefcase,
       isActive: pathname.startsWith('/portfolio'),
     },
-    {
-      label: isAr ? 'الأجندة' : 'Calendar',
-      href: '/calendar',
-      icon: Calendar,
-      isActive: pathname.startsWith('/calendar'),
-    },
   ];
 
   return (
     <nav
-      aria-label="Mobile Navigation"
-      className="fixed bottom-0 inset-x-0 z-40 md:hidden bg-white/95 dark:bg-[#0B1120]/95 backdrop-blur-lg border-t border-slate-200 dark:border-slate-800 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] px-2 py-1 pb-safe transition-colors"
+      aria-label="Mobile Bottom Navigation"
+      className="fixed bottom-0 inset-x-0 z-40 md:hidden bg-white/95 dark:bg-[#0B1120]/95 backdrop-blur-lg border-t border-slate-200 dark:border-slate-800 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] px-3 py-1 pb-safe transition-colors h-14"
     >
-      <div className="flex items-center justify-around h-14 max-w-md mx-auto">
-        {navItems.map((item, idx) => {
+      <div className="flex items-center justify-between h-full max-w-md mx-auto">
+        {navItems.map((item) => {
           const Icon = item.icon;
-
-          if (item.isAction) {
-            return (
-              <motion.button
-                key="action-search"
-                whileTap={{ scale: 0.88 }}
-                onClick={item.onClick}
-                className="flex flex-col items-center justify-center -mt-5 cursor-pointer focus:outline-none"
-                aria-label="Search and Command Palette"
-              >
-                <div className="w-12 h-12 rounded-2xl bg-emerald-600 dark:bg-emerald-500 text-white flex items-center justify-center shadow-lg shadow-emerald-500/30 border-2 border-white dark:border-[#0B1120] transition-transform">
-                  <Search className="w-5 h-5" />
-                </div>
-                <span className="text-[10px] font-black text-slate-600 dark:text-slate-300 mt-0.5">
-                  {item.label}
-                </span>
-              </motion.button>
-            );
-          }
-
           const active = item.isActive;
 
           return (
             <Link
-              key={item.href || idx}
-              href={item.href!}
-              className="flex flex-col items-center justify-center w-14 py-1 relative focus:outline-none"
+              key={item.href}
+              href={item.href}
+              className="flex-1 min-w-[44px] min-h-[44px] flex flex-col items-center justify-center relative focus:outline-none"
             >
               <motion.div
                 whileTap={{ scale: 0.9 }}
@@ -110,13 +82,45 @@ export default function MobileBottomNav() {
                     />
                   )}
                 </div>
-                <span className="text-[10px] tracking-tight truncate max-w-[52px]">
+                <span className="text-[10px] tracking-tight truncate max-w-[56px]">
                   {item.label}
                 </span>
               </motion.div>
             </Link>
           );
         })}
+
+        {/* 5th Item: Profile / Sign In */}
+        <div className="flex-1 min-w-[44px] min-h-[44px] flex flex-col items-center justify-center">
+          {!isLoaded ? (
+            <div className="w-5 h-5 rounded-full bg-slate-200 dark:bg-slate-700 animate-pulse" />
+          ) : isSignedIn ? (
+            <div className="flex flex-col items-center gap-0.5">
+              <UserButton
+                appearance={{
+                  elements: {
+                    avatarBox: 'w-5 h-5 rounded-full ring-1 ring-emerald-500/40',
+                  },
+                }}
+              />
+              <span className="text-[10px] tracking-tight text-slate-500 dark:text-slate-400 font-medium">
+                {isAr ? 'حسابي' : 'Profile'}
+              </span>
+            </div>
+          ) : (
+            <SignInButton mode="modal">
+              <button
+                className="flex flex-col items-center gap-0.5 text-slate-500 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors focus:outline-none"
+                aria-label="Sign in"
+              >
+                <User className="w-5 h-5 stroke-[1.8px]" />
+                <span className="text-[10px] tracking-tight">
+                  {isAr ? 'دخول' : 'Sign In'}
+                </span>
+              </button>
+            </SignInButton>
+          )}
+        </div>
       </div>
     </nav>
   );

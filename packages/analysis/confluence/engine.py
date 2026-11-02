@@ -353,8 +353,8 @@ class ConfluenceEngine:
             sigma_i = max(0.05, 1.0 - conf)
             sigma_weighted_sq_sum += (sigma_i * w) ** 2
 
-        total_score = round(total_score, 3)
-        final_score = min(1.0, max(-1.0, total_score))
+        total_score = round(sum(e["contribution"] for e in engines_dict.values()), 4)
+        final_score = min(1.0, max(-1.0, round(total_score, 3)))
 
         # Step 3: Confidence Interval
         sigma_total = math.sqrt(sigma_weighted_sq_sum)
@@ -416,7 +416,7 @@ class ConfluenceEngine:
             "score": final_score,
             "confidence_interval": [ci_lower, ci_upper],
             "engines": engines_dict,
-            "total_score": final_score,
+            "total_score": total_score,
             "contradictions": contradictions,
             "missing_engines": missing_engines,
             "data_quality": {

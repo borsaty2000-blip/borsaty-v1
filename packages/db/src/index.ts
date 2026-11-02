@@ -33,6 +33,117 @@ universeData.forEach((inst) => {
   inMemoryStore.instrumentsByProvider.set(inst.providerSymbol.toUpperCase(), inst);
 });
 
+// Watchlist in-memory store for fallback/dev
+const inMemoryWatchlist = new Map<
+  string,
+  Array<{ id: string; userId: string; symbol: string; nameEn: string; nameAr: string; createdAt: Date }>
+>();
+
+export async function getWatchlist(userId: string) {
+  if (process.env.DATABASE_URL) {
+    try {
+      const client = getPrismaClient();
+      const list = await client.watchlist.findMany({
+        where: { userId },
+        orderBy: { createdAt: "desc" },
+      });
+      return list;
+    } catch {
+      // Non-blocking fallback
+    }
+  }
+  return inMemoryWatchlist.get(userId) || [];
+}
+
+export async function addToWatchlist(item: {
+  userId: string;
+  symbol: string;
+  nameEn: string;
+  nameAr: string;
+}) {
+  const sym = item.symbol.toUpperCase();
+  if (process.env.DATABASE_URL) {
+    try {
+      const client = getPrismaClient();
+      return await client.watchlist.upsert({
+        where: {
+          userId_symbol: {
+            userId: item.userId,
+            symbol: sym,
+          },
+        },
+        create: {
+          userId: item.userId,
+          symbol: sym,
+          nameEn: item.nameEn,
+          nameAr: item.nameAr,
+        },
+        update: {
+          nameEn: item.nameEn,
+          nameAr: item.nameAr,
+        },
+      });
+    } catch {
+      // Non-blocking fallback
+    }
+  }
+
+  const userItems = inMemoryWatchlist.get(item.userId) || [];
+  const existingIdx = userItems.findIndex((w) => w.symbol === sym);
+  const entry = {
+    id: `wl_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+    userId: item.userId,
+    symbol: sym,
+    nameEn: item.nameEn,
+    nameAr: item.nameAr,
+    createdAt: new Date(),
+  };
+  if (existingIdx >= 0) {
+    userItems[existingIdx] = entry;
+  } else {
+    userItems.unshift(entry);
+  }
+  inMemoryWatchlist.set(item.userId, userItems);
+  return entry;
+}
+
+export async function removeFromWatchlist(userId: string, symbol: string) {
+  const sym = symbol.toUpperCase();
+  if (process.env.DATABASE_URL) {
+    try {
+      const client = getPrismaClient();
+      await client.watchlist.deleteMany({
+        where: { userId, symbol: sym },
+      });
+      return true;
+    } catch {
+      // Non-blocking fallback
+    }
+  }
+
+  const userItems = inMemoryWatchlist.get(userId) || [];
+  inMemoryWatchlist.set(userId, userItems.filter((w) => w.symbol !== sym));
+  return true;
+}
+
+export async function isInWatchlist(userId: string, symbol: string): Promise<boolean> {
+  const sym = symbol.toUpperCase();
+  if (process.env.DATABASE_URL) {
+    try {
+      const client = getPrismaClient();
+      const count = await client.watchlist.count({
+        where: { userId, symbol: sym },
+      });
+      return count > 0;
+    } catch {
+      // Non-blocking fallback
+    }
+  }
+
+  const userItems = inMemoryWatchlist.get(userId) || [];
+  return userItems.some((w) => w.symbol === sym);
+}
+
 export async function findCompany(symbolOrQuery: string) {
   const sym = symbolOrQuery.trim().toUpperCase();
   const match = inMemoryStore.companies.get(sym);

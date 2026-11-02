@@ -172,3 +172,15 @@ model ScreenerQuery {
 
   @@index([userId, createdAt])
 }
+
+model Watchlist {
+  id        String   @id @default(cuid())
+  userId    String   // Clerk user ID
+  symbol    String   // Canonical ticker (e.g., "COMI", "AAPL")
+  nameEn    String
+  nameAr    String
+  createdAt DateTime @default(now())
+
+  @@unique([userId, symbol])
+  @@index([userId, createdAt])
+}

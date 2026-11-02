@@ -720,3 +720,35 @@ flowchart TD
 
 
 
+
+## المرحلة التاسعة (ح): محرك التحقق المتدحرج والاختبار التاريخي (Phase ح: Walk-Forward Validation Engine)
+
+المنطلق: *لا نُقرّ بدقة عالية — نُثبتها بالبيانات التاريخية والتحقق المتدحرج وفترات ثقة ويلسون.*
+
+### ما تم بناؤه في Phase ح:
+
+- **`packages/analysis/backtest/engine.py`** — `BacktestEngine`: محاكاة شريط بشريط بدون أي look-ahead.
+  - يُشغّل خط الأنابيب الكامل (7 محركات) على كل نقطة زمنية تاريخية بيانات الماضي فقط.
+  - يُصنّف كل إشارة: `HIT_T1` | `HIT_T2` | `HIT_T3` | `STOPPED` | `EXPIRED`.
+  - يحسب: Hit Rate، Profit Factor، Sharpe Ratio، Max Drawdown، Expectancy.
+  - فترات ثقة ويلسون 95% لكل معدل نجاح.
+- **`packages/analysis/backtest/walk_forward.py`** — `WalkForwardValidator`: نوافذ متدحرجة (500 شمعة، خطوة 250).
+  - يقيس الاستقرار عبر النوافذ: `stability_score = 1 - std/mean`.
+  - يحسب WF Efficiency: نسبة أداء النافذة الأخيرة / الأولى.
+  - حكم تلقائي: `stable` | `unstable` | `insufficient_data`.
+- **`packages/analysis/backtest/report.py`** — `BacktestReport`: تقارير إحصائية ثنائية اللغة.
+  - عربي وإنجليزي مستقلان (نفس عقد zero-hallucination من Phase ز).
+  - تعرض "بيانات غير كافية" تلقائياً عند أقل من 30 إشارة.
+- **`packages/analysis/backtest/seed_data.py`** — بيانات تاريخية اصطناعية لـ 10 أدوات × 5 سنوات (1305 شمعة لكل أداة).
+- **`POST /backtest/run`** + **`POST /backtest/leaderboard`** — نقاط API جديدة في FastAPI.
+- **`/api/backtest/[symbol]`** + **`/api/backtest/leaderboard`** — مسارات Next.js جديدة.
+
+### ضمانات غير قابلة للتفاوض:
+- **لا Look-Ahead مطلقاً** — مثبت بـ 10 اختبارات وحدة خاصة.
+- **أقل من 30 إشارة → `insufficient_data`** — معدل النجاح لا يُنشر.
+- **فترات ثقة ويلسون** لكل معدل نجاح منشور.
+
+### نتائج الاختبارات:
+- **61 اختباراً جديداً** في `test_backtest.py`: Look-Ahead، تصنيف النتائج، المقاييس، Walk-Forward، التقارير، بيانات حقيقية، الأداء.
+- **533+ اختباراً** إجمالياً بدون أي تراجعات.
+- توثيق تفصيلي: [`docs/BACKTEST.md`](file:///c:/Projects/Borsaty/docs/BACKTEST.md).

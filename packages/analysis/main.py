@@ -491,6 +491,161 @@ def narrate_endpoint(payload: NarrateRequest):
         style=style,
     )
 
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Phase ح: Walk-Forward Validation & Backtest Endpoints
+# ─────────────────────────────────────────────────────────────────────────────
+
+from backtest.engine import BacktestEngine, BacktestResult
+from backtest.walk_forward import WalkForwardValidator, WalkForwardResult
+from backtest.report import BacktestReport
+import dataclasses
+
+_backtest_engine = BacktestEngine()
+_wf_validator = WalkForwardValidator()
+_bt_report = BacktestReport()
+
+
+class BacktestRequest(BaseModel):
+    symbol: str
+    timeframe: Optional[str] = "1D"
+    candles: List[Candle]
+    warmup_bars: Optional[int] = 250
+    language: Optional[str] = "ar"
+    include_walk_forward: Optional[bool] = True
+    fast_mode: Optional[bool] = True
+
+
+def _bt_to_dict(bt: BacktestResult) -> Dict[str, Any]:
+    """Convert BacktestResult dataclass to JSON-serializable dict."""
+    d = dataclasses.asdict(bt)
+    # signals list can be large — summarise signal objects
+    d["signals"] = [
+        {
+            "signal_id": s["signal_id"],
+            "bar_index": s["bar_index"],
+            "date": s["date"],
+            "direction": s["direction"],
+            "entry_zone": s["entry_zone"],
+            "stop": s["stop"],
+            "targets": s["targets"],
+            "regime": s["regime"],
+            "engines_used": s["engines_used"],
+            "confluence_score": s["confluence_score"],
+            "outcome": s["outcome"],
+            "realized_r": s["realized_r"],
+            "days_to_resolution": s["days_to_resolution"],
+            "mfe_pct": s["mfe_pct"],
+            "mae_pct": s["mae_pct"],
+        }
+        for s in d.get("signals", [])
+    ]
+    d["metrics"] = dataclasses.asdict(bt.metrics)
+    return d
+
+
+def _wf_to_dict(wf: WalkForwardResult) -> Dict[str, Any]:
+    return dataclasses.asdict(wf)
+
+
+@app.post("/backtest/run")
+def run_backtest_endpoint(payload: BacktestRequest):
+    """
+    Run bar-by-bar backtest on provided candles.
+    Returns BacktestResult + optional WalkForwardResult + dual-language report.
+    """
+    sym = payload.symbol.upper()
+    tf = (payload.timeframe or "1D").upper()
+    lang = (payload.language or "ar").lower()
+    warmup = max(50, min(500, payload.warmup_bars or 250))
+
+    if not payload.candles or len(payload.candles) < warmup + 2:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Candles too few for backtest (need ≥ {warmup + 2}, got {len(payload.candles or [])})"
+        )
+
+    raw = [c.model_dump() for c in payload.candles]
+    is_fast = True if payload.fast_mode is None else payload.fast_mode
+
+    bt = _backtest_engine.run(sym, tf, raw, warmup_bars=warmup, fast_mode=is_fast)
+    bt_dict = _bt_to_dict(bt)
+
+    wf_dict = None
+    if payload.include_walk_forward:
+        try:
+            wf = _wf_validator.validate(sym, tf, raw, fast_mode=is_fast)
+            wf_dict = _wf_to_dict(wf)
+        except Exception:
+            wf_dict = None
+
+    # Generate report (parse back from dicts is expensive; use original objects)
+    report_text = _bt_report.generate(bt, language=lang)
+
+    return {
+        "backtest": bt_dict,
+        "walk_forward": wf_dict,
+        "report": report_text,
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+    }
+
+
+class LeaderboardQuery(BaseModel):
+    period_days: Optional[int] = 90
+    min_signals: Optional[int] = 30
+    sort_by: Optional[str] = "hit_rate_t1"   # or "profit_factor" | "sharpe_ratio"
+    limit: Optional[int] = 20
+    candles_by_symbol: Dict[str, List[Candle]]  # symbol -> candles
+    timeframe: Optional[str] = "1D"
+    language: Optional[str] = "ar"
+
+
+@app.post("/backtest/leaderboard")
+def backtest_leaderboard_endpoint(payload: LeaderboardQuery):
+    """
+    Run backtests across multiple symbols and return ranked leaderboard.
+    Minimum 30 signals required for inclusion.
+    """
+    tf = (payload.timeframe or "1D").upper()
+    lang = (payload.language or "ar").lower()
+    min_sigs = max(1, payload.min_signals or 30)
+    sort_key = payload.sort_by or "hit_rate_t1"
+    limit = max(1, min(100, payload.limit or 20))
+
+    results = []
+    for sym, candles in (payload.candles_by_symbol or {}).items():
+        raw = [c.model_dump() for c in candles]
+        try:
+            bt = _backtest_engine.run(sym.upper(), tf, raw, fast_mode=True)
+            if bt.total_signals >= min_sigs:
+                results.append({
+                    "symbol": bt.symbol,
+                    "total_signals": bt.total_signals,
+                    "hit_rate_t1": bt.metrics.hit_rate_t1,
+                    "profit_factor": bt.metrics.profit_factor,
+                    "sharpe_ratio": bt.metrics.sharpe_ratio,
+                    "avg_r_multiple": bt.metrics.avg_r_multiple,
+                    "wilson_ci_95_t1": bt.metrics.wilson_ci_95_t1,
+                    "sample_adequate": bt.data_quality.get("sample_size_adequate", False),
+                })
+        except Exception:
+            continue
+
+    # Sort
+    valid_keys = {"hit_rate_t1", "profit_factor", "sharpe_ratio"}
+    if sort_key not in valid_keys:
+        sort_key = "hit_rate_t1"
+    results.sort(key=lambda x: x.get(sort_key, 0.0), reverse=True)
+
+    return {
+        "leaderboard": results[:limit],
+        "sort_by": sort_key,
+        "timeframe": tf,
+        "min_signals_required": min_sigs,
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+    }
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

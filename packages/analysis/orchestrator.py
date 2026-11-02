@@ -61,10 +61,13 @@ class AnalysisOrchestrator:
         timeframe: str,
         candles: List[Dict[str, Any]],
         min_degree: int = 1,
+        fast_mode: bool = False,
     ) -> Dict[str, Any]:
         """
         Runs the end-to-end unified analysis pipeline over candlestick data.
         Returns FullAnalysis dictionary with all sub-results and confluence verdict.
+        If fast_mode=True, skips heavy engines (Elliott, Harmonic, Classical, Narrator)
+        and runs only core quantitative/HSPD/Indicators/Confluence/TradePlan.
         """
         t0 = time.time()
         sym = symbol.upper()
@@ -100,10 +103,16 @@ class AnalysisOrchestrator:
         # 2. Derive HSPD Pivots (foundation for Elliott, Harmonic, Classical, Structure)
         pivots = self.hspd.detect(candles, min_degree=0, max_degree=3)
 
-        # 3. Run Independent Engines
-        elliott_res = self.elliott.detect(sym, tf, pivots, min_degree=min_degree)
-        harmonic_res = self.harmonic.detect(sym, tf, pivots, min_degree=min_degree, candles=candles)
-        classical_res = self.classical.detect(sym, tf, pivots, candles=candles, min_degree=min_degree)
+        # 3. Run Independent Engines (skip heavy engines in fast_mode)
+        if fast_mode:
+            elliott_res = None
+            harmonic_res = None
+            classical_res = None
+        else:
+            elliott_res = self.elliott.detect(sym, tf, pivots, min_degree=min_degree)
+            harmonic_res = self.harmonic.detect(sym, tf, pivots, min_degree=min_degree, candles=candles)
+            classical_res = self.classical.detect(sym, tf, pivots, candles=candles, min_degree=min_degree)
+
         indicators_res = self.indicators.compute_all(sym, tf, candles)
 
         # 4. Compute Regime-Aware Confluence
@@ -153,22 +162,26 @@ class AnalysisOrchestrator:
             "targets_count": len(trade_plan_full["targets"]),
         }
 
-        # 6. Generate Dual Original Narratives (Arabic & English)
-        narrative_payload = {
-            "symbol": sym,
-            "timeframe": tf,
-            "candles": candles,
-            "regime": regime,
-            "pivots": pivots,
-            "elliott": elliott_res,
-            "harmonic": harmonic_res,
-            "classical": classical_res,
-            "indicators": indicators_res,
-            "confluence": confluence_res,
-            "trade_plan": trade_plan_full,
-        }
-        narrative_ar = self.narrator.narrate(narrative_payload, language="ar", style="professional")
-        narrative_en = self.narrator.narrate(narrative_payload, language="en", style="professional")
+        # 6. Generate Dual Original Narratives (Arabic & English) (skip in fast_mode)
+        if fast_mode:
+            narrative_ar = None
+            narrative_en = None
+        else:
+            narrative_payload = {
+                "symbol": sym,
+                "timeframe": tf,
+                "candles": candles,
+                "regime": regime,
+                "pivots": pivots,
+                "elliott": elliott_res,
+                "harmonic": harmonic_res,
+                "classical": classical_res,
+                "indicators": indicators_res,
+                "confluence": confluence_res,
+                "trade_plan": trade_plan_full,
+            }
+            narrative_ar = self.narrator.narrate(narrative_payload, language="ar", style="professional")
+            narrative_en = self.narrator.narrate(narrative_payload, language="en", style="professional")
 
         elapsed_ms = round((time.time() - t0) * 1000.0, 2)
 

@@ -24,7 +24,7 @@ const dictionaries = {
 };
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguageState] = useState<Language>('ar');
+  const [language, setLanguageState] = useState<Language>('en');
   const [theme, setThemeState] = useState<Theme>('light'); // Premium Light mode default!
 
   useEffect(() => {

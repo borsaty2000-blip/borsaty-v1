@@ -1,14 +1,20 @@
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
 
-export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+const isProtectedRoute = createRouteMatcher([
+  "/watchlist(.*)",
+  "/api/watchlist(.*)",
+]);
 
+export default clerkMiddleware(async (auth, req) => {
+  const { pathname } = req.nextUrl;
+
+  // 1. Maintain existing /api/admin security
   if (pathname.startsWith("/api/admin")) {
     const isProduction = process.env.NODE_ENV === "production";
     const allowAdminTests = process.env.ALLOW_ADMIN_TESTS === "true";
 
-    // 1. In production, hide and disable admin test endpoints unless explicitly enabled
+    // In production, hide and disable admin test endpoints unless explicitly enabled
     if (isProduction && !allowAdminTests) {
       return new NextResponse(JSON.stringify({ error: "Not Found" }), {
         status: 404,
@@ -16,7 +22,7 @@ export function middleware(request: NextRequest) {
       });
     }
 
-    // 2. Fail-closed: In production, ADMIN_TOKEN must be explicitly set and non-empty
+    // Fail-closed: In production, ADMIN_TOKEN must be explicitly set and non-empty
     const rawAdminToken = process.env.ADMIN_TOKEN?.trim();
     if (isProduction && (!rawAdminToken || rawAdminToken.length === 0)) {
       return new NextResponse(
@@ -33,9 +39,9 @@ export function middleware(request: NextRequest) {
       );
     }
 
-    // 3. Extract and validate client token
-    const headerToken = request.headers.get("x-admin-token")?.trim();
-    const authHeader = request.headers.get("authorization")?.trim();
+    // Extract and validate client token
+    const headerToken = req.headers.get("x-admin-token")?.trim();
+    const authHeader = req.headers.get("authorization")?.trim();
     const bearerToken = authHeader?.startsWith("Bearer ") ? authHeader.slice(7).trim() : null;
     const provided = headerToken || bearerToken;
 
@@ -47,9 +53,19 @@ export function middleware(request: NextRequest) {
     }
   }
 
+  // 2. Protect authenticated routes
+  if (isProtectedRoute(req)) {
+    await auth.protect();
+  }
+
   return NextResponse.next();
-}
+});
 
 export const config = {
-  matcher: ["/api/admin/:path*"],
+  matcher: [
+    // Skip Next.js internals and all static files, unless found in search params
+    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
+    // Always run for API routes
+    "/(api|trpc)(.*)",
+  ],
 };

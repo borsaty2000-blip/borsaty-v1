@@ -12,6 +12,7 @@
     "@borsaty/db": "workspace:*",
     "@borsaty/shared": "workspace:*",
     "@borsaty/ui": "workspace:*",
+    "@clerk/nextjs": "^7.9.23",
     "clsx": "^2.1.1",
     "lightweight-charts": "^5.0.3",
     "lucide-react": "^0.475.0",

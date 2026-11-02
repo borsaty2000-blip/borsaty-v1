@@ -461,6 +461,36 @@ def compute_trade_plan_endpoint(payload: TradePlanRequest):
         candles=raw_candles,
     )
 
+class NarrateRequest(BaseModel):
+    symbol: str
+    timeframe: Optional[str] = "1D"
+    language: Optional[str] = "ar"
+    style: Optional[str] = "professional"
+    candles: Optional[List[Candle]] = None
+
+@app.post("/narrate")
+def narrate_endpoint(payload: NarrateRequest):
+    sym = payload.symbol.upper()
+    tf = payload.timeframe or "1D"
+    lang = payload.language or "ar"
+    style = payload.style or "professional"
+
+    if not payload.candles:
+        raise HTTPException(status_code=400, detail="Candles cannot be empty for narrative generation")
+
+    raw_candles = [c.model_dump() for c in payload.candles]
+    full_res = global_orchestrator.run(
+        symbol=sym,
+        timeframe=tf,
+        candles=raw_candles,
+    )
+    from narrator.engine import global_narrator_engine
+    return global_narrator_engine.narrate(
+        payload=full_res,
+        language=lang,
+        style=style,
+    )
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

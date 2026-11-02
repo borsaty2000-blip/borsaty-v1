@@ -128,6 +128,14 @@ export async function GET(
         primary_rr: 1.71,
         targets_count: 3,
       },
+      narrative_ar: {
+        language: "ar",
+        full_text: `سهم ${sym} يتحرك في إطار مسار صاعد إيجابي بدرجة توافق 62 من 100.`,
+      },
+      narrative_en: {
+        language: "en",
+        full_text: `${sym} is trading with a bullish directional bias supported by a confluence of 62/100.`,
+      },
       execution_ms: Date.now() - startTime,
     };
   }

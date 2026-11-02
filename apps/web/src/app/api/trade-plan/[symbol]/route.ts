@@ -79,7 +79,8 @@ export async function GET(
 
     const stopDistance = Math.abs(lastPrice - stopPrice);
     const stopDistancePct = Math.round((stopDistance / lastPrice) * 1000) / 10;
-    const riskAmount = capital * (riskPct / 100.0);
+    const capVal = capital ?? 1000.0;
+    const riskAmount = capVal * (riskPct / 100.0);
     const units = Math.round((riskAmount / stopDistance) * 100) / 100;
 
     planResult = {

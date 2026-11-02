@@ -16,6 +16,7 @@ from classical.detector import ClassicalPatternDetector, global_classical_detect
 from engines.indicator_engine import IndicatorEngine, global_indicator_engine
 from confluence.engine import ConfluenceEngine, global_confluence_engine
 from trade_plan.engine import TradePlanEngine, global_trade_plan_engine
+from narrator.engine import NarratorEngine, global_narrator_engine
 
 
 class AnalysisOrchestrator:
@@ -42,6 +43,7 @@ class AnalysisOrchestrator:
         indicator_engine: Optional[IndicatorEngine] = None,
         confluence_engine: Optional[ConfluenceEngine] = None,
         trade_plan_engine: Optional[TradePlanEngine] = None,
+        narrator_engine: Optional[NarratorEngine] = None,
     ):
         self.regime_det = regime_detector or global_regime_detector
         self.hspd = hspd_engine or global_hspd_engine
@@ -51,6 +53,7 @@ class AnalysisOrchestrator:
         self.indicators = indicator_engine or global_indicator_engine
         self.confluence = confluence_engine or global_confluence_engine
         self.trade_plan = trade_plan_engine or global_trade_plan_engine
+        self.narrator = narrator_engine or global_narrator_engine
 
     def run(
         self,
@@ -86,6 +89,8 @@ class AnalysisOrchestrator:
                 "indicators": {},
                 "confluence": None,
                 "trade_plan": None,
+                "narrative_ar": None,
+                "narrative_en": None,
                 "execution_ms": round((time.time() - t0) * 1000.0, 2),
             }
 
@@ -148,6 +153,23 @@ class AnalysisOrchestrator:
             "targets_count": len(trade_plan_full["targets"]),
         }
 
+        # 6. Generate Dual Original Narratives (Arabic & English)
+        narrative_payload = {
+            "symbol": sym,
+            "timeframe": tf,
+            "candles": candles,
+            "regime": regime,
+            "pivots": pivots,
+            "elliott": elliott_res,
+            "harmonic": harmonic_res,
+            "classical": classical_res,
+            "indicators": indicators_res,
+            "confluence": confluence_res,
+            "trade_plan": trade_plan_full,
+        }
+        narrative_ar = self.narrator.narrate(narrative_payload, language="ar", style="professional")
+        narrative_en = self.narrator.narrate(narrative_payload, language="en", style="professional")
+
         elapsed_ms = round((time.time() - t0) * 1000.0, 2)
 
         return {
@@ -164,6 +186,8 @@ class AnalysisOrchestrator:
             "indicators": indicators_res,
             "confluence": confluence_res,
             "trade_plan": trade_plan_summary,
+            "narrative_ar": narrative_ar,
+            "narrative_en": narrative_en,
             "execution_ms": elapsed_ms,
         }
 

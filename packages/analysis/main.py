@@ -22,6 +22,7 @@ from classical.detector import global_classical_detector, ClassicalPatternDetect
 from orchestrator import global_orchestrator, AnalysisOrchestrator
 from screener.nlu import global_screener_nlu
 from screener.builder import global_screener_engine
+from trade_plan.engine import global_trade_plan_engine, TradePlanEngine
 from datetime import datetime, timezone
 
 app = FastAPI(
@@ -424,6 +425,40 @@ def full_analysis_endpoint(payload: FullAnalysisRequest):
         timeframe=tf,
         candles=raw_candles,
         min_degree=min_d,
+    )
+
+class TradePlanRequest(BaseModel):
+    symbol: str
+    timeframe: Optional[str] = "1D"
+    candles: Optional[List[Candle]] = None
+    capital: Optional[float] = 1000.0
+    risk_pct: Optional[float] = 2.0
+    min_degree: Optional[int] = 1
+
+@app.post("/trade-plan/compute")
+@app.post("/trade-plan")
+def compute_trade_plan_endpoint(payload: TradePlanRequest):
+    sym = payload.symbol.upper()
+    tf = payload.timeframe or "1D"
+    min_d = max(0, min(3, payload.min_degree if payload.min_degree is not None else 1))
+
+    if not payload.candles:
+        raise HTTPException(status_code=400, detail="Candles list cannot be empty for trade plan computation")
+
+    raw_candles = [c.model_dump() for c in payload.candles]
+    full_res = global_orchestrator.run(
+        symbol=sym,
+        timeframe=tf,
+        candles=raw_candles,
+        min_degree=min_d,
+    )
+    return global_trade_plan_engine.compute(
+        symbol=sym,
+        timeframe=tf,
+        full_analysis=full_res,
+        capital=payload.capital,
+        risk_pct=payload.risk_pct or 2.0,
+        candles=raw_candles,
     )
 
 if __name__ == "__main__":

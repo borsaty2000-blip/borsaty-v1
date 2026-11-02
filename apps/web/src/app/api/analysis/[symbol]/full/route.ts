@@ -118,6 +118,16 @@ export async function GET(
           coverage_pct: 83,
         },
       },
+      trade_plan: {
+        status: "actionable",
+        status_reason: null,
+        direction: "bullish",
+        entry_zone: { low: 85.5, high: 86.5 },
+        stop_loss: 82.5,
+        primary_target: 92.0,
+        primary_rr: 1.71,
+        targets_count: 3,
+      },
       execution_ms: Date.now() - startTime,
     };
   }

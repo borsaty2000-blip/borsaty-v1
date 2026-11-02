@@ -15,6 +15,7 @@ from harmonic.detector import HarmonicDetector, global_harmonic_detector
 from classical.detector import ClassicalPatternDetector, global_classical_detector
 from engines.indicator_engine import IndicatorEngine, global_indicator_engine
 from confluence.engine import ConfluenceEngine, global_confluence_engine
+from trade_plan.engine import TradePlanEngine, global_trade_plan_engine
 
 
 class AnalysisOrchestrator:
@@ -40,6 +41,7 @@ class AnalysisOrchestrator:
         classical_detector: Optional[ClassicalPatternDetector] = None,
         indicator_engine: Optional[IndicatorEngine] = None,
         confluence_engine: Optional[ConfluenceEngine] = None,
+        trade_plan_engine: Optional[TradePlanEngine] = None,
     ):
         self.regime_det = regime_detector or global_regime_detector
         self.hspd = hspd_engine or global_hspd_engine
@@ -48,6 +50,7 @@ class AnalysisOrchestrator:
         self.classical = classical_detector or global_classical_detector
         self.indicators = indicator_engine or global_indicator_engine
         self.confluence = confluence_engine or global_confluence_engine
+        self.trade_plan = trade_plan_engine or global_trade_plan_engine
 
     def run(
         self,
@@ -82,6 +85,7 @@ class AnalysisOrchestrator:
                 "classical": None,
                 "indicators": {},
                 "confluence": None,
+                "trade_plan": None,
                 "execution_ms": round((time.time() - t0) * 1000.0, 2),
             }
 
@@ -114,6 +118,36 @@ class AnalysisOrchestrator:
             candles=candles,
         )
 
+        # 5. Compute Unified Trade Plan
+        trade_plan_full = self.trade_plan.compute(
+            symbol=sym,
+            timeframe=tf,
+            full_analysis={
+                "symbol": sym,
+                "timeframe": tf,
+                "candles": candles,
+                "regime": regime,
+                "pivots": pivots,
+                "elliott": elliott_res,
+                "harmonic": harmonic_res,
+                "classical": classical_res,
+                "indicators": indicators_res,
+                "confluence": confluence_res,
+            },
+            candles=candles,
+        )
+
+        trade_plan_summary = {
+            "status": trade_plan_full["status"],
+            "status_reason": trade_plan_full["status_reason"],
+            "direction": trade_plan_full["direction"],
+            "entry_zone": trade_plan_full["entry_zone"],
+            "stop_loss": trade_plan_full["stop_loss"]["price"],
+            "primary_target": trade_plan_full["targets"][0]["price"] if trade_plan_full["targets"] else None,
+            "primary_rr": trade_plan_full["risk_reward"]["primary_rr"],
+            "targets_count": len(trade_plan_full["targets"]),
+        }
+
         elapsed_ms = round((time.time() - t0) * 1000.0, 2)
 
         return {
@@ -129,6 +163,7 @@ class AnalysisOrchestrator:
             "classical": classical_res,
             "indicators": indicators_res,
             "confluence": confluence_res,
+            "trade_plan": trade_plan_summary,
             "execution_ms": elapsed_ms,
         }
 

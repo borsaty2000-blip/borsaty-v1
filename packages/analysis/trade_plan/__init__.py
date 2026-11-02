@@ -14,6 +14,8 @@ from trade_plan.proposals import (
     extract_fibonacci_proposals,
     calculate_atr14,
 )
+from trade_plan.sizing import PositionSizer, global_position_sizer
+from trade_plan.engine import TradePlanEngine, global_trade_plan_engine
 
 __all__ = [
     "TradeProposal",
@@ -24,4 +26,8 @@ __all__ = [
     "extract_structure_proposals",
     "extract_fibonacci_proposals",
     "calculate_atr14",
+    "PositionSizer",
+    "global_position_sizer",
+    "TradePlanEngine",
+    "global_trade_plan_engine",
 ]

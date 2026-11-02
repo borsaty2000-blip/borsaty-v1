@@ -3,9 +3,6 @@ const nextConfig = {
   transpilePackages: ["@borsaty/shared", "@borsaty/db", "@borsaty/ui"],
   reactStrictMode: true,
   productionBrowserSourceMaps: false,
-  experimental: {
-    nodeMiddleware: true,
-  },
   compiler: {
     removeConsole:
       process.env.NODE_ENV === "production" ? { exclude: ["error", "warn"] } : false,

@@ -2,9 +2,8 @@ import type { Metadata } from "next";
 import { Cairo, Inter } from "next/font/google";
 import { TrendingUp } from "lucide-react";
 import "./globals.css";
-import dynamic from "next/dynamic";
 import Header from "@/components/Header";
-const CommandPalette = dynamic(() => import("@/components/CommandPalette"), { ssr: false });
+import CommandPalette from "@/components/CommandPalette";
 import MobileBottomNav from "@/components/MobileBottomNav";
 import { AppProvider } from "@/context/AppContext";
 import { BorsatyProvider } from "@/context/BorsatyContext";
@@ -13,14 +12,12 @@ import { Toaster } from "sonner";
 
 const cairo = Cairo({
   subsets: ["arabic", "latin"],
-  weight: ["400", "600", "700"],
   display: "swap",
   variable: "--font-cairo",
 });
 
 const inter = Inter({
   subsets: ["latin"],
-  weight: ["400", "600", "700"],
   display: "swap",
   variable: "--font-inter",
 });

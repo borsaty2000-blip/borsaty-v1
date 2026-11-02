@@ -855,3 +855,48 @@ def test_performance_100_instruments_under_30s():
     print(f"\n100 Instruments Elliott Detection: {total_sec:.2f}s")
     assert total_sec < 30.0
 
+def test_unavailable_when_insufficient_pivots():
+    detector = ElliottDetector()
+    pivots = [
+        make_pivot(0, 100.0, "trough"),
+        make_pivot(10, 110.0, "peak"),
+    ]
+    res = detector.detect("TEST", "1D", pivots, min_degree=1)
+    assert res["status"] == "unavailable"
+    assert res["status_reason"] == "insufficient_pivots"
+    assert "غير كافٍ" in res["status_message_ar"]
+    assert "Insufficient" in res["status_message_en"]
+    assert res["primary_count"] is None
+
+def test_unavailable_when_no_valid_pattern():
+    detector = ElliottDetector()
+    # 4 pivots that violate both zigzag and flat rules (B retraces 100% of A, and C is truncated rc=0.05)
+    pivots = [
+        make_pivot(0, 100.0, "trough"),
+        make_pivot(10, 120.0, "peak"),
+        make_pivot(20, 95.0, "trough"),
+        make_pivot(30, 96.0, "peak"),
+    ]
+    res = detector.detect("TEST", "1D", pivots, min_degree=1)
+    assert res["status"] == "unavailable"
+    assert res["status_reason"] == "no_valid_pattern"
+    assert "لا توجد" in res["status_message_ar"]
+    assert "No valid" in res["status_message_en"]
+    assert res["primary_count"] is None
+
+def test_available_status_when_valid_pattern():
+    detector = ElliottDetector()
+    pivots = [
+        make_pivot(0, 100.0, "trough"),
+        make_pivot(10, 110.0, "peak"),
+        make_pivot(20, 104.0, "trough"),
+        make_pivot(30, 125.0, "peak"),
+        make_pivot(40, 118.0, "trough"),
+        make_pivot(50, 135.0, "peak"),
+    ]
+    res = detector.detect("TEST", "1D", pivots, min_degree=1)
+    assert res["status"] == "available"
+    assert res["status_reason"] is None
+    assert res["primary_count"] is not None
+
+

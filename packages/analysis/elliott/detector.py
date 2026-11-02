@@ -215,12 +215,33 @@ class ElliottDetector:
                     }
                     break
 
+        # Determine status
+        if len(pivots_list) < 4:
+            status = "unavailable"
+            status_reason = "insufficient_pivots"
+            status_message_ar = "عدد نقاط التحول غير كافٍ لاشتقاق هياكل موجات إليوت (الحد الأدنى 4 نقاط)"
+            status_message_en = "Insufficient validated pivots to derive Elliott wave structures (minimum 4 required)"
+        elif primary_count is None:
+            status = "unavailable"
+            status_reason = "no_valid_pattern"
+            status_message_ar = "لا توجد أنماط موجية تطابق القواعد الرياضية الصارمة"
+            status_message_en = "No valid Elliott wave pattern satisfied all binary hard rules"
+        else:
+            status = "available"
+            status_reason = None
+            status_message_ar = "تم اشتقاق العد الموجي بنجاح وفق القواعد الحتمية"
+            status_message_en = "Valid Elliott wave count derived successfully"
+
         return {
             "symbol": symbol,
             "timeframe": timeframe,
             "version": self.VERSION,
             "computed_at": computed_at,
             "degree": min_degree,
+            "status": status,
+            "status_reason": status_reason,
+            "status_message_ar": status_message_ar,
+            "status_message_en": status_message_en,
             "primary_count": primary_count,
             "alternative_count": alternative_count,
             "rejected_counts": rejected_counts,

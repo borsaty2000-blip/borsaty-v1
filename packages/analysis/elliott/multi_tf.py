@@ -139,10 +139,30 @@ class MultiTfElliott:
                 trade_ready_status = "SUPPRESSED"
                 suppression_reason = "Counts are contradictory across timeframes. Wait for clarity before acting."
 
+        if coherence_score < 0.60:
+            status = "unavailable"
+            status_reason = "contradictory_coherence"
+            status_message_ar = "تعارض شديد في العد الموجي عبر الفواصل الزمنية. تم حجب إشارات التداول لعدم وضوح الهيكل."
+            status_message_en = "Contradictory Elliott wave counts across timeframes. Signal suppressed until structure clarifies."
+        elif not daily_primary:
+            status = "unavailable"
+            status_reason = "no_valid_pattern"
+            status_message_ar = "لا يوجد عد موجي صالح على الفاصل الزمني الأساسي."
+            status_message_en = "No valid primary wave count on base timeframe."
+        else:
+            status = "available"
+            status_reason = None
+            status_message_ar = "التحليل متعدد الفواصل متاح ومتوافق."
+            status_message_en = "Multi-timeframe wave counts available and coherent."
+
         return {
             "symbol": symbol,
             "version": self.VERSION,
             "computed_at": computed_at,
+            "status": status,
+            "status_reason": status_reason,
+            "status_message_ar": status_message_ar,
+            "status_message_en": status_message_en,
             "timeframes": tfs,
             "tf_results": tf_results,
             "pairwise_coherence": pairwise,

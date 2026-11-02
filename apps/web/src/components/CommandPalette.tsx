@@ -17,6 +17,11 @@ import {
   Sparkles,
   Briefcase,
   Calendar,
+  GitCompare,
+  Activity,
+  FileCode,
+  History,
+  Info,
 } from 'lucide-react';
 import { useBorsaty } from '@/context/BorsatyContext';
 import { useApp } from '@/context/AppContext';
@@ -302,6 +307,61 @@ export default function CommandPalette() {
                   <span>{isAr ? 'قائمة المتابعة (Watchlist)' : 'Persistent Watchlist'}</span>
                 </div>
                 <kbd className="text-[10px] text-slate-400 font-mono">G + W</kbd>
+              </Command.Item>
+
+              <Command.Item
+                value="compare stocks performance correlation مقارنة الأسهم"
+                onSelect={() => handleNavigate('/compare')}
+                className="flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors aria-selected:bg-emerald-50 dark:aria-selected:bg-emerald-500/10"
+              >
+                <div className="flex items-center gap-3">
+                  <GitCompare className="w-4 h-4 text-violet-500" />
+                  <span>{isAr ? 'مقارنة الأسهم والمؤشرات (Compare)' : 'Compare Assets Terminal'}</span>
+                </div>
+              </Command.Item>
+
+              <Command.Item
+                value="status system health telemetry uptime حالة النظام"
+                onSelect={() => handleNavigate('/status')}
+                className="flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors aria-selected:bg-emerald-50 dark:aria-selected:bg-emerald-500/10"
+              >
+                <div className="flex items-center gap-3">
+                  <Activity className="w-4 h-4 text-emerald-500" />
+                  <span>{isAr ? 'حالة الخوادم والخدمات (System Status)' : 'System Health & Status'}</span>
+                </div>
+              </Command.Item>
+
+              <Command.Item
+                value="docs api developer endpoints documentation التوثيق البرمجي"
+                onSelect={() => handleNavigate('/docs')}
+                className="flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors aria-selected:bg-emerald-50 dark:aria-selected:bg-emerald-500/10"
+              >
+                <div className="flex items-center gap-3">
+                  <FileCode className="w-4 h-4 text-sky-500" />
+                  <span>{isAr ? 'دليل المطورين والـ API (Developer Docs)' : 'Developer API & Docs'}</span>
+                </div>
+              </Command.Item>
+
+              <Command.Item
+                value="changelog release notes version history سجل التحديثات"
+                onSelect={() => handleNavigate('/changelog')}
+                className="flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors aria-selected:bg-emerald-50 dark:aria-selected:bg-emerald-500/10"
+              >
+                <div className="flex items-center gap-3">
+                  <History className="w-4 h-4 text-amber-500" />
+                  <span>{isAr ? 'سجل التحديثات والإصدارات (Changelog)' : 'Release Notes & Changelog'}</span>
+                </div>
+              </Command.Item>
+
+              <Command.Item
+                value="about mission institutional methodology عن المنصة"
+                onSelect={() => handleNavigate('/about')}
+                className="flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors aria-selected:bg-emerald-50 dark:aria-selected:bg-emerald-500/10"
+              >
+                <div className="flex items-center gap-3">
+                  <Info className="w-4 h-4 text-blue-500" />
+                  <span>{isAr ? 'عن بورصتي والرؤية المؤسسية (About)' : 'About Borsaty AI'}</span>
+                </div>
               </Command.Item>
             </Command.Group>
 

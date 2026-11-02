@@ -33,6 +33,7 @@ const PriceChart = dynamic(
 );
 import { DataWrapper } from '@/components/ui/DataWrapper';
 import InfoTooltip from '@/components/ui/InfoTooltip';
+import AnimatedNumber from '@/components/ui/AnimatedNumber';
 import { DecisionCard, DecisionCardProps } from '@/components/DecisionCard';
 import TechnicalStrengthMeter from '@/components/TechnicalStrengthMeter';
 import MultiTimeframeMatrix from '@/components/MultiTimeframeMatrix';
@@ -280,8 +281,8 @@ export default function StockDetailClientV2({
 
         {/* Current Price Banner */}
         <div className="flex items-baseline gap-3">
-          <div className="text-3xl md:text-4xl font-black tabular-nums text-slate-900 dark:text-white">
-            {quote.price.toFixed(2)}
+          <div className="text-3xl md:text-4xl font-black tabular-nums text-slate-900 dark:text-white flex items-baseline">
+            <AnimatedNumber value={quote.price} decimals={2} />
             <span className="text-sm font-bold text-slate-500 ms-1.5">{quote.currency}</span>
           </div>
           <div
@@ -292,9 +293,12 @@ export default function StockDetailClientV2({
             }`}
           >
             {isPositive ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
-            <span className="tabular-nums">
+            <span className="tabular-nums flex items-center">
               {isPositive ? '+' : ''}
-              {quote.change.toFixed(2)} ({quote.changePct.toFixed(2)}%)
+              <AnimatedNumber value={quote.change} decimals={2} />
+              <span className="mx-1">
+                (<AnimatedNumber value={quote.changePct} decimals={2} prefix={isPositive ? '+' : ''} suffix="%" />)
+              </span>
             </span>
           </div>
         </div>

@@ -41,6 +41,7 @@ import { useApp } from '@/context/AppContext';
 import { toast } from 'sonner';
 import AddTransactionModal from './AddTransactionModal';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import AnimatedNumber from '@/components/ui/AnimatedNumber';
 
 interface Holding {
   symbol: string;
@@ -243,7 +244,7 @@ export default function PortfolioDashboard() {
             {isAr ? 'القيمة الإجمالية للمحفظة' : 'Total Portfolio Value'}
           </div>
           <div className="text-2xl md:text-3xl font-black tabular-nums text-slate-900 dark:text-white">
-            ${summary.totalValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            <AnimatedNumber value={summary.totalValue} prefix="$" decimals={2} />
           </div>
           <div className="text-[11px] font-semibold text-slate-400 mt-2">
             {isAr ? `التكلفة الإجمالية: $${summary.totalCost.toLocaleString()}` : `Cost Basis: $${summary.totalCost.toLocaleString()}`}
@@ -267,7 +268,8 @@ export default function PortfolioDashboard() {
           >
             {isProfitable ? <TrendingUp className="w-6 h-6" /> : <TrendingDown className="w-6 h-6" />}
             <span>
-              {isProfitable ? '+' : ''}${summary.totalProfitLoss.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              {isProfitable ? '+' : ''}
+              <AnimatedNumber value={summary.totalProfitLoss} prefix="$" decimals={2} />
             </span>
           </div>
           <div className="text-[11px] font-bold text-slate-400 mt-2">
@@ -290,7 +292,8 @@ export default function PortfolioDashboard() {
               isProfitable ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'
             }`}
           >
-            {isProfitable ? '+' : ''}{summary.totalReturnPct.toFixed(2)}%
+            {isProfitable ? '+' : ''}
+            <AnimatedNumber value={summary.totalReturnPct} decimals={2} suffix="%" />
           </div>
           <div className="text-[11px] font-semibold text-slate-400 mt-2">
             {isAr ? 'عائد مرجح زمني' : 'Money-weighted yield'}

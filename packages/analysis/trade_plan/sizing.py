@@ -8,6 +8,28 @@ from typing import Dict, Any, List, Optional
 import math
 
 
+class KellyRejectionError(ValueError):
+    """Raised when Kelly criterion is rejected due to insufficient closed signals."""
+    def __init__(self, current_count: int = 0, required_count: int = 30, signals_per_week: float = 5.0):
+        self.current_count = current_count
+        self.required_count = required_count
+        remaining = max(0, required_count - current_count)
+        weeks = max(1, math.ceil(remaining / signals_per_week)) if remaining > 0 else 0
+        self.estimated_time_to_threshold = f"{weeks} weeks" if weeks != 1 else "1 week"
+        self.estimated_time_ar = f"{weeks} أسابيع" if weeks > 2 else ("أسبوعين" if weeks == 2 else "أسبوع واحد")
+        self.reason_en = (
+            f"Kelly requires hit rate from SignalStore. Run at least 30 closed signals first. "
+            f"Current count: {current_count}/{required_count}. "
+            f"Estimated time to threshold: ~{self.estimated_time_to_threshold}."
+        )
+        self.reason_ar = (
+            f"يتطلب معيار كيلي نسبة نجاح موثقة من سجل الإشارات (30 إشارة مغلقة على الأقل). "
+            f"العدد الحالي: {current_count}/{required_count}. "
+            f"الوقت التقديري للوصول للعتبة: ~{self.estimated_time_ar}."
+        )
+        super().__init__(self.reason_en)
+
+
 class PositionSizer:
     """
     Multiple sizing methods, user-selectable.
@@ -100,10 +122,9 @@ class PositionSizer:
             }
 
         elif method_lower == "kelly":
-            if win_rate is None or avg_win is None or avg_loss is None:
-                raise ValueError("Kelly requires hit rate from SignalStore. Run at least 30 closed signals first.")
-            if closed_signals_count is not None and closed_signals_count < 30:
-                raise ValueError("Kelly requires hit rate from SignalStore. Run at least 30 closed signals first.")
+            current_cnt = closed_signals_count if closed_signals_count is not None else 0
+            if win_rate is None or avg_win is None or avg_loss is None or current_cnt < 30:
+                raise KellyRejectionError(current_count=current_cnt, required_count=30)
             if avg_win <= 0:
                 raise ValueError("Average win must be greater than zero for Kelly Criterion")
 

@@ -1046,4 +1046,19 @@ def test_position_sizing_none_when_capital_is_none():
     assert "Provide capital" in plan["position_sizing_note_en"]
 
 
+def test_kelly_rejection_error_informative_messages():
+    from trade_plan.sizing import KellyRejectionError
+    sizer = PositionSizer()
+    with pytest.raises(KellyRejectionError) as exc_info:
+        sizer.compute(capital=1000.0, entry=86.0, stop=82.5, method="kelly", win_rate=0.6, avg_win=2.0, avg_loss=1.0, closed_signals_count=12)
+
+    err = exc_info.value
+    assert err.current_count == 12
+    assert err.required_count == 30
+    assert "12/30" in err.reason_en
+    assert "12/30" in err.reason_ar
+    assert err.estimated_time_to_threshold != ""
+
+
+
 

@@ -1,7 +1,7 @@
 {
-  "name": "Borsaty AI — Quantitative Financial Platform",
-  "short_name": "Borsaty AI",
-  "description": "Investing-grade quantitative technical decision engine and multi-asset intelligence platform.",
+  "name": "Borsaty — Financial Markets & Stock Analysis",
+  "short_name": "Borsaty",
+  "description": "Investing-grade quantitative technical decision engine and multi-asset market platform.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0b0f19",

@@ -182,6 +182,8 @@ def extract_classical_proposals(classical_result: Dict[str, Any]) -> List[TradeP
 
     patterns = classical_result.get("patterns", [])
     for p in patterns:
+        if p.get("status") not in [None, "confirmed"]:
+            continue
         pat_name = p.get("pattern", "classical")
         source_engine = f"classical_{pat_name}"
         pat_type = p.get("type", "bullish").lower()
@@ -263,6 +265,10 @@ def extract_structure_proposals(
 
         # Targets: nearest resistance peaks above current price
         resistances = sorted([p for p in peaks if float(p["price"]) > current_price], key=lambda x: float(x["price"]))
+        if not resistances and peaks:
+            highest_peak = max(peaks, key=lambda x: float(x["price"]))
+            resistances = [{"price": float(highest_peak["price"]) + (idx + 1) * 1.5 * atr, "stability_score": highest_peak.get("stability_score", 0.80)} for idx in range(3)]
+
         for idx, r in enumerate(resistances[:3]):
             proposals.append(TradeProposal(
                 engine="structure",
@@ -290,6 +296,10 @@ def extract_structure_proposals(
 
         # Targets: nearest support troughs below current price
         supports = sorted([p for p in troughs if float(p["price"]) < current_price], key=lambda x: float(x["price"]), reverse=True)
+        if not supports and troughs:
+            lowest_trough = min(troughs, key=lambda x: float(x["price"]))
+            supports = [{"price": float(lowest_trough["price"]) - (idx + 1) * 1.5 * atr, "stability_score": lowest_trough.get("stability_score", 0.80)} for idx in range(3)]
+
         for idx, s in enumerate(supports[:3]):
             proposals.append(TradeProposal(
                 engine="structure",
@@ -326,7 +336,7 @@ def extract_fibonacci_proposals(
     swing_low = min(lows)
     swing_range = swing_high - swing_low
 
-    if swing_range <= 0.0001:
+    if swing_range <= 0.0001 or (swing_range / current_price) < 0.015:
         return proposals
 
     if direction == "bullish":
@@ -355,7 +365,7 @@ def extract_fibonacci_proposals(
             method="Swing low - 0.5 ATR buffer",
             score=0.60,
             direction="bullish",
-            reason="Below recent swing low"
+            reason="Below recent swing low (Fibonacci invalidation)"
         ))
     elif direction == "bearish":
         # Extensions below swing low

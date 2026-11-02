@@ -242,17 +242,33 @@ class TradePlanEngine:
             )
             cluster["rank_score"] = round(rank_score, 4)
 
-        # Sort clusters by rank score descending
-        processed_clusters.sort(key=lambda x: x["rank_score"], reverse=True)
-        top_clusters = processed_clusters[:3]
+        # Sort clusters: Confluent clusters (>= 2 methods) prioritized for primary target (Target 1)
+        confluent_clusters = [c for c in processed_clusters if c["method_diversity"] >= 2]
+        confluent_clusters.sort(key=lambda x: x["rank_score"], reverse=True)
 
-        # Order the top clusters outward by distance from current_price
-        if confluence_dir == "bullish":
-            top_clusters.sort(key=lambda x: x["centroid"])
-        elif confluence_dir == "bearish":
-            top_clusters.sort(key=lambda x: x["centroid"], reverse=True)
+        top_clusters = []
+        if confluent_clusters:
+            primary_confluent = confluent_clusters[0]
+            if confluence_dir == "bullish":
+                further_clusters = [c for c in processed_clusters if c["centroid"] > primary_confluent["centroid"]]
+                further_clusters.sort(key=lambda x: x["centroid"])
+            elif confluence_dir == "bearish":
+                further_clusters = [c for c in processed_clusters if c["centroid"] < primary_confluent["centroid"]]
+                further_clusters.sort(key=lambda x: x["centroid"], reverse=True)
+            else:
+                further_clusters = [c for c in processed_clusters if c != primary_confluent]
+                further_clusters.sort(key=lambda x: x["centroid"])
+
+            top_clusters = [primary_confluent] + further_clusters[:2]
         else:
-            top_clusters.sort(key=lambda x: x["centroid"])
+            processed_clusters.sort(key=lambda x: x["rank_score"], reverse=True)
+            top_clusters = processed_clusters[:3]
+            if confluence_dir == "bullish":
+                top_clusters.sort(key=lambda x: x["centroid"])
+            elif confluence_dir == "bearish":
+                top_clusters.sort(key=lambda x: x["centroid"], reverse=True)
+            else:
+                top_clusters.sort(key=lambda x: x["centroid"])
 
         # STEP 4: Primary Stop Selection
         chosen_stop_price = None
@@ -375,7 +391,7 @@ class TradePlanEngine:
         elif not targets_list:
             status = "no_actionable_setup"
             status_reason = "no_targets_found"
-        elif not any(t["method_diversity"] >= 2 for t in targets_list):
+        elif targets_list[0]["method_diversity"] < 2:
             status = "no_actionable_setup"
             status_reason = "insufficient_target_confluence"
         elif r1 < 1.5:

@@ -8,8 +8,10 @@ export default function ServiceWorkerRegister() {
       navigator.serviceWorker
         .register("/sw.js")
         .then((reg) => {
-          // eslint-disable-next-line no-console
-          console.log("[PWA] Service Worker registered with scope:", reg.scope);
+          if (process.env.NODE_ENV !== "production") {
+            // eslint-disable-next-line no-console
+            console.log("[PWA] Service Worker registered with scope:", reg.scope);
+          }
         })
         .catch(() => {
           // Non-blocking

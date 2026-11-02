@@ -3,6 +3,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Plus, DollarSign, Calendar, Hash, ArrowUpRight, ArrowDownRight, Loader2 } from 'lucide-react';
+import confetti from 'canvas-confetti';
+import { toast } from 'sonner';
 import { useApp } from '@/context/AppContext';
 
 interface AddTransactionModalProps {
@@ -86,6 +88,18 @@ export default function AddTransactionModal({
         throw new Error(data.error || 'Failed to save transaction');
       }
 
+      try {
+        confetti({
+          particleCount: 70,
+          spread: 60,
+          origin: { y: 0.7 },
+          colors: ['#00D9FF', '#10B981', '#0A0A0A', '#6366F1'],
+        });
+      } catch {
+        // Confetti fallback
+      }
+
+      toast.success(isAr ? 'تم تسجيل الصفقة بنجاح في المحفظة!' : 'Transaction recorded in portfolio successfully!');
       onSuccess();
       onClose();
     } catch (err: unknown) {
@@ -115,7 +129,7 @@ export default function AddTransactionModal({
           {/* Header */}
           <div className="flex items-center justify-between p-5 border-b border-slate-100 dark:border-slate-800">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-lg bg-black text-white border border-slate-700 flex items-center justify-center">
                 <Plus className="w-4 h-4" />
               </div>
               <h3 className="text-base font-extrabold">
@@ -281,7 +295,7 @@ export default function AddTransactionModal({
               <button
                 type="submit"
                 disabled={loading}
-                className="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black shadow-md shadow-emerald-500/20 flex items-center gap-1.5 transition-all cursor-pointer disabled:opacity-50"
+                className="px-5 py-2 rounded-xl bg-black hover:bg-slate-900 text-white text-xs font-black shadow-sm border border-slate-800 flex items-center gap-1.5 transition-all cursor-pointer disabled:opacity-50"
               >
                 {loading && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
                 <span>{isAr ? 'تسجيل الصفقة' : 'Save Transaction'}</span>

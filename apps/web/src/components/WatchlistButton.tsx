@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuth, useClerk } from "@clerk/nextjs";
 import { Star, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import { useApp } from "@/context/AppContext";
 
 interface WatchlistButtonProps {
@@ -79,6 +80,7 @@ export default function WatchlistButton({
         });
         if (res.ok) {
           setInWatchlist(false);
+          toast.success(isAr ? `تمت إزالة ${sym} من قائمة المتابعة` : `${sym} removed from watchlist`);
         }
       } else {
         // Add
@@ -93,6 +95,7 @@ export default function WatchlistButton({
         });
         if (res.ok) {
           setInWatchlist(true);
+          toast.success(isAr ? `تمت إضافة ${sym} إلى قائمة المتابعة` : `${sym} added to watchlist`);
         }
       }
     } catch {

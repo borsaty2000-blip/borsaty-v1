@@ -18,6 +18,7 @@ import {
   Sparkles,
   User
 } from "lucide-react";
+import { toast } from "sonner";
 import { useApp } from "@/context/AppContext";
 import ErrorBoundary from "@/components/ErrorBoundary";
 
@@ -110,6 +111,7 @@ export default function WatchlistPage() {
       });
       if (res.ok) {
         setItems((prev) => prev.filter((i) => i.symbol !== symbol));
+        toast.success(isAr ? `تمت إزالة ${symbol} من قائمة المتابعة` : `${symbol} removed from watchlist`);
       }
     } catch {
       // Non-blocking
@@ -216,7 +218,7 @@ export default function WatchlistPage() {
               <Link
                 key={sym}
                 href={`/stock/${sym}`}
-                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 hover:border-emerald-500 dark:hover:border-emerald-500 transition-colors shadow-sm"
+                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 hover:border-[#00D9FF] dark:hover:border-[#00D9FF] transition-colors shadow-sm"
               >
                 <span>{sym}</span>
                 <ExternalLink className="w-3 h-3 text-slate-400" />
@@ -245,7 +247,7 @@ export default function WatchlistPage() {
                       <div className="flex items-center gap-2">
                         <Link
                           href={`/stock/${item.symbol}`}
-                          className="text-xl font-black text-slate-900 dark:text-white hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
+                          className="text-xl font-black text-slate-900 dark:text-white hover:text-[#00D9FF] dark:hover:text-[#00D9FF] transition-colors"
                         >
                           {item.symbol}
                         </Link>

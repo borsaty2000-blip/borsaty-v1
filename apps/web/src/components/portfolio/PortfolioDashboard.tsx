@@ -31,6 +31,7 @@ import {
   RefreshCw,
 } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
+import { toast } from 'sonner';
 import AddTransactionModal from './AddTransactionModal';
 import ErrorBoundary from '@/components/ErrorBoundary';
 
@@ -125,6 +126,7 @@ export default function PortfolioDashboard() {
       });
       if (res.ok) {
         await fetchPortfolio();
+        toast.success(isAr ? 'تم حذف العملية وتحديث المحفظة بنجاح' : 'Transaction deleted and portfolio recalculated');
       }
     } catch {
       // ignore
@@ -439,8 +441,25 @@ export default function PortfolioDashboard() {
             </table>
           </div>
         ) : (
-          <div className="py-8 text-center text-slate-400 text-xs font-semibold">
-            {isAr ? 'لا توجد أسهم حالياً في المحفظة. اضغط "إضافة صفقة جديدة" للبدء.' : 'Your portfolio is empty. Click "Add Transaction" to begin tracking.'}
+          <div className="py-12 px-4 rounded-xl border border-dashed border-slate-200 dark:border-slate-800 text-center flex flex-col items-center justify-center">
+            <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800/80 flex items-center justify-center text-slate-400 mb-3">
+              <Briefcase className="w-6 h-6 stroke-[1.5]" />
+            </div>
+            <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200 mb-1">
+              {isAr ? 'محفظتك فارغة حالياً' : 'Your Portfolio is Empty'}
+            </h4>
+            <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mb-4">
+              {isAr
+                ? 'ابدأ بإضافة أول صفقة لتتبع القيمة السوقية، والأرباح والخسائر، وتوزيع الأصول مباشرة.'
+                : 'Add your first transaction to track live profit & loss, market value, and sector allocation.'}
+            </p>
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-black hover:bg-slate-900 text-white text-xs font-bold transition-all shadow-sm border border-slate-800 cursor-pointer"
+            >
+              <Plus className="w-4 h-4" />
+              <span>{isAr ? 'إضافة صفقة الآن' : 'Add First Transaction'}</span>
+            </button>
           </div>
         )}
       </div>

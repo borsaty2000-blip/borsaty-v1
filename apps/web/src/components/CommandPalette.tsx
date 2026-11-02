@@ -50,21 +50,70 @@ export default function CommandPalette() {
 
   const isAr = language === 'ar';
 
-  // Toggle on Ctrl+K / Cmd+K
+  // Global keyboard shortcuts: Ctrl+K / Cmd+K and G+H, G+P, G+W, G+S
   useEffect(() => {
+    let lastKey = '';
+    let lastKeyTime = 0;
+
     const handleKeyDown = (e: KeyboardEvent) => {
+      const activeTag = (document.activeElement?.tagName || '').toLowerCase();
+      const isInput =
+        activeTag === 'input' ||
+        activeTag === 'textarea' ||
+        document.activeElement?.getAttribute('contenteditable') === 'true';
+
       if ((e.key === 'k' || e.key === 'K') && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
         setIsCommandPaletteOpen(!isCommandPaletteOpen);
+        return;
       }
+
       if (e.key === 'Escape' && isCommandPaletteOpen) {
         setIsCommandPaletteOpen(false);
+        return;
+      }
+
+      // Quick Go-To Shortcuts (only when not typing in an input and palette closed)
+      if (!isInput && !isCommandPaletteOpen) {
+        const now = Date.now();
+        const key = e.key.toLowerCase();
+
+        if (lastKey === 'g' && now - lastKeyTime < 1000) {
+          if (key === 'h') {
+            e.preventDefault();
+            router.push('/');
+            lastKey = '';
+            return;
+          } else if (key === 'p') {
+            e.preventDefault();
+            router.push('/portfolio');
+            lastKey = '';
+            return;
+          } else if (key === 'w') {
+            e.preventDefault();
+            router.push('/watchlist');
+            lastKey = '';
+            return;
+          } else if (key === 's') {
+            e.preventDefault();
+            router.push('/screener');
+            lastKey = '';
+            return;
+          }
+        }
+
+        if (key === 'g') {
+          lastKey = 'g';
+          lastKeyTime = now;
+        } else {
+          lastKey = '';
+        }
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isCommandPaletteOpen, setIsCommandPaletteOpen]);
+  }, [isCommandPaletteOpen, setIsCommandPaletteOpen, router]);
 
   if (!isCommandPaletteOpen) return null;
 
@@ -307,9 +356,9 @@ export default function CommandPalette() {
           {/* Footer Bar */}
           <div className="px-4 py-2 bg-slate-50 dark:bg-[#0b1120] border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
             <div className="flex items-center gap-2">
-              <span className="font-bold text-emerald-600">Borsaty</span>
+              <span className="font-bold text-slate-900 dark:text-white">Borsaty</span>
               <span>•</span>
-              <span>Command Palette</span>
+              <span className="hidden sm:inline">Shortcuts: <kbd className="px-1 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-[10px] font-mono">G+H</kbd> Home, <kbd className="px-1 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-[10px] font-mono">G+P</kbd> Portfolio, <kbd className="px-1 py-0.5 rounded bg-slate-200 dark:bg-slate-800 text-[10px] font-mono">G+S</kbd> Screener</span>
             </div>
             <div className="flex items-center gap-3">
               <span>Navigate: ↑↓</span>

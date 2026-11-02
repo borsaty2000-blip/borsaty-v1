@@ -170,11 +170,18 @@ export default function ScreenerPage() {
           onRetry={() => handleSearch()}
           emptyState={
             results !== null && results.length === 0 ? (
-              <div className="p-10 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0b0f19] text-center space-y-2">
-                <AlertCircle className="w-8 h-8 text-slate-400 mx-auto" />
+              <div className="p-10 rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0b0f19] text-center space-y-3">
+                <div className="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400 mx-auto">
+                  <Filter className="w-6 h-6 stroke-[1.5]" />
+                </div>
                 <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200">
                   {t("screener.emptyResults")}
                 </h4>
+                <p className="text-xs text-slate-500 max-w-sm mx-auto leading-relaxed">
+                  {isAr
+                    ? "لم نجد أي أسهم مطابقة لمعايير البحث الحالية. جرّب تخفيف القيود أو استخدام أحد الأمثلة المقترحة بالأعلى."
+                    : "No instruments matched these screening criteria. Try broadening your query or selecting a suggested filter above."}
+                </p>
               </div>
             ) : undefined
           }

@@ -16,6 +16,8 @@ from engines.indicator_engine import global_indicator_engine, IndicatorEngine
 from engines.hspd import global_hspd_engine, HSPDEngine
 from elliott.detector import global_elliott_detector, ElliottDetector
 from elliott.multi_tf import MultiTfElliott
+from harmonic.detector import global_harmonic_detector, HarmonicDetector
+from harmonic.prz import global_prz_calculator, PrzCalculator
 from screener.nlu import global_screener_nlu
 from screener.builder import global_screener_engine
 from datetime import datetime, timezone
@@ -241,6 +243,80 @@ def detect_elliott_endpoint(payload: ElliottDetectRequest):
         candles_used=candles_used
     )
     return res
+
+class HarmonicDetectRequest(BaseModel):
+    symbol: str
+    timeframe: Optional[str] = "1D"
+    candles: Optional[List[Candle]] = None
+    pivots: Optional[List[Dict[str, Any]]] = None
+    min_degree: Optional[int] = 1
+    min_score: Optional[float] = 0.70
+
+@app.post("/harmonic/detect")
+def detect_harmonic_endpoint(payload: HarmonicDetectRequest):
+    sym = payload.symbol.upper()
+    tf = payload.timeframe or "1D"
+    min_d = max(0, min(3, payload.min_degree if payload.min_degree is not None else 1))
+    min_sc = payload.min_score if payload.min_score is not None else 0.70
+
+    pivots_data = payload.pivots
+    raw_candles = [c.model_dump() for c in payload.candles] if payload.candles else None
+
+    if not pivots_data:
+        if not raw_candles:
+            raise HTTPException(status_code=400, detail="Either candles or pivots must be provided")
+        hspd_res = global_hspd_engine.detect(
+            candles=raw_candles,
+            min_degree=min_d,
+            max_degree=3,
+            symbol=sym,
+            timeframe=tf
+        )
+        pivots_data = hspd_res.get("pivots", [])
+
+    res = global_harmonic_detector.detect(
+        symbol=sym,
+        timeframe=tf,
+        pivots=pivots_data,
+        min_degree=min_d,
+        candles=raw_candles,
+    )
+
+    # Filter by min_score if specified
+    if min_sc > 0.0 and res.get("patterns"):
+        res["patterns"] = [p for p in res["patterns"] if p.get("overall_score", 0.0) >= min_sc]
+        if len(res["patterns"]) == 0 and res.get("status") == "available":
+            res["status"] = "unavailable"
+            res["status_reason"] = "below_min_score"
+            res["status_message_ar"] = f"لا توجد نماذج هارمونيك تحقق الحد الأدنى لدرجة التوافق ({min_sc})"
+            res["status_message_en"] = f"No harmonic patterns met the minimum score threshold ({min_sc})"
+
+    return res
+
+class HarmonicPrzRequest(BaseModel):
+    symbol: str
+    points: Dict[str, Dict[str, Any]]
+    pattern_name: str
+    is_bullish: bool
+    atr: Optional[float] = 1.0
+
+@app.post("/harmonic/prz")
+def compute_harmonic_prz_endpoint(payload: HarmonicPrzRequest):
+    prz, reason = global_prz_calculator.compute_prz(
+        points=payload.points,
+        pattern_name=payload.pattern_name.lower(),
+        is_bullish=payload.is_bullish,
+        atr=payload.atr if payload.atr is not None else 1.0
+    )
+    if not prz:
+        raise HTTPException(status_code=400, detail=f"PRZ computation failed: {reason}")
+
+    return {
+        "symbol": payload.symbol.upper(),
+        "pattern": payload.pattern_name.lower(),
+        "is_bullish": payload.is_bullish,
+        "prz": prz
+    }
 
 class ScreenerApiRequest(BaseModel):
     query: str

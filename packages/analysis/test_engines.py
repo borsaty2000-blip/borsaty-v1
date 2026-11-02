@@ -531,5 +531,47 @@ def test_fastapi_elliott_detect_endpoint(sample_candles):
     assert "coherence_score" in mtf_data
     assert "coherence_tier" in mtf_data
 
+def test_fastapi_harmonic_endpoints(sample_candles):
+    from fastapi.testclient import TestClient
+    from main import app
+    client = TestClient(app)
+
+    # 1. Harmonic detect endpoint
+    payload = {
+        "symbol": "COMI",
+        "timeframe": "1D",
+        "min_degree": 0,
+        "candles": sample_candles
+    }
+    resp = client.post("/harmonic/detect", json=payload)
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["symbol"] == "COMI"
+    assert data["status"] in ["available", "unavailable"]
+    assert "patterns" in data
+    assert "data_quality" in data
+
+    # 2. Harmonic PRZ endpoint
+    prz_payload = {
+        "symbol": "COMI",
+        "pattern_name": "gartley",
+        "is_bullish": True,
+        "atr": 1.5,
+        "points": {
+            "X": {"price": 100.0},
+            "A": {"price": 110.0},
+            "B": {"price": 103.82},
+            "C": {"price": 107.66},
+            "D": {"price": 102.14},
+        }
+    }
+    prz_resp = client.post("/harmonic/prz", json=prz_payload)
+    assert prz_resp.status_code == 200
+    prz_data = prz_resp.json()
+    assert prz_data["symbol"] == "COMI"
+    assert "prz" in prz_data
+    assert prz_data["prz"]["low"] < prz_data["prz"]["high"]
+
+
 
 

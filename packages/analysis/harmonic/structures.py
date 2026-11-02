@@ -40,7 +40,7 @@ HARMONIC_PATTERNS: Dict[str, Dict[str, Any]] = {
             "B_vs_XA": {"ideal": 0.786, "tolerance": 0.03},
             "C_vs_AB": {"ideal": 0.618, "tolerance": 0.15},
             "D_vs_XA": {"ideal": 1.27, "tolerance": 0.10, "alt_ideals": [1.618]},   # 1.27 or 1.618
-            "CD_vs_BC": {"ideal": 1.618, "tolerance": 0.20, "alt_ideals": [2.24]},
+            "CD_vs_BC": {"ideal": 1.618, "tolerance": 0.20, "alt_ideals": [2.0, 2.24, 2.618]},
         },
         "prz_projections": ["1.27*XA", "1.618*XA", "2.24*BC"],
         "note": "D extends BEYOND X — key distinguishing feature",

@@ -336,3 +336,65 @@ def test_b_0_50_detected_as_bat_not_gartley():
     assert any(p["pattern"] == "bat" for p in res["patterns"])
     assert not any(p["pattern"] == "gartley" for p in res["patterns"])
 
+
+# ==============================================================================
+# PART F: BUTTERFLY PATTERN TESTS
+# ==============================================================================
+
+def test_perfect_bullish_butterfly_detected_with_high_score():
+    detector = HarmonicDetector()
+    # X=100, A=110, B=102.14 (0.786 XA), C=107.0, D=97.30 (1.27 XA extension beyond X)
+    pivots = [
+        make_pivot(10, 100.0, "trough"),
+        make_pivot(20, 110.0, "peak"),
+        make_pivot(30, 102.14, "trough"),
+        make_pivot(40, 107.0, "peak"),
+        make_pivot(50, 97.30, "trough"),
+    ]
+    res = detector.detect("TEST", "1D", pivots)
+    assert res["status"] == "available"
+    assert len(res["patterns"]) == 1
+    pat = res["patterns"][0]
+    assert pat["pattern"] == "butterfly"
+    assert pat["direction"] == "bullish"
+    assert pat["points"]["D"]["price"] < pat["points"]["X"]["price"]  # D extends beyond X
+    assert pat["overall_score"] >= 0.95
+
+
+def test_perfect_bearish_butterfly_detected_with_high_score():
+    detector = HarmonicDetector()
+    # Inverted: X=110, A=100, B=107.86, C=103.0, D=112.70 (1.27 XA extension beyond X)
+    pivots = [
+        make_pivot(10, 110.0, "peak"),
+        make_pivot(20, 100.0, "trough"),
+        make_pivot(30, 107.86, "peak"),
+        make_pivot(40, 103.0, "trough"),
+        make_pivot(50, 112.70, "peak"),
+    ]
+    res = detector.detect("TEST", "1D", pivots)
+    assert res["status"] == "available"
+    assert len(res["patterns"]) == 1
+    pat = res["patterns"][0]
+    assert pat["pattern"] == "butterfly"
+    assert pat["direction"] == "bearish"
+    assert pat["points"]["D"]["price"] > pat["points"]["X"]["price"]  # D extends beyond X
+    assert pat["overall_score"] >= 0.95
+
+
+def test_butterfly_rejected_if_d_does_not_extend_beyond_x():
+    detector = HarmonicDetector()
+    # D is 101.0 (inside X=100), not extending beyond X
+    pivots = [
+        make_pivot(10, 100.0, "trough"),
+        make_pivot(20, 110.0, "peak"),
+        make_pivot(30, 102.14, "trough"),
+        make_pivot(40, 107.0, "peak"),
+        make_pivot(50, 101.0, "trough"),
+    ]
+    res = detector.detect("TEST", "1D", pivots)
+    assert not any(p["pattern"] == "butterfly" for p in res["patterns"])
+    butterfly_rejs = [r for r in res["rejected_candidates"] if r.get("closest_pattern") == "butterfly"]
+    assert len(butterfly_rejs) >= 1
+    assert "extend beyond point X" in butterfly_rejs[0]["reason"]
+
+

@@ -21,7 +21,7 @@ class HarmonicDetector:
     VERSION = "1.0.0"
 
     # Enabled patterns in phased order
-    ENABLED_PATTERNS = ["gartley", "bat"]
+    ENABLED_PATTERNS = ["gartley", "bat", "butterfly"]
 
     def __init__(self, prz_calculator: Optional[PrzCalculator] = None):
         self.prz_calc = prz_calculator or global_prz_calculator
@@ -128,6 +128,24 @@ class HarmonicDetector:
                         "pivots_indices": [p_x.get("index"), p_a.get("index"), p_b.get("index"), p_c.get("index"), p_d.get("index")],
                         "reason": f"{pattern_name.capitalize()} structural sequence violation: points must stay contained within XA boundaries",
                         "closest_pattern": pattern_name,
+                    }
+
+        elif pattern_name == "butterfly":
+            if is_bullish:
+                # D extends BEYOND X (vd < vx)
+                if not (vx < va and vb < va and vb > vx and vc > vb and vc < va and vd < vx):
+                    return False, None, {
+                        "pivots_indices": [p_x.get("index"), p_a.get("index"), p_b.get("index"), p_c.get("index"), p_d.get("index")],
+                        "reason": "Butterfly structural violation: D must extend beyond point X",
+                        "closest_pattern": "butterfly",
+                    }
+            else:
+                # D extends BEYOND X (vd > vx)
+                if not (vx > va and vb > va and vb < vx and vc < vb and vc > va and vd > vx):
+                    return False, None, {
+                        "pivots_indices": [p_x.get("index"), p_a.get("index"), p_b.get("index"), p_c.get("index"), p_d.get("index")],
+                        "reason": "Butterfly structural violation: D must extend beyond point X",
+                        "closest_pattern": "butterfly",
                     }
 
         # Check all required ratios for the pattern

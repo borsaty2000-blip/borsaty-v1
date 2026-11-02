@@ -22,6 +22,7 @@ import { PriceChart } from '@/components/charts/PriceChart';
 import { DataWrapper } from '@/components/ui/DataWrapper';
 import { DecisionCard, DecisionCardProps } from '@/components/DecisionCard';
 import TechnicalStrengthMeter from '@/components/TechnicalStrengthMeter';
+import MultiTimeframeMatrix from '@/components/MultiTimeframeMatrix';
 import WatchlistButton from '@/components/WatchlistButton';
 import NewsFeed from '@/components/news/NewsFeed';
 import ErrorBoundary from '@/components/ErrorBoundary';
@@ -361,6 +362,11 @@ export default function StockDetailClientV2({
       <div ref={chartSectionRef} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column: Interactive Price Chart & Pattern Visualizer */}
         <div className="lg:col-span-2 space-y-4">
+          {/* Multi-Timeframe Analysis Matrix (Fits above the chart) */}
+          <ErrorBoundary fallbackTitleEn="Timeframe Matrix Error" fallbackTitleAr="تعذر عرض مصفوفة الفترات الزمنية">
+            <MultiTimeframeMatrix symbol={company.symbol} />
+          </ErrorBoundary>
+
           <ErrorBoundary fallbackTitleEn="Chart Display Error" fallbackTitleAr="تعذر عرض الرسم البياني">
             <PriceChart
               candles={candles}

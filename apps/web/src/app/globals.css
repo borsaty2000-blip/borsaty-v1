@@ -12,11 +12,11 @@
   }
 
   .dark {
-    --background: 11 15 25;
+    --background: 11 17 32;
     --foreground: 243 244 246;
-    --surface: 17 24 39;
-    --surface-card: 26 34 52;
-    --surface-border: 35 46 72;
+    --surface: 15 23 42;
+    --surface-card: 22 30 46;
+    --surface-border: 30 41 59;
   }
 
   body {
@@ -27,7 +27,7 @@
   }
 
   .dark body {
-    background-color: #0b0f19;
+    background-color: #0B1120;
     color: #f3f4f6;
   }
 }

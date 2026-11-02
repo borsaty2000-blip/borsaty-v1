@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 import {
   TrendingUp,
   TrendingDown,
@@ -105,7 +106,10 @@ export function DecisionCard({ symbol, currency = 'EGP', decisionData }: Decisio
   };
 
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35, ease: 'easeOut' }}
       className={`w-full rounded-2xl border p-5 md:p-6 transition-all duration-200 shadow-sm ${badgeBg} mb-6`}
     >
       {/* Top Header: Decision & Confidence Gauge */}
@@ -222,6 +226,6 @@ export function DecisionCard({ symbol, currency = 'EGP', decisionData }: Decisio
           {isAr ? decisionData.disclaimer_ar : decisionData.disclaimer_en}
         </p>
       </div>
-    </div>
+    </motion.div>
   );
 }

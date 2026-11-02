@@ -16,6 +16,7 @@ import {
   Workflow,
   Compass,
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { PriceChart } from '@/components/charts/PriceChart';
 import { DataWrapper } from '@/components/ui/DataWrapper';
 import { DecisionCard, DecisionCardProps } from '@/components/DecisionCard';
@@ -331,7 +332,9 @@ export default function StockDetailClientV2({
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-              <button
+              <motion.button
+                whileHover={{ scale: 1.02, y: -2 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => highlightHarmonicPattern('Bullish Gartley')}
                 className="flex items-center justify-between p-3 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-cyan-500/50 hover:bg-cyan-50/30 dark:hover:bg-cyan-500/10 transition-all text-start group cursor-pointer"
               >
@@ -345,9 +348,11 @@ export default function StockDetailClientV2({
                   </div>
                 </div>
                 <Maximize2 className="w-3.5 h-3.5 text-slate-400 group-hover:text-cyan-600 transition-colors" />
-              </button>
+              </motion.button>
 
-              <button
+              <motion.button
+                whileHover={{ scale: 1.02, y: -2 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={highlightElliottWave}
                 className="flex items-center justify-between p-3 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-purple-500/50 hover:bg-purple-50/30 dark:hover:bg-purple-500/10 transition-all text-start group cursor-pointer"
               >
@@ -361,9 +366,11 @@ export default function StockDetailClientV2({
                   </div>
                 </div>
                 <Maximize2 className="w-3.5 h-3.5 text-slate-400 group-hover:text-purple-600 transition-colors" />
-              </button>
+              </motion.button>
 
-              <button
+              <motion.button
+                whileHover={{ scale: 1.02, y: -2 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={highlightTradePlan}
                 className="flex items-center justify-between p-3 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-emerald-500/50 hover:bg-emerald-50/30 dark:hover:bg-emerald-500/10 transition-all text-start group cursor-pointer"
               >
@@ -377,7 +384,7 @@ export default function StockDetailClientV2({
                   </div>
                 </div>
                 <Maximize2 className="w-3.5 h-3.5 text-slate-400 group-hover:text-emerald-600 transition-colors" />
-              </button>
+              </motion.button>
             </div>
           </div>
         </div>
@@ -455,99 +462,115 @@ export default function StockDetailClientV2({
         </div>
       </div>
 
-      {/* 5. Tab Panels Details (Active Tab Content) */}
-      {activeTab === 'tradePlan' && (
-        <div className="p-6 rounded-2xl bg-white dark:bg-[#0b1120] border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-lg font-black text-slate-900 dark:text-white">
-                {isAr ? 'تفاصيل خطة التداول الموحدة' : 'Unified Trade Plan Matrix'}
-              </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
-                {isAr
-                  ? 'محسوبة بدقة عبر محرك التداول الكمي مع تحديد أهداف متعددة ونسب عائد لمخاطرة واضحة.'
-                  : 'Computed via deterministic quantitative trade engine with dynamic multi-target optimization.'}
-              </p>
-            </div>
-            <button
-              onClick={highlightTradePlan}
-              className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
-            >
-              <Target className="w-4 h-4" />
-              <span>{isAr ? 'عرض المستويات على الرسم البياني' : 'Plot All Levels on Chart'}</span>
-            </button>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/40">
-              <div className="text-xs font-bold text-slate-500 mb-1">{isAr ? 'منطقة الدخول' : 'Entry Zone'}</div>
-              <div className="text-xl font-black text-slate-900 dark:text-white tabular-nums">
-                {decisionData?.entry_zone ? `${decisionData.entry_zone[0]} - ${decisionData.entry_zone[1]}` : `${quote.price.toFixed(2)}`}
+      {/* 5. Tab Panels Details (Active Tab Content with Framer Motion) */}
+      <AnimatePresence mode="wait">
+        {activeTab === 'tradePlan' && (
+          <motion.div
+            key="tab-tradePlan"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -12 }}
+            transition={{ duration: 0.25, ease: 'easeOut' }}
+            className="p-6 rounded-2xl bg-white dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 shadow-sm space-y-6"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-black text-slate-900 dark:text-white">
+                  {isAr ? 'تفاصيل خطة التداول الموحدة' : 'Unified Trade Plan Matrix'}
+                </h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  {isAr
+                    ? 'محسوبة بدقة عبر محرك التداول الكمي مع تحديد أهداف متعددة ونسب عائد لمخاطرة واضحة.'
+                    : 'Computed via deterministic quantitative trade engine with dynamic multi-target optimization.'}
+                </p>
               </div>
-              <div className="text-[11px] text-slate-400 mt-2">
-                {isAr ? 'دخول منضبط عند اكتمال التأكيد الفني' : 'Optimal liquidity entry threshold'}
-              </div>
+              <button
+                onClick={highlightTradePlan}
+                className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+              >
+                <Target className="w-4 h-4" />
+                <span>{isAr ? 'عرض المستويات على الرسم البياني' : 'Plot All Levels on Chart'}</span>
+              </button>
             </div>
 
-            <div className="p-4 rounded-xl border border-rose-200 dark:border-rose-900/40 bg-rose-50/30 dark:bg-rose-950/20">
-              <div className="text-xs font-bold text-rose-600 dark:text-rose-400 mb-1 flex items-center gap-1">
-                <AlertTriangle className="w-3.5 h-3.5" />
-                <span>{isAr ? 'وقف الخسارة الحاسم' : 'Strict Stop Loss'}</span>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/40">
+                <div className="text-xs font-bold text-slate-500 mb-1">{isAr ? 'منطقة الدخول' : 'Entry Zone'}</div>
+                <div className="text-xl font-black text-slate-900 dark:text-white tabular-nums">
+                  {decisionData?.entry_zone ? `${decisionData.entry_zone[0]} - ${decisionData.entry_zone[1]}` : `${quote.price.toFixed(2)}`}
+                </div>
+                <div className="text-[11px] text-slate-400 mt-2">
+                  {isAr ? 'دخول منضبط عند اكتمال التأكيد الفني' : 'Optimal liquidity entry threshold'}
+                </div>
               </div>
-              <div className="text-xl font-black text-rose-600 dark:text-rose-400 tabular-nums">
-                {decisionData?.stop_loss || (quote.price * 0.96).toFixed(2)}
+
+              <div className="p-4 rounded-xl border border-rose-200 dark:border-rose-900/40 bg-rose-50/30 dark:bg-rose-950/20">
+                <div className="text-xs font-bold text-rose-600 dark:text-rose-400 mb-1 flex items-center gap-1">
+                  <AlertTriangle className="w-3.5 h-3.5" />
+                  <span>{isAr ? 'وقف الخسارة الحاسم' : 'Strict Stop Loss'}</span>
+                </div>
+                <div className="text-xl font-black text-rose-600 dark:text-rose-400 tabular-nums">
+                  {decisionData?.stop_loss || (quote.price * 0.96).toFixed(2)}
+                </div>
+                <div className="text-[11px] text-slate-400 mt-2">
+                  {isAr ? 'إلغاء النموذج الفني عند كسر هذا المستوى' : 'Invalidation level for technical premise'}
+                </div>
               </div>
-              <div className="text-[11px] text-slate-400 mt-2">
-                {isAr ? 'إلغاء النموذج الفني عند كسر هذا المستوى' : 'Invalidation level for technical premise'}
+
+              <div className="p-4 rounded-xl border border-emerald-200 dark:border-emerald-900/40 bg-emerald-50/30 dark:bg-emerald-950/20">
+                <div className="text-xs font-bold text-emerald-600 dark:text-emerald-400 mb-1 flex items-center gap-1">
+                  <Target className="w-3.5 h-3.5" />
+                  <span>{isAr ? 'الهدف الأولي' : 'Primary Target'}</span>
+                </div>
+                <div className="text-xl font-black text-emerald-600 dark:text-emerald-400 tabular-nums">
+                  {decisionData?.targets?.[0] || (quote.price * 1.05).toFixed(2)}
+                </div>
+                <div className="text-[11px] text-slate-400 mt-2">
+                  {decisionData?.primary_rr ? `R:R ${decisionData.primary_rr}:1` : 'R:R 2.2:1'}
+                </div>
               </div>
             </div>
+          </motion.div>
+        )}
 
-            <div className="p-4 rounded-xl border border-emerald-200 dark:border-emerald-900/40 bg-emerald-50/30 dark:bg-emerald-950/20">
-              <div className="text-xs font-bold text-emerald-600 dark:text-emerald-400 mb-1 flex items-center gap-1">
-                <Target className="w-3.5 h-3.5" />
-                <span>{isAr ? 'الهدف الأولي' : 'Primary Target'}</span>
+        {activeTab === 'narrative' && (
+          <motion.div
+            key="tab-narrative"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -12 }}
+            transition={{ duration: 0.25, ease: 'easeOut' }}
+            className="p-6 rounded-2xl bg-white dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 shadow-sm space-y-6"
+          >
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h3 className="text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
+                  <Compass className="w-5 h-5 text-emerald-600" />
+                  <span>{isAr ? 'السرد التحليلي المؤسسي' : 'Institutional Dual-Authored Narrative'}</span>
+                </h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  {isAr
+                    ? 'سرد متكامل يجمع بين التحليل الفني والكمي وإدارة المخاطر.'
+                    : 'Engineered quantitative synthesis generated across 8 deterministic engines.'}
+                </p>
               </div>
-              <div className="text-xl font-black text-emerald-600 dark:text-emerald-400 tabular-nums">
-                {decisionData?.targets?.[0] || (quote.price * 1.05).toFixed(2)}
-              </div>
-              <div className="text-[11px] text-slate-400 mt-2">
-                {decisionData?.primary_rr ? `R:R ${decisionData.primary_rr}:1` : 'R:R 2.2:1'}
-              </div>
+              <button
+                onClick={() => window.open(`/api/reports/${company.symbol}/download?lang=${language}`, '_blank')}
+                className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-900 text-xs font-bold flex items-center gap-2 shadow-sm transition-colors cursor-pointer"
+              >
+                <FileDown className="w-4 h-4 text-emerald-500" />
+                <span>{isAr ? 'تحميل التقرير الكامل PDF' : 'Download Institutional PDF'}</span>
+              </button>
             </div>
-          </div>
-        </div>
-      )}
 
-      {activeTab === 'narrative' && (
-        <div className="p-6 rounded-2xl bg-white dark:bg-[#0b1120] border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div>
-              <h3 className="text-lg font-black text-slate-900 dark:text-white flex items-center gap-2">
-                <Compass className="w-5 h-5 text-emerald-600" />
-                <span>{isAr ? 'السرد التحليلي المؤسسي' : 'Institutional Dual-Authored Narrative'}</span>
-              </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
-                {isAr
-                  ? 'سرد متكامل يجمع بين التحليل الفني والكمي وإدارة المخاطر.'
-                  : 'Engineered quantitative synthesis generated across 8 deterministic engines.'}
-              </p>
+            <div className="p-5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 leading-relaxed text-sm text-slate-700 dark:text-slate-300 whitespace-pre-line">
+              {isAr
+                ? analysisData?.narrative_ar?.full_text || decisionData?.why_ar?.join('\n') || 'التحليل الفني متوفر مع درجة توافق كمي متقدمة.'
+                : analysisData?.narrative_en?.full_text || decisionData?.why_en?.join('\n') || 'Technical and quantitative analysis is available with validated multi-engine confluence.'}
             </div>
-            <button
-              onClick={() => window.open(`/api/reports/${company.symbol}/download?lang=${language}`, '_blank')}
-              className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-900 text-xs font-bold flex items-center gap-2 shadow-sm transition-colors cursor-pointer"
-            >
-              <FileDown className="w-4 h-4 text-emerald-500" />
-              <span>{isAr ? 'تحميل التقرير الكامل PDF' : 'Download Institutional PDF'}</span>
-            </button>
-          </div>
-
-          <div className="p-5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 leading-relaxed text-sm text-slate-700 dark:text-slate-300 whitespace-pre-line">
-            {isAr
-              ? analysisData?.narrative_ar?.full_text || decisionData?.why_ar?.join('\n') || 'التحليل الفني متوفر مع درجة توافق كمي متقدمة.'
-              : analysisData?.narrative_en?.full_text || decisionData?.why_en?.join('\n') || 'Technical and quantitative analysis is available with validated multi-engine confluence.'}
-          </div>
-        </div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

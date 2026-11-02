@@ -9,7 +9,13 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "#0b0f19",
+        background: "#0B1120",
+        obsidian: {
+          950: "#070b14",
+          900: "#0B1120",
+          800: "#0f172a",
+          700: "#1e293b",
+        },
         surface: "#111827",
         "surface-card": "#1a2234",
         "surface-border": "#232e48",

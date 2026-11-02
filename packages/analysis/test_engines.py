@@ -572,6 +572,22 @@ def test_fastapi_harmonic_endpoints(sample_candles):
     assert "prz" in prz_data
     assert prz_data["prz"]["low"] < prz_data["prz"]["high"]
 
+    # 3. Classical Pattern Detection endpoint
+    classical_payload = {
+        "symbol": "COMI",
+        "timeframe": "1D",
+        "min_degree": 0,
+        "candles": sample_candles
+    }
+    classical_resp = client.post("/classical/detect", json=classical_payload)
+    assert classical_resp.status_code == 200
+    c_data = classical_resp.json()
+    assert c_data["symbol"] == "COMI"
+    assert c_data["status"] in ["available", "unavailable"]
+    assert "patterns" in c_data
+    assert "near_misses" in c_data
+    assert "data_quality" in c_data
+
 
 
 

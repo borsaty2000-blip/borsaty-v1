@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Union
 
 from engines.indicators import calculate_all_indicators
 from engines.gann import calculate_square_of_nine, calculate_gann_angles, calculate_time_cycles
@@ -18,6 +18,7 @@ from elliott.detector import global_elliott_detector, ElliottDetector
 from elliott.multi_tf import MultiTfElliott
 from harmonic.detector import global_harmonic_detector, HarmonicDetector
 from harmonic.prz import global_prz_calculator, PrzCalculator
+from classical.detector import global_classical_detector, ClassicalPatternDetector
 from screener.nlu import global_screener_nlu
 from screener.builder import global_screener_engine
 from datetime import datetime, timezone
@@ -317,6 +318,44 @@ def compute_harmonic_prz_endpoint(payload: HarmonicPrzRequest):
         "is_bullish": payload.is_bullish,
         "prz": prz
     }
+
+class ClassicalDetectRequest(BaseModel):
+    symbol: str
+    timeframe: Optional[str] = "1D"
+    candles: Optional[List[Candle]] = None
+    pivots: Optional[Union[Dict[str, Any], List[Dict[str, Any]]]] = None
+    min_degree: Optional[int] = 1
+    pattern: Optional[str] = None
+    status: Optional[str] = None
+
+@app.post("/classical/detect")
+def detect_classical_endpoint(payload: ClassicalDetectRequest):
+    sym = payload.symbol.upper()
+    tf = payload.timeframe or "1D"
+    min_d = max(0, min(3, payload.min_degree if payload.min_degree is not None else 1))
+
+    pivots_data = payload.pivots
+    raw_candles = [c.model_dump() for c in payload.candles] if payload.candles else None
+
+    if not pivots_data:
+        if not raw_candles:
+            raise HTTPException(status_code=400, detail="Either candles or pivots must be provided")
+        hspd_engine = HSPDEngine()
+        pivots_data = hspd_engine.detect(raw_candles, min_degree=0, max_degree=3)
+
+    res = global_classical_detector.detect(
+        symbol=sym,
+        timeframe=tf,
+        pivots=pivots_data,
+        candles=raw_candles,
+        min_degree=min_d,
+        pattern=payload.pattern,
+    )
+
+    if payload.status:
+        res["patterns"] = [p for p in res["patterns"] if p.get("status") == payload.status]
+
+    return res
 
 class ScreenerApiRequest(BaseModel):
     query: str

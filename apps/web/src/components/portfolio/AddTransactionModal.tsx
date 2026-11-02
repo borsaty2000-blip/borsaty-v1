@@ -9,6 +9,8 @@ interface AddTransactionModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
+  initialSymbol?: string;
+  initialPrice?: number;
 }
 
 const POPULAR_STOCKS = [
@@ -24,14 +26,16 @@ export default function AddTransactionModal({
   isOpen,
   onClose,
   onSuccess,
+  initialSymbol = 'AAPL',
+  initialPrice = 235.0,
 }: AddTransactionModalProps) {
   const { language } = useApp();
   const isAr = language === 'ar';
 
-  const [symbol, setSymbol] = useState('AAPL');
+  const [symbol, setSymbol] = useState(initialSymbol);
   const [type, setType] = useState<'BUY' | 'SELL'>('BUY');
   const [quantity, setQuantity] = useState('10');
-  const [price, setPrice] = useState('235.00');
+  const [price, setPrice] = useState(initialPrice ? initialPrice.toFixed(2) : '235.00');
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

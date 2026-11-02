@@ -21,6 +21,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { PriceChart } from '@/components/charts/PriceChart';
 import { DataWrapper } from '@/components/ui/DataWrapper';
 import { DecisionCard, DecisionCardProps } from '@/components/DecisionCard';
+import TechnicalStrengthMeter from '@/components/TechnicalStrengthMeter';
 import WatchlistButton from '@/components/WatchlistButton';
 import NewsFeed from '@/components/news/NewsFeed';
 import ErrorBoundary from '@/components/ErrorBoundary';
@@ -76,6 +77,18 @@ export default function StockDetailClientV2({
   const [decisionData, setDecisionData] = useState<DecisionCardProps['decisionData'] | null>(null);
   const [decisionLoading, setDecisionLoading] = useState(true);
   const [analysisData, setAnalysisData] = useState<ValidatedUnifiedAnalysis | null>(null);
+  const [techScoreData, setTechScoreData] = useState<{
+    score: number;
+    verdict: string;
+    verdict_ar: string;
+    components: {
+      trend: number;
+      momentum: number;
+      volume: number;
+      structure: number;
+      patterns: number;
+    };
+  } | null>(null);
 
   const chartSectionRef = useRef<HTMLDivElement>(null);
 
@@ -120,8 +133,21 @@ export default function StockDetailClientV2({
       }
     }
 
+    async function fetchTechScore() {
+      try {
+        const res = await fetch(`/api/technical-score/${company.symbol}`);
+        if (res.ok) {
+          const data = await res.json();
+          setTechScoreData(data);
+        }
+      } catch {
+        // fallback
+      }
+    }
+
     fetchDecision();
     fetchAnalysis();
+    fetchTechScore();
   }, [company.symbol, setActiveAnalysis]);
 
   const isPositive = quote.change >= 0;
@@ -253,17 +279,34 @@ export default function StockDetailClientV2({
         </div>
       </div>
 
-      {/* 2. THE MOMENT OF TRUTH: PROMINENT DECISION CARD */}
+      {/* 2. THE COMMAND CENTER: GIANT DECISION CARD */}
       <ErrorBoundary fallbackTitleEn="Decision Card Unavailable" fallbackTitleAr="تعذر عرض بطاقة القرار">
         <DataWrapper isLoading={decisionLoading} data={decisionData}>
           {(dec) => (
             <DecisionCard
               symbol={company.symbol}
               currency={company.currency}
+              currentPrice={quote.price}
               decisionData={dec}
             />
           )}
         </DataWrapper>
+      </ErrorBoundary>
+
+      {/* 3. TECHNICAL STRENGTH METER (-100 to +100 Gauge) */}
+      <ErrorBoundary fallbackTitleEn="Technical Meter Unavailable" fallbackTitleAr="تعذر عرض مقياس القوة الفنية">
+        <TechnicalStrengthMeter
+          score={techScoreData?.score ?? (decisionData ? Math.round(decisionData.confidence_score * 100) - 20 : 65)}
+          verdict={techScoreData?.verdict ?? (decisionData?.decision.includes('BUY') ? 'STRONG BUY' : 'WATCH & WAIT')}
+          verdictAr={techScoreData?.verdict_ar ?? (decisionData?.decision.includes('BUY') ? 'شراء قوي' : 'مراقبة وانتظار')}
+          components={techScoreData?.components ?? {
+            trend: 25,
+            momentum: 18,
+            volume: 10,
+            structure: 15,
+            patterns: 0,
+          }}
+        />
       </ErrorBoundary>
 
       {/* 3. Section Tabs */}

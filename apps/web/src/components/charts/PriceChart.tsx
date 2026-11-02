@@ -9,8 +9,16 @@ import {
   Time,
   ColorType,
   CandlestickSeries,
+  LineSeries,
+  createSeriesMarkers,
+  ISeriesMarkersPluginApi,
+  SeriesMarker,
+  IPriceLine,
+  LineStyle,
 } from 'lightweight-charts';
 import { useApp } from '@/context/AppContext';
+import { useBorsaty } from '@/context/BorsatyContext';
+import { X, Sparkles } from 'lucide-react';
 
 export interface CandleDataPoint {
   time: string | number; // YYYY-MM-DD or unix timestamp
@@ -39,7 +47,12 @@ export function PriceChart({
   const chartContainerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
   const seriesRef = useRef<ISeriesApi<'Candlestick'> | null>(null);
+  const patternSeriesRef = useRef<ISeriesApi<'Line'> | null>(null);
+  const priceLinesRef = useRef<IPriceLine[]>([]);
+  const markersRef = useRef<ISeriesMarkersPluginApi<Time> | null>(null);
+
   const { theme, direction } = useApp();
+  const { activeHighlight, clearHighlight } = useBorsaty();
 
   const isDark = theme === 'dark';
 
@@ -47,7 +60,7 @@ export function PriceChart({
     if (!chartContainerRef.current) return;
 
     // Premium Investing-grade styling for both light and dark
-    const bg = isDark ? '#0b0f19' : '#ffffff';
+    const bg = isDark ? '#0b1120' : '#ffffff';
     const text = isDark ? '#94a3b8' : '#475569';
     const grid = isDark ? '#1e293b' : '#f1f5f9';
     const border = isDark ? '#334155' : '#e2e8f0';
@@ -116,7 +129,6 @@ export function PriceChart({
         if (typeof c.time === 'number') {
           timeVal = c.time as Time;
         } else {
-          // Normalize string to YYYY-MM-DD
           timeVal = String(c.time).slice(0, 10) as Time;
         }
         return {
@@ -164,8 +176,135 @@ export function PriceChart({
     };
   }, [candles, height, isDark, direction]);
 
+  // Handle Dynamic Interactive Highlighting (Harmonics, Elliott, Trade Plan Levels)
+  useEffect(() => {
+    const chart = chartRef.current;
+    const series = seriesRef.current;
+    if (!chart || !series) return;
+
+    // 1. Remove previous price lines
+    priceLinesRef.current.forEach((pl) => {
+      try {
+        series.removePriceLine(pl);
+      } catch {
+        // ignore
+      }
+    });
+    priceLinesRef.current = [];
+
+    // 2. Remove previous pattern line series
+    if (patternSeriesRef.current) {
+      try {
+        chart.removeSeries(patternSeriesRef.current);
+      } catch {
+        // ignore
+      }
+      patternSeriesRef.current = null;
+    }
+
+    // 3. Clear previous markers
+    if (markersRef.current) {
+      try {
+        markersRef.current.setMarkers([]);
+      } catch {
+        // ignore
+      }
+      markersRef.current = null;
+    }
+
+    if (!activeHighlight) return;
+
+    // A. Draw Price Lines (Entry, SL, Targets)
+    if (activeHighlight.priceLevels) {
+      const { entry, stopLoss, targets } = activeHighlight.priceLevels;
+
+      if (entry && entry.length > 0) {
+        entry.forEach((lvl, idx) => {
+          const pl = series.createPriceLine({
+            price: lvl,
+            color: '#06b6d4',
+            lineWidth: 2,
+            lineStyle: LineStyle.Dashed,
+            axisLabelVisible: true,
+            title: entry.length > 1 ? `Entry ${idx + 1}` : 'Entry',
+          });
+          priceLinesRef.current.push(pl);
+        });
+      }
+
+      if (stopLoss) {
+        const pl = series.createPriceLine({
+          price: stopLoss,
+          color: '#ef4444',
+          lineWidth: 2,
+          lineStyle: LineStyle.Dashed,
+          axisLabelVisible: true,
+          title: 'Stop Loss',
+        });
+        priceLinesRef.current.push(pl);
+      }
+
+      if (targets && targets.length > 0) {
+        targets.forEach((tgt, idx) => {
+          const pl = series.createPriceLine({
+            price: tgt,
+            color: '#10b981',
+            lineWidth: 2,
+            lineStyle: LineStyle.Dashed,
+            axisLabelVisible: true,
+            title: `Target ${idx + 1}`,
+          });
+          priceLinesRef.current.push(pl);
+        });
+      }
+    }
+
+    // B. Draw Pattern Line Series & Markers (X-A-B-C-D or 1-2-3-4-5)
+    if (activeHighlight.points && activeHighlight.points.length > 0) {
+      const sortedPoints = [...activeHighlight.points]
+        .map((p) => ({
+          time: (typeof p.time === 'number' ? p.time : String(p.time).slice(0, 10)) as Time,
+          value: p.price,
+          label: p.label,
+          color: p.color || '#06b6d4',
+        }))
+        .sort((a, b) => (a.time > b.time ? 1 : -1));
+
+      // Connecting pattern line
+      if (sortedPoints.length >= 2) {
+        const patternLineSeries = chart.addSeries(LineSeries, {
+          color: activeHighlight.type === 'elliott' ? '#8b5cf6' : '#06b6d4',
+          lineWidth: 2,
+          lineStyle: LineStyle.Solid,
+          priceLineVisible: false,
+          lastValueVisible: false,
+          priceScaleId: direction === 'rtl' ? 'left' : 'right',
+        });
+        patternLineSeries.setData(sortedPoints.map((p) => ({ time: p.time, value: p.value })));
+        patternSeriesRef.current = patternLineSeries;
+      }
+
+      // Markers on candles
+      const markerItems: SeriesMarker<Time>[] = sortedPoints.map((p) => ({
+        time: p.time,
+        position: 'aboveBar' as const,
+        color: p.color || '#06b6d4',
+        shape: 'circle' as const,
+        text: p.label,
+        size: 2,
+      }));
+
+      try {
+        const primitive = createSeriesMarkers(series, markerItems);
+        markersRef.current = primitive;
+      } catch {
+        // fallback if markers primitive encounters time sync issue
+      }
+    }
+  }, [activeHighlight, direction]);
+
   return (
-    <div className="relative w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0b0f19] p-3 shadow-sm transition-colors duration-200">
+    <div className="relative w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0b1120] p-3 shadow-sm transition-colors duration-200">
       {/* Top chart details bar */}
       <div className="flex items-center justify-between pb-3 mb-2 border-b border-slate-100 dark:border-slate-800/80 text-xs font-semibold text-slate-600 dark:text-slate-300">
         <div className="flex items-center gap-2">
@@ -181,6 +320,26 @@ export function PriceChart({
           <span>1D Interactive Candle</span>
         </div>
       </div>
+
+      {/* Floating Active Pattern / Level Highlight Banner */}
+      {activeHighlight && (
+        <div className="absolute top-14 start-6 z-20 flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900/95 dark:bg-slate-800/95 text-white text-xs font-semibold backdrop-blur shadow-lg border border-cyan-500/40">
+          <Sparkles className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
+          <span>
+            {activeHighlight.type === 'harmonic' && 'Harmonic: '}
+            {activeHighlight.type === 'elliott' && 'Elliott: '}
+            {activeHighlight.type === 'trade_plan' && 'Trade Plan: '}
+            {activeHighlight.name}
+          </span>
+          <button
+            onClick={clearHighlight}
+            className="ms-2 p-1 rounded-md hover:bg-slate-700/80 text-slate-300 hover:text-white transition-colors"
+            title="Clear highlight"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      )}
 
       {/* Chart Canvas */}
       <div ref={chartContainerRef} className="w-full" style={{ height }} />

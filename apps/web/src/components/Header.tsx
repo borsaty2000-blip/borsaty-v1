@@ -19,12 +19,14 @@ import {
 import AuthButton from "@/components/AuthButton";
 import { resolveStockAlias } from "@borsaty/shared";
 import { useApp } from "@/context/AppContext";
+import { useBorsaty } from "@/context/BorsatyContext";
 
 export default function Header() {
   const [searchQuery, setSearchQuery] = useState("");
   const [langMenuOpen, setLangMenuOpen] = useState(false);
   const router = useRouter();
   const { language, setLanguage, theme, toggleTheme, t } = useApp();
+  const { setIsCommandPaletteOpen } = useBorsaty();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -132,19 +134,24 @@ export default function Header() {
           </nav>
         </div>
 
-        {/* Search Bar */}
-        <form onSubmit={handleSearch} className="flex-1 max-w-sm sm:max-w-md relative">
+        {/* Search Bar with Command Palette trigger */}
+        <div
+          onClick={() => setIsCommandPaletteOpen(true)}
+          className="flex-1 max-w-sm sm:max-w-md relative cursor-pointer"
+        >
           <div className="relative">
             <input
               type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              readOnly
               placeholder={t("common.searchPlaceholder")}
-              className="w-full h-10 px-4 ps-10 bg-slate-50 dark:bg-slate-900/90 border border-slate-300 dark:border-slate-700 rounded-lg text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all shadow-inner"
+              className="w-full h-10 px-4 ps-10 pe-14 bg-slate-50 dark:bg-slate-900/90 border border-slate-300 dark:border-slate-700 rounded-lg text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none cursor-pointer shadow-inner hover:border-emerald-500/50 transition-colors"
             />
             <Search className="w-4 h-4 text-slate-400 absolute start-3.5 top-3 pointer-events-none" />
+            <kbd className="hidden sm:inline-flex items-center gap-0.5 px-2 py-0.5 text-[10px] font-mono font-bold text-slate-400 bg-slate-200/80 dark:bg-slate-800 rounded absolute end-2.5 top-2.5 border border-slate-300 dark:border-slate-700 pointer-events-none">
+              ⌘K
+            </kbd>
           </div>
-        </form>
+        </div>
 
         {/* Action Controls: Language & Theme Toggles */}
         <div className="flex items-center gap-2">

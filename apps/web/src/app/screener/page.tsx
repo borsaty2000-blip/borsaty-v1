@@ -1,19 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import {
   Search,
-  Filter,
+  SlidersHorizontal,
   Sparkles,
-  TrendingUp,
-  TrendingDown,
-  AlertCircle,
-  Clock,
   ArrowUpRight,
   ShieldCheck,
   CheckCircle2,
+  AlertCircle,
+  HelpCircle,
+  Clock,
+  Filter,
 } from "lucide-react";
+import { useApp } from "@/context/AppContext";
+import { DataWrapper } from "@/components/ui/DataWrapper";
 
 interface ScreenerResult {
   symbol: string;
@@ -33,6 +35,9 @@ interface ScreenerResult {
 }
 
 export default function ScreenerPage() {
+  const { language, t } = useApp();
+  const isAr = language === "ar";
+
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -40,324 +45,225 @@ export default function ScreenerPage() {
   const [explanation, setExplanation] = useState<string | null>(null);
   const [interpretedDsl, setInterpretedDsl] = useState<any | null>(null);
   const [executionMs, setExecutionMs] = useState<number | null>(null);
-  const [dataQuality, setDataQuality] = useState<{
-    stale_instruments_excluded: number;
-    insufficient_history_excluded: number;
-  } | null>(null);
 
   const sampleChips = [
     "الأسهم السعودية في القطاع البنكي",
     "أسهم مصرية بـ RSI تحت 30",
     "كريبتو بحجم تداول مرتفع",
     "أسهم فوق SMA200 وتحت SMA50",
-    "أسهم مصرية مع Supertrend صاعد",
-    "أسهم بمكرر ربحية أقل من 15",
   ];
 
-  const handleRunSearch = async (searchQuery: string) => {
-    if (!searchQuery.trim()) return;
+  const handleSearch = async (overrideQuery?: string) => {
+    const q = overrideQuery || query;
+    if (!q.trim()) return;
+
     setLoading(true);
     setError(null);
     setResults(null);
     setExplanation(null);
+    setInterpretedDsl(null);
 
     try {
       const res = await fetch("/api/screener/query", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query: searchQuery }),
+        body: JSON.stringify({ query: q }),
       });
 
-      const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || "فشل معالجة استعلام التصفية");
+        throw new Error("فشل تنفيذ الاستعلام، يرجى المحاولة مرة أخرى");
       }
 
+      const data = await res.json();
       setResults(data.results || []);
-      setExplanation(data.interpreted_ar || null);
-      setInterpretedDsl(data.interpreted || null);
+      setExplanation(data.explanation || null);
+      setInterpretedDsl(data.interpreted_dsl || null);
       setExecutionMs(data.execution_ms || null);
-      setDataQuality(data.data_quality || null);
     } catch (err: any) {
-      setError(err.message || "حدث خطأ غير متوقع");
+      setError(err.message || t("errors.fetchFailed"));
     } finally {
       setLoading(false);
     }
   };
 
-  const handleChipClick = (chipText: string) => {
-    setQuery(chipText);
-    handleRunSearch(chipText);
-  };
-
   return (
-    <div className="space-y-6 pb-12">
-      {/* Title & Badge */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#1f293d] pb-6">
-        <div>
-          <div className="flex items-center gap-2 mb-2">
-            <span className="px-2.5 py-1 rounded-md text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5" />
-              مصفاة الذكاء الاصطناعي الحتمية
-            </span>
-            <span className="text-xs text-gray-400">DSL Engine v1.0 • 21 مؤشر فني</span>
+    <div className="w-full space-y-8 pb-12">
+      {/* 1. Screener Header Banner */}
+      <div className="p-8 md:p-10 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0b0f19] shadow-sm">
+        <div className="max-w-3xl space-y-3">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-50 dark:bg-cyan-500/10 border border-cyan-200 dark:border-cyan-500/20 text-cyan-700 dark:text-cyan-400 text-xs font-bold">
+            <SlidersHorizontal className="w-3.5 h-3.5" />
+            <span>NLU Natural Language Quantitative Screener</span>
           </div>
-          <h1 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight">
-            مصفاة الأسهم باللغة العربية (AI Market Screener)
+          <h1 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
+            {t("screener.title")}
           </h1>
-          <p className="text-sm text-gray-400 mt-1 max-w-3xl">
-            اكتب طلبك باللغة العربية الفصحى أو العامية الدارجة لتحويله تلقائياً إلى شروط رقمية حتمية ومصفاة دقيقة عبر 5,000+ أصل مالي دون أي هلوسة.
+          <p className="text-sm md:text-base text-slate-600 dark:text-slate-300 font-medium">
+            {t("screener.subtitle")}
           </p>
-        </div>
-      </div>
 
-      {/* Query Input Box */}
-      <div className="bg-[#121929] border border-[#1f293d] rounded-2xl p-5 shadow-xl space-y-4">
-        <label className="block text-sm font-semibold text-gray-200">
-          استعلام التصفية بالعربية:
-        </label>
-        <div className="relative">
-          <textarea
-            rows={3}
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="مثال: أسهم مصرية بـ RSI أقل من 30 وسعرها فوق متوسط 200..."
-            className="w-full bg-[#0d1320] border border-[#232e48] rounded-xl p-3.5 text-sm text-gray-100 placeholder-gray-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-all resize-none font-arabic"
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                handleRunSearch(query);
-              }
+          {/* Large Search Input */}
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSearch();
             }}
-          />
-        </div>
-
-        {/* Suggestion Chips */}
-        <div className="space-y-2">
-          <span className="text-xs text-gray-400 flex items-center gap-1">
-            <Filter className="w-3 h-3 text-emerald-400" />
-            نماذج جاهزة وسريعة للاختبار:
-          </span>
-          <div className="flex flex-wrap gap-2">
-            {sampleChips.map((chip, idx) => (
-              <button
-                key={idx}
-                type="button"
-                onClick={() => handleChipClick(chip)}
-                className="text-xs px-3 py-1.5 rounded-lg bg-[#182338] hover:bg-emerald-500/10 hover:text-emerald-400 border border-[#23314d] hover:border-emerald-500/30 text-gray-300 transition-all cursor-pointer"
-              >
-                {chip}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Action Button */}
-        <div className="flex items-center justify-between pt-2">
-          <div className="text-xs text-gray-400 flex items-center gap-1.5">
-            <ShieldCheck className="w-4 h-4 text-emerald-400" />
-            <span>حماية كاملة ضد حقن الأوامر (Strict Allowlist DSL)</span>
-          </div>
-          <button
-            type="button"
-            disabled={loading || !query.trim()}
-            onClick={() => handleRunSearch(query)}
-            className="px-6 py-2.5 rounded-xl bg-gradient-to-l from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 disabled:opacity-50 text-white font-medium text-sm shadow-lg shadow-emerald-500/20 flex items-center gap-2 transition-all cursor-pointer"
+            className="pt-3"
           >
-            {loading ? (
-              <>
-                <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-                <span>جاري التحليل والتصفية...</span>
-              </>
-            ) : (
-              <>
-                <Search className="w-4 h-4" />
-                <span>تنفيذ التصفية</span>
-              </>
-            )}
-          </button>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <div className="relative flex-1">
+                <input
+                  type="text"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder={t("screener.inputPlaceholder")}
+                  className="w-full h-13 px-4 ps-11 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-sm md:text-base text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all shadow-inner font-medium"
+                />
+                <Search className="w-5 h-5 text-slate-400 absolute start-3.5 top-4 pointer-events-none" />
+              </div>
+              <button
+                type="submit"
+                disabled={loading}
+                className="h-13 px-6 rounded-xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 font-bold text-sm shadow-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2 cursor-pointer shrink-0"
+              >
+                <Sparkles className="w-4 h-4 text-cyan-400" />
+                <span>{loading ? t("common.loading") : t("screener.searchBtn")}</span>
+              </button>
+            </div>
+          </form>
+
+          {/* Example Quick Chips */}
+          <div className="pt-2">
+            <span className="text-xs font-bold text-slate-400 me-2 block sm:inline mb-1.5 sm:mb-0">
+              {isAr ? "أمثلة شائعة:" : "Quick Examples:"}
+            </span>
+            <div className="inline-flex flex-wrap gap-2">
+              {sampleChips.map((chip, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => {
+                    setQuery(chip);
+                    handleSearch(chip);
+                  }}
+                  className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-cyan-50 hover:text-cyan-700 dark:hover:bg-cyan-500/10 dark:hover:text-cyan-400 border border-slate-200 dark:border-slate-700 transition-colors cursor-pointer"
+                >
+                  {chip}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Error Banner */}
-      {error && (
-        <div className="p-4 rounded-xl bg-red-950/40 border border-red-500/30 text-red-200 text-sm flex items-start gap-3">
-          <AlertCircle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
-          <div>
-            <div className="font-semibold text-red-300">تعذر استكمال التصفية</div>
-            <div className="text-xs mt-1 text-red-200/90">{error}</div>
-          </div>
-        </div>
-      )}
-
-      {/* Explanation Banner */}
-      {explanation && (
-        <div className="p-4 rounded-xl bg-emerald-950/30 border border-emerald-500/30 text-emerald-100 text-sm flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-lg">
-          <div className="flex items-center gap-3">
-            <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
-            <div>
-              <span className="font-semibold text-emerald-300">{explanation}</span>
-              {interpretedDsl && (
-                <div className="text-xs text-emerald-400/80 mt-1 font-mono">
-                  السوق: {interpretedDsl.universe} • شروط التصفية: {interpretedDsl.conditions?.length || 0}
+      {/* 2. Results Section with DataWrapper */}
+      <DataWrapper
+        isLoading={loading}
+        error={error}
+        data={results}
+        onRetry={() => handleSearch()}
+        emptyState={
+          results !== null && results.length === 0 ? (
+            <div className="p-10 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0b0f19] text-center space-y-2">
+              <AlertCircle className="w-8 h-8 text-slate-400 mx-auto" />
+              <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200">
+                {t("screener.emptyResults")}
+              </h4>
+            </div>
+          ) : undefined
+        }
+      >
+        {(stkList) => (
+          <div className="space-y-4">
+            {/* Interpreted Explanation Box */}
+            {explanation && (
+              <div className="p-4 rounded-xl border border-cyan-200 dark:border-cyan-900/50 bg-cyan-50/50 dark:bg-cyan-950/20 text-cyan-900 dark:text-cyan-300 flex items-center justify-between text-xs font-semibold">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
+                  <span>
+                    {t("screener.interpretedAs")} <b>{explanation}</b>
+                  </span>
                 </div>
-              )}
+                {executionMs && (
+                  <span className="text-slate-400 font-mono text-[11px] tabular-nums">
+                    {executionMs}ms
+                  </span>
+                )}
+              </div>
+            )}
+
+            {/* Results Table */}
+            <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0b0f19] overflow-hidden shadow-sm">
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs text-start">
+                  <thead className="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 font-bold text-slate-600 dark:text-slate-400">
+                    <tr>
+                      <th className="py-3 px-4 text-start">{t("screener.symbol")}</th>
+                      <th className="py-3 px-4 text-start">{t("screener.company")}</th>
+                      <th className="py-3 px-4 text-start">{t("screener.market")}</th>
+                      <th className="py-3 px-4 text-end">{t("screener.price")}</th>
+                      <th className="py-3 px-4 text-end">{t("screener.change")}</th>
+                      <th className="py-3 px-4 text-end">RSI (14)</th>
+                      <th className="py-3 px-4 text-end">SMA (200)</th>
+                      <th className="py-3 px-4 text-center">{t("screener.action")}</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 font-medium">
+                    {stkList.map((stk) => {
+                      const pos = (stk.close_change_pct_1d || 0) >= 0;
+                      return (
+                        <tr
+                          key={stk.symbol}
+                          className="hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-colors"
+                        >
+                          <td className="py-3 px-4 font-black text-slate-900 dark:text-white">
+                            {stk.symbol}
+                          </td>
+                          <td className="py-3 px-4 text-slate-700 dark:text-slate-300 font-semibold">
+                            {isAr ? stk.nameAr : stk.nameEn}
+                          </td>
+                          <td className="py-3 px-4">
+                            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
+                              {stk.market}
+                            </span>
+                          </td>
+                          <td className="py-3 px-4 text-end font-bold tabular-nums text-slate-900 dark:text-white">
+                            {stk.close.toFixed(2)}
+                          </td>
+                          <td
+                            className={`py-3 px-4 text-end font-bold tabular-nums ${
+                              pos
+                                ? "text-emerald-600 dark:text-emerald-400"
+                                : "text-rose-600 dark:text-rose-400"
+                            }`}
+                          >
+                            {pos ? "+" : ""}
+                            {(stk.close_change_pct_1d || 0).toFixed(2)}%
+                          </td>
+                          <td className="py-3 px-4 text-end tabular-nums font-mono">
+                            {stk.RSI_14 ? stk.RSI_14.toFixed(1) : "—"}
+                          </td>
+                          <td className="py-3 px-4 text-end tabular-nums font-mono">
+                            {stk.SMA_200 ? stk.SMA_200.toFixed(2) : "—"}
+                          </td>
+                          <td className="py-3 px-4 text-center">
+                            <Link
+                              href={`/stock/${stk.symbol}`}
+                              className="inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 font-bold hover:bg-emerald-100 dark:hover:bg-emerald-500/20 transition-colors"
+                            >
+                              <span>{isAr ? "تحليل" : "Analyze"}</span>
+                              <ArrowUpRight className="w-3 h-3" />
+                            </Link>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
-          {executionMs !== null && (
-            <div className="flex items-center gap-2 text-xs text-gray-400 bg-[#0e1424] px-3 py-1.5 rounded-lg border border-[#232e48]">
-              <Clock className="w-3.5 h-3.5 text-gray-400" />
-              <span>زمن التنفيذ: {executionMs}ms</span>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Data Quality Notice */}
-      {dataQuality && (dataQuality.stale_instruments_excluded > 0 || dataQuality.insufficient_history_excluded > 0) && (
-        <div className="text-xs bg-[#161f33] text-gray-300 px-4 py-2.5 rounded-lg border border-[#232e48] flex items-center gap-4">
-          <span className="text-amber-400 font-medium">معايير جودة البيانات:</span>
-          <span>استبعاد أصول قديمة: {dataQuality.stale_instruments_excluded}</span>
-          <span>استبعاد بيانات غير كافية (&lt;200 بار): {dataQuality.insufficient_history_excluded}</span>
-        </div>
-      )}
-
-      {/* Results Section */}
-      {results && (
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <h2 className="text-base font-semibold text-gray-200 flex items-center gap-2">
-              نتائج التصفية
-              <span className="text-xs font-normal text-gray-400 bg-[#161f33] px-2.5 py-0.5 rounded-full border border-[#232e48]">
-                {results.length} أصل مالي متطابق
-              </span>
-            </h2>
-          </div>
-
-          {results.length === 0 ? (
-            <div className="text-center py-12 bg-[#121929] rounded-2xl border border-[#1f293d] space-y-2">
-              <Filter className="w-8 h-8 text-gray-500 mx-auto" />
-              <div className="text-gray-300 font-medium">لا توجد أصول تطابق هذه الشروط حالياً</div>
-              <div className="text-xs text-gray-500">جرب تخفيف الشروط أو فحص سوق آخر</div>
-            </div>
-          ) : (
-            <div className="overflow-x-auto rounded-xl border border-[#1f293d] bg-[#121929] shadow-lg">
-              <table className="w-full text-sm text-right">
-                <thead className="bg-[#161f33] text-gray-400 text-xs uppercase font-medium border-b border-[#232e48]">
-                  <tr>
-                    <th className="py-3 px-4">الأصل المالي</th>
-                    <th className="py-3 px-4">السوق / القطاع</th>
-                    <th className="py-3 px-4">السعر</th>
-                    <th className="py-3 px-4">التغير اليومي</th>
-                    <th className="py-3 px-4">RSI (14)</th>
-                    <th className="py-3 px-4">متوسط 200 (SMA)</th>
-                    <th className="py-3 px-4">Supertrend</th>
-                    <th className="py-3 px-4 text-center">الرسم والتحليل</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[#1c263c] text-gray-200">
-                  {results.map((row) => {
-                    const isPositive = (row.close_change_pct_1d ?? 0) >= 0;
-                    return (
-                      <tr
-                        key={row.symbol}
-                        className="hover:bg-[#182238] transition-colors group"
-                      >
-                        <td className="py-3.5 px-4 font-medium">
-                          <Link
-                            href={`/stock/${row.symbol}`}
-                            className="flex flex-col group-hover:text-emerald-400 transition-colors"
-                          >
-                            <span className="font-bold text-white text-base flex items-center gap-1.5">
-                              {row.symbol}
-                              <ArrowUpRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-emerald-400" />
-                            </span>
-                            <span className="text-xs text-gray-400">{row.nameAr}</span>
-                          </Link>
-                        </td>
-                        <td className="py-3.5 px-4 text-xs">
-                          <span className="px-2 py-0.5 rounded bg-[#1c263c] text-gray-300 border border-[#2b3956] inline-block mb-1">
-                            {row.market}
-                          </span>
-                          <div className="text-gray-400">{row.sector || "—"}</div>
-                        </td>
-                        <td className="py-3.5 px-4 font-mono font-semibold text-white">
-                          {row.close ? row.close.toFixed(2) : "—"}
-                        </td>
-                        <td className="py-3.5 px-4">
-                          {row.close_change_pct_1d !== undefined ? (
-                            <span
-                              className={`inline-flex items-center gap-1 font-mono text-xs font-semibold px-2 py-0.5 rounded ${
-                                isPositive
-                                  ? "text-emerald-400 bg-emerald-500/10"
-                                  : "text-red-400 bg-red-500/10"
-                              }`}
-                            >
-                              {isPositive ? (
-                                <TrendingUp className="w-3 h-3" />
-                              ) : (
-                                <TrendingDown className="w-3 h-3" />
-                              )}
-                              {isPositive ? "+" : ""}
-                              {row.close_change_pct_1d.toFixed(2)}%
-                            </span>
-                          ) : (
-                            "—"
-                          )}
-                        </td>
-                        <td className="py-3.5 px-4 font-mono text-xs">
-                          {row.RSI_14 !== undefined ? (
-                            <span
-                              className={`px-2 py-0.5 rounded ${
-                                row.RSI_14 < 30
-                                  ? "text-emerald-400 bg-emerald-500/10 font-bold"
-                                  : row.RSI_14 > 70
-                                  ? "text-red-400 bg-red-500/10 font-bold"
-                                  : "text-gray-300"
-                              }`}
-                            >
-                              {row.RSI_14.toFixed(1)}
-                            </span>
-                          ) : (
-                            "—"
-                          )}
-                        </td>
-                        <td className="py-3.5 px-4 font-mono text-xs text-gray-300">
-                          {row.SMA_200 !== undefined ? row.SMA_200.toFixed(2) : "—"}
-                        </td>
-                        <td className="py-3.5 px-4 text-xs">
-                          {row.Supertrend ? (
-                            <span
-                              className={`px-2 py-0.5 rounded text-[11px] font-semibold ${
-                                row.Supertrend === "BULLISH"
-                                  ? "text-emerald-400 bg-emerald-500/10 border border-emerald-500/20"
-                                  : "text-red-400 bg-red-500/10 border border-red-500/20"
-                              }`}
-                            >
-                              {row.Supertrend === "BULLISH" ? "صاعد (Bullish)" : "هابط (Bearish)"}
-                            </span>
-                          ) : (
-                            "—"
-                          )}
-                        </td>
-                        <td className="py-3.5 px-4 text-center">
-                          <Link
-                            href={`/stock/${row.symbol}`}
-                            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[#1a2337] hover:bg-emerald-500/20 text-gray-300 hover:text-emerald-400 border border-[#232e48] hover:border-emerald-500/30 text-xs transition-colors"
-                          >
-                            <span>فتح التحليل</span>
-                            <ArrowUpRight className="w-3.5 h-3.5" />
-                          </Link>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
-      )}
+        )}
+      </DataWrapper>
     </div>
   );
 }

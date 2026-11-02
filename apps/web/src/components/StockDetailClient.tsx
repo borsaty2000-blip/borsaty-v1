@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import CandlestickChart from "@/components/CandlestickChart";
 import ExplainabilityPanel from "@/components/ExplainabilityPanel";
 import AskAIDialog from "@/components/AskAIDialog";
+import WatchlistButton from "@/components/WatchlistButton";
 import {
   TrendingUp,
   TrendingDown,
@@ -43,6 +44,11 @@ export default function StockDetailClient({
             <span className="text-xs px-2 py-0.5 rounded-full font-bold bg-[#1d263b] text-gray-300 border border-[#2d3a54]">
               {quote.market}
             </span>
+            <WatchlistButton
+              symbol={symbol}
+              nameAr={quote.nameAr}
+              nameEn={quote.nameEn}
+            />
             <span className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
               لحظي مباشر

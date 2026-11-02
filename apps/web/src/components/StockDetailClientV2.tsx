@@ -16,6 +16,7 @@ import {
 import { PriceChart } from '@/components/charts/PriceChart';
 import { DataWrapper } from '@/components/ui/DataWrapper';
 import { DecisionCard } from '@/components/DecisionCard';
+import WatchlistButton from '@/components/WatchlistButton';
 import { useApp } from '@/context/AppContext';
 
 interface StockDetailClientProps {
@@ -86,6 +87,11 @@ export default function StockDetailClientV2({
             <span className="px-2 py-0.5 rounded-md text-xs font-bold uppercase bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
               {company.market}
             </span>
+            <WatchlistButton
+              symbol={company.symbol}
+              nameEn={company.nameEn}
+              nameAr={company.nameAr}
+            />
           </div>
           <div className="flex items-center gap-2 text-xs font-medium text-slate-500 dark:text-slate-400">
             <span>{company.sector}</span>

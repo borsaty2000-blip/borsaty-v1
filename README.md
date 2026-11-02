@@ -55,6 +55,7 @@ TOTAL                                         429     28    93%
 - **Zero-Hallucination Test (`test_zero_hallucination_narrator`):** يتحقق رياضياً من أن المساعد الذكي Narrator لا يذكر أي رقم سعر، هدف، وقف خسارة، أو نسبة ليست موجودة في الـ JSON الحتمي المدخل.
 - **SAHMK Fallback Test (`test_sahmk_fallback_mechanism`):** يختبر الانتقال التلقائي لمزود البيانات الاحتياطي (EODHD / Proxy) عند انقطاع خدمة SAHMK مع تسجيل الوسم `fallback_used: True` والتنبيهات.
 - **Data Quality Gates:** فحص الشموع الشاذة والقيم السالبة ووسم تأخير الـ 15 دقيقة للبورصة المصرية.
+- **Pytest Warnings Policy:** فحص صارم للتحذيرات (`-W error::RuntimeWarning -W error::FutureWarning`) لضمان عدم وجود أخطاء صامتة؛ تم استبدال `utcnow()` بـ `datetime.now(timezone.utc)` لمعالجة تحذيرات Deprecation، وحصر التحذير المتبقي الوحيد في مكتبة الطرف الثالث (`StarletteDeprecationWarning` التابعة لـ `fastapi.testclient`).
 
 ---
 

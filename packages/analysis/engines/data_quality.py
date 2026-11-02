@@ -1,5 +1,5 @@
 from typing import List, Dict, Any
-from datetime import datetime
+from datetime import datetime, timezone
 
 def validate_data_quality(
     symbol: str,
@@ -53,6 +53,6 @@ def validate_data_quality(
         "orderBookProxyUsed": not has_realtime_orderbook,
         "warnings": warnings,
         "missingFields": missing_fields,
-        "verifiedAt": datetime.utcnow().isoformat() + "Z",
+        "verifiedAt": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "status": "PASS" if not negative_values else "WARNING"
     }

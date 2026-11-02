@@ -14,9 +14,18 @@ import {
   Newspaper,
   Layers,
 } from 'lucide-react';
+import dynamic from 'next/dynamic';
 import { useApp } from '@/context/AppContext';
 import { DataWrapper } from '@/components/ui/DataWrapper';
-import SectorHeatmap from '@/components/SectorHeatmap';
+
+const SectorHeatmap = dynamic(() => import('@/components/SectorHeatmap'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-72 rounded-2xl bg-slate-100 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 animate-pulse flex items-center justify-center text-xs text-slate-400">
+      Loading Market Sector Heatmap...
+    </div>
+  ),
+});
 
 interface MarketIndexItem {
   symbol: string;

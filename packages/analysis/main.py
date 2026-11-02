@@ -770,6 +770,14 @@ def generate_pdf_report_endpoint(symbol: str, payload: Optional[PDFReportRequest
 # ─────────────────────────────────────────────────────────────────────────────
 
 from data.real_fetcher import global_real_data_fetcher
+from engines.technical_score import global_technical_score_engine
+
+@app.get("/technical-score/{symbol}")
+@app.get("/api/technical-score/{symbol}")
+def technical_score_endpoint(symbol: str, market: Optional[str] = "EGX", timeframe: Optional[str] = "1D"):
+    candles = global_real_data_fetcher.fetch_history(symbol, market or "EGX", period="1y")
+    return global_technical_score_engine.compute_score(candles, symbol=symbol, timeframe=timeframe or "1D")
+
 
 @app.get("/market/indices")
 def market_indices_endpoint():

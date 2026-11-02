@@ -15,6 +15,32 @@
     "en": "English",
     "disclaimer": "This analysis is strictly educational and quantitative, and does not constitute financial or investment advice. All trading decisions remain the sole responsibility of the user."
   },
+  "home": {
+    "heroTitle": "Deterministic AI-Powered Market Decisions",
+    "heroSubtitle": "Multi-engine quantitative analysis combining Elliott Wave, Harmonics, Classical Patterns with unified trade plans and historical evidence.",
+    "exploreScreener": "Try Natural Language Screener",
+    "exploreEgyptian": "Explore Egyptian Market (COMI)",
+    "marketIndices": "Market Indices & Commodities",
+    "topGainers": "Top Gainers",
+    "topLosers": "Top Losers",
+    "featuredAnalyses": "Latest Technical Decisions",
+    "viewAnalysis": "View Full Analysis"
+  },
+  "screener": {
+    "title": "Natural Language AI Screener",
+    "subtitle": "Search in natural language: Show me Egyptian stocks above 200 SMA and RSI below 30",
+    "inputPlaceholder": "Enter query (e.g., Egyptian stocks with RSI below 30)...",
+    "searchBtn": "Screen Stocks",
+    "interpretedAs": "Query interpreted as:",
+    "resultsFound": "Matching Instruments:",
+    "emptyResults": "No instruments matched these conditions — try adjusting criteria.",
+    "symbol": "Symbol",
+    "company": "Company",
+    "market": "Market",
+    "price": "Price",
+    "change": "Change",
+    "action": "Action"
+  },
   "nav": {
     "markets": "Markets",
     "screener": "Smart Screener",

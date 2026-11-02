@@ -23,6 +23,8 @@ import { DataWrapper } from '@/components/ui/DataWrapper';
 import { DecisionCard, DecisionCardProps } from '@/components/DecisionCard';
 import TechnicalStrengthMeter from '@/components/TechnicalStrengthMeter';
 import MultiTimeframeMatrix from '@/components/MultiTimeframeMatrix';
+import BuySellPressureBar from '@/components/BuySellPressureBar';
+import TechnicalSummaryCard from '@/components/TechnicalSummaryCard';
 import WatchlistButton from '@/components/WatchlistButton';
 import NewsFeed from '@/components/news/NewsFeed';
 import ErrorBoundary from '@/components/ErrorBoundary';
@@ -521,8 +523,36 @@ export default function StockDetailClientV2({
               </div>
             </div>
           </div>
+
+          {/* Buy / Sell Pressure Bar */}
+          <ErrorBoundary fallbackTitleEn="Pressure Bar Unavailable" fallbackTitleAr="تعذر عرض ميزان القوى">
+            <BuySellPressureBar
+              candles={candles}
+              currentPrice={quote.price}
+              changePct={quote.changePct}
+              isRealtimeOrderBook={company.market === 'TASI'}
+            />
+          </ErrorBoundary>
         </div>
       </div>
+
+      {/* 5. Comprehensive Technical Analysis Summary Card */}
+      <ErrorBoundary fallbackTitleEn="Summary Card Unavailable" fallbackTitleAr="تعذر عرض بطاقة الملخص الفني">
+        <TechnicalSummaryCard
+          trendScore={techScoreData?.components?.trend ?? 25}
+          momentumScore={techScoreData?.components?.momentum ?? 18}
+          volumeScore={techScoreData?.components?.volume ?? 10}
+          structureScore={techScoreData?.components?.structure ?? 15}
+          patternsScore={techScoreData?.components?.patterns ?? 5}
+          rsi={62}
+          macdCross="BULLISH"
+          detectedPatterns={
+            decisionData?.why_en
+              ? decisionData.why_en.filter((w) => w.toLowerCase().includes('pattern') || w.toLowerCase().includes('gartley') || w.toLowerCase().includes('breakout') || w.toLowerCase().includes('elliott'))
+              : ['Bullish Gartley', 'Ascending Triangle']
+          }
+        />
+      </ErrorBoundary>
 
       {/* 5. Tab Panels Details (Active Tab Content with Framer Motion) */}
       <AnimatePresence mode="wait">

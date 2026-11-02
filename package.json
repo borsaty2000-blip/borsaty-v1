@@ -2,7 +2,7 @@
   "name": "borsaty-monorepo",
   "version": "1.0.0",
   "private": true,
-  "description": "Borsaty — Arabic-First Global Financial Markets Platform",
+  "description": "Borsaty AI — Intelligent Quantitative & Technical Analysis Financial Platform",
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",

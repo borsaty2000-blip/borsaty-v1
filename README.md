@@ -1,6 +1,8 @@
-# بورصتي — Borsaty 1.0 (Arabic-First Global Financial Markets Platform)
+# بورصتي AI — Borsaty AI (Investing-Grade Quantitative Intelligence Platform)
 
-منصة «بورصتي» هي المنصة العربية الأولى لدعم القرار المالي والاستثماري، تغطي الأسواق المالية من القاهرة إلى وول ستريت (EGX, TASI, NOMU, DFM, ADX, QE, US, Global).
+منصة «بورصتي AI» هي المنصة المالية والكمية الأولى لدعم القرار الاستثماري، تغطي الأسواق المالية من القاهرة إلى وول ستريت (EGX, TASI, NOMU, DFM, ADX, QE, US, Global).
+
+Borsaty AI connects 8 deterministic engines (HSPD, Elliott Wave, Harmonics, Classical Patterns, 21 Technical Indicators, Multi-Engine Confluence, Trade Plan Engine, and Dual-Authored Narrators) with live pricing and walk-forward verification.
 
 ---
 

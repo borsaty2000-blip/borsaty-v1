@@ -114,7 +114,7 @@ class PDFReportGenerator:
         header_data_ar = [
             [
                 Paragraph(f"<b>{date_str}</b> | {shape_ar('التقرير الفني والكمي الشامل')}", styles["Normal"]),
-                Paragraph(f"<b><font size=14 color='#059669'>{shape_ar('بورصاتي')} BORSATY</font></b>", styles["Normal"]),
+                Paragraph(f"<b><font size=14 color='#059669'>{shape_ar('بورصاتي')} BORSATY AI</font></b>", styles["Normal"]),
             ]
         ]
         t_header_ar = Table(header_data_ar, colWidths=[10 * cm, 7 * cm])
@@ -211,7 +211,7 @@ class PDFReportGenerator:
         # Header Table (EN)
         header_data_en = [
             [
-                Paragraph("<b><font size=14 color='#059669'>BORSATY</font></b> | Quantitative Decision Platform", styles["Normal"]),
+                Paragraph("<b><font size=14 color='#059669'>BORSATY AI</font></b> | Quantitative Decision Platform", styles["Normal"]),
                 Paragraph(f"<b>{date_str}</b> | Comprehensive Technical Report", styles["Normal"]),
             ]
         ]

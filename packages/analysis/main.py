@@ -755,6 +755,29 @@ def generate_pdf_report_endpoint(symbol: str, payload: Optional[PDFReportRequest
     )
 
 
+# ─────────────────────────────────────────────────────────────────────────────
+# Phase م: Live Real Data Endpoints (yfinance + EODHD)
+# ─────────────────────────────────────────────────────────────────────────────
+
+from data.real_fetcher import global_real_data_fetcher
+
+@app.get("/market/indices")
+def market_indices_endpoint():
+    """Fetch live market benchmark indices."""
+    return {"indices": global_real_data_fetcher.fetch_indices()}
+
+@app.get("/quote/{symbol}")
+def quote_endpoint(symbol: str, market: Optional[str] = "EGX"):
+    """Fetch live quote for a symbol."""
+    return global_real_data_fetcher.fetch_quote(symbol, market or "EGX")
+
+@app.get("/history/{symbol}")
+def history_endpoint(symbol: str, market: Optional[str] = "EGX", period: Optional[str] = "5y"):
+    """Fetch real historical candle bars."""
+    candles = global_real_data_fetcher.fetch_history(symbol, market or "EGX", period or "5y")
+    return {"symbol": symbol.upper(), "candles": candles, "count": len(candles)}
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

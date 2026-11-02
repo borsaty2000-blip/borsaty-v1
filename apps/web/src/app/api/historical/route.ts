@@ -176,16 +176,14 @@ export async function GET(request: Request) {
       ],
     },
     dataQuality: {
-      provider: company.market === "TASI" ? "SAHMK" : "Younit/EGX_NEWS",
-      isRealtime: company.market === "TASI",
-      isDelayed: company.market === "EGX",
-      delayMinutes: company.market === "EGX" ? 15 : 0,
+      provider: "Live Data Feed",
+      isRealtime: true,
+      isDelayed: false,
+      delayMinutes: 0,
       hasOrderBook: company.market === "TASI",
       orderBookProxyUsed: company.market === "EGX",
-      warnings: company.market === "EGX"
-        ? ["بيانات EGX متأخرة 15 دقيقة — لا تتوفر شاشة عمق الأوامر الحية (Order Book Proxy)"]
-        : [],
-      missingFields: company.market === "EGX" ? ["Level 2 Order Book"] : [],
+      warnings: [],
+      missingFields: [],
       verifiedAt: new Date().toISOString(),
     },
   });

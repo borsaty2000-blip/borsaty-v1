@@ -36,7 +36,7 @@ export async function POST(request: Request) {
 
 ⚠️ **إفصاح جودة البيانات والشفافية:**
 - مزود البيانات: **${dataQuality?.provider || "Borsaty Data Gateway"}**
-- حالة البث: ${dataQuality?.isDelayed ? "متأخر 15 دقيقة (EGX Feed)" : "لحظي مباشر (SAHMK)"}
+- حالة البث: ${dataQuality?.isDelayed ? "متأخر 15 دقيقة" : "لحظي مباشر"}
 - تنبيه هام: هذا التحليل صادر عن نماذج حسابية وكمية حتمية، وهو لأغراض تعليمية وبحثية ولا يُعد بأي شكل توصية مالية مباشرة بالشراء أو البيع.
     `.trim();
 

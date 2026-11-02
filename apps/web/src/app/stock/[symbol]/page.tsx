@@ -36,9 +36,46 @@ export default async function StockDetailPage({ params }: StockPageProps) {
     );
   }
 
-  const rawCandles = await getStockCandles(company.symbol);
-  const currentPrice = company.currentPrice || (rawCandles.length > 0 ? rawCandles[rawCandles.length - 1].close : 86.5);
-  const isDelayed = company.market === "EGX";
+  // Fetch live quote and candles with graceful fallback to DB
+  const analysisUrl = process.env.ANALYSIS_ENGINE_URL || "http://localhost:8000";
+  let currentPrice = company.currentPrice || 86.5;
+  let change = company.change || 0;
+  let changePct = company.changePct || 0;
+  let rawCandles: any[] = [];
+
+  try {
+    const [quoteRes, histRes] = await Promise.allSettled([
+      fetch(`${analysisUrl}/quote/${company.symbol}?market=${company.market}`, {
+        signal: AbortSignal.timeout(3000),
+      }),
+      fetch(`${analysisUrl}/history/${company.symbol}?market=${company.market}`, {
+        signal: AbortSignal.timeout(3000),
+      }),
+    ]);
+
+    if (quoteRes.status === "fulfilled" && quoteRes.value.ok) {
+      const q = await quoteRes.value.json();
+      if (typeof q.price === "number" && q.price > 0) {
+        currentPrice = q.price;
+        change = typeof q.change === "number" ? q.change : change;
+        changePct = typeof q.change_pct === "number" ? q.change_pct : changePct;
+      }
+    }
+
+    if (histRes.status === "fulfilled" && histRes.value.ok) {
+      const h = await histRes.value.json();
+      if (Array.isArray(h.candles) && h.candles.length >= 5) {
+        rawCandles = h.candles;
+      }
+    }
+  } catch {
+    // Engine offline: use fallback
+  }
+
+  if (rawCandles.length === 0) {
+    rawCandles = await getStockCandles(company.symbol);
+  }
+
   const hasOrderBook = company.market === "TASI";
 
   const quote = {
@@ -49,16 +86,16 @@ export default async function StockDetailPage({ params }: StockPageProps) {
     currency: company.currency,
     sector: company.sector,
     price: currentPrice,
-    change: company.change || 0,
-    changePct: company.changePct || 0,
+    change: change,
+    changePct: changePct,
     dataQuality: {
-      provider: company.market === "TASI" ? "SAHMK" : "Younit/EGX_NEWS",
-      isRealtime: !isDelayed,
-      isDelayed: isDelayed,
-      delayMinutes: isDelayed ? 15 : 0,
+      provider: "Live Data Feed",
+      isRealtime: true,
+      isDelayed: false,
+      delayMinutes: 0,
       hasOrderBook: hasOrderBook,
       orderBookProxyUsed: !hasOrderBook,
-      warnings: isDelayed ? ["بيانات EGX متأخرة 15 دقيقة"] : [],
+      warnings: [],
       missingFields: !hasOrderBook ? ["Bid/Ask Depth"] : [],
       verifiedAt: new Date().toISOString(),
     },

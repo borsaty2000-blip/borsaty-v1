@@ -1,6 +1,10 @@
 // API & Analysis Types
 export * from './types/api';
 
+// Priority Stocks (25 PoC)
+export * from './priority-stocks';
+
+
 // Markets
 export type Market = 'EGX' | 'TASI' | 'NOMU' | 'DFM' | 'ADX' | 'QE' | 'KW' | 'US' | 'UK' | 'DE' | 'JP' | 'GLOBAL';
 export type AssetClass = 'EQUITY' | 'FOREX' | 'CRYPTO' | 'COMMODITY' | 'INDEX';

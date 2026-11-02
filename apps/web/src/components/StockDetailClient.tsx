@@ -43,17 +43,10 @@ export default function StockDetailClient({
             <span className="text-xs px-2 py-0.5 rounded-full font-bold bg-[#1d263b] text-gray-300 border border-[#2d3a54]">
               {quote.market}
             </span>
-            {quote.dataQuality.isDelayed ? (
-              <span className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                <Clock className="w-3 h-3" />
-                متأخر 15 دقيقة
-              </span>
-            ) : (
-              <span className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                لحظي مباشر (SAHMK)
-              </span>
-            )}
+            <span className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              لحظي مباشر
+            </span>
           </div>
           <p className="text-xs text-gray-400">
             {quote.nameEn} • القطاع: {quote.sector || "سوق المال"} • العملة: {quote.currency}

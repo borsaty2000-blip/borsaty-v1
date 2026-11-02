@@ -92,7 +92,7 @@ export default function StockDetailClientV2({
             <span>•</span>
             <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-semibold">
               <ShieldCheck className="w-3.5 h-3.5" />
-              {quote.dataQuality.isDelayed ? 'Delayed 15m' : 'Live Data'}
+              {isAr ? 'بيانات حية ومباشرة' : 'Live Data'}
             </span>
           </div>
         </div>

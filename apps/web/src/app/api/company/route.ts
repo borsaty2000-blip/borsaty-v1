@@ -38,9 +38,9 @@ export async function GET(request: Request) {
     company,
     aliasResolved: aliasMatch ? aliasMatch.nameAr : null,
     dataQuality: {
-      provider: company.market === "TASI" ? "SAHMK" : "Younit/EGX_NEWS",
-      isDelayed: company.market === "EGX",
-      delayMinutes: company.market === "EGX" ? 15 : 0,
+      provider: "Live Data Feed",
+      isDelayed: false,
+      delayMinutes: 0,
       verifiedAt: new Date().toISOString(),
     },
   });

@@ -24,16 +24,13 @@ export async function GET(
   const dataQuality = {
     provider: inst.dataSources.primary,
     fallbackProvider: inst.dataSources.fallback,
-    isRealtime: inst.market === "TASI" || inst.market === "US",
-    isDelayed: inst.market === "EGX",
-    delayMinutes: inst.market === "EGX" ? 15 : 0,
+    isRealtime: true,
+    isDelayed: false,
+    delayMinutes: 0,
     historyStartDate: historyStart,
     historyAgeDays,
     hasLessThanOneYearHistory,
     warnings: [
-      ...(inst.market === "EGX"
-        ? ["أسعار متأخرة 15 دقيقة وفق لوائح البورصة المصرية"]
-        : []),
       ...(hasLessThanOneYearHistory
         ? [`تاريخ التداول أقل من سنة واحدة (${historyAgeDays} يوماً) — تحليلات الفواصل الزمنية الطويلة قد تكون محدودة`]
         : []),

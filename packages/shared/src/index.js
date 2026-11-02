@@ -18,6 +18,8 @@ exports.ARABIC_STOCK_ALIASES = void 0;
 exports.resolveStockAlias = resolveStockAlias;
 // API & Analysis Types
 __exportStar(require("./types/api"), exports);
+// Priority Stocks (25 PoC)
+__exportStar(require("./priority-stocks"), exports);
 // Arabic Stock Aliases Map
 exports.ARABIC_STOCK_ALIASES = {
     // EGX Stocks

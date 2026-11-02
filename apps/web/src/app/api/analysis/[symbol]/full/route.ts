@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { redis, getStockCandles } from "@borsaty/db";
+import { PRIORITY_STOCKS } from "@borsaty/shared";
 
 export async function GET(
   request: Request,
@@ -33,14 +34,35 @@ export async function GET(
     // Redis offline: continue
   }
 
-  // 2. Fetch candles for symbol
-  const candles = await getStockCandles(sym);
+  // 2. Fetch candles for symbol (Live fetch from Analysis engine with fallback to DB)
+  const analysisUrl = process.env.ANALYSIS_ENGINE_URL || "http://localhost:8000";
+  const matchedStock = PRIORITY_STOCKS.find((s) => s.symbol.toUpperCase() === sym);
+  const market = searchParams.get("market") || matchedStock?.market || "EGX";
+
+  let candles: any[] = [];
+  try {
+    const histRes = await fetch(`${analysisUrl}/history/${sym}?market=${market}`, {
+      signal: AbortSignal.timeout(4000),
+    });
+    if (histRes.ok) {
+      const histData = await histRes.json();
+      if (Array.isArray(histData.candles) && histData.candles.length >= 5) {
+        candles = histData.candles;
+      }
+    }
+  } catch {
+    // Engine offline or fetch history timeout: proceed to fallback
+  }
+
+  if (!candles || candles.length === 0) {
+    candles = await getStockCandles(sym);
+  }
+
   if (!candles || candles.length === 0) {
     return NextResponse.json({ error: `No price data found for ${sym}` }, { status: 404 });
   }
 
   // 3. Compute Full Unified Analysis via Analysis Orchestrator
-  const analysisUrl = process.env.ANALYSIS_ENGINE_URL || "http://localhost:8000";
   let fullResult: any = null;
 
   try {

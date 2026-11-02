@@ -3,6 +3,23 @@ import { redis, getStockCandles } from "@borsaty/db";
 import { PRIORITY_STOCKS } from "@borsaty/shared";
 import { getPythonServiceUrl } from "@/lib/config";
 
+async function checkRateLimit(key: string, limit: number, windowSec: number = 60) {
+  try {
+    const count = await redis.incr(key);
+    if (count === 1) {
+      await redis.expire(key, windowSec);
+    }
+    const ttl = await redis.ttl(key);
+    return {
+      allowed: count <= limit,
+      remaining: Math.max(0, limit - count),
+      resetIn: ttl > 0 ? ttl : windowSec,
+    };
+  } catch {
+    return { allowed: true, remaining: limit, resetIn: windowSec };
+  }
+}
+
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ symbol: string }> }
@@ -11,6 +28,24 @@ export async function GET(
   const { symbol } = await params;
   if (!symbol) {
     return NextResponse.json({ error: "Symbol is required" }, { status: 400 });
+  }
+
+  // Rate Limiting per IP: 60 requests/min
+  const forwarded = request.headers.get("x-forwarded-for");
+  const ip = forwarded ? forwarded.split(",")[0].trim() : "127.0.0.1";
+  const rateLimit = await checkRateLimit(`rate:analysis:ip:${ip}`, 60, 60);
+  if (!rateLimit.allowed) {
+    return NextResponse.json(
+      { error: "Rate limit exceeded. Please try again shortly.", retryAfter: rateLimit.resetIn },
+      {
+        status: 429,
+        headers: {
+          "Retry-After": rateLimit.resetIn.toString(),
+          "X-RateLimit-Limit": "60",
+          "X-RateLimit-Remaining": "0",
+        },
+      }
+    );
   }
 
   const { searchParams } = new URL(request.url);

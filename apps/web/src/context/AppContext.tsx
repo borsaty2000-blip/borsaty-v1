@@ -1,8 +1,8 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import arMessages from '../../../messages/ar.json';
-import enMessages from '../../../messages/en.json';
+import arMessages from '../../messages/ar.json';
+import enMessages from '../../messages/en.json';
 
 export type Language = 'ar' | 'en';
 export type Theme = 'light' | 'dark';

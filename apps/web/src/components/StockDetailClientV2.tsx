@@ -15,12 +15,14 @@ import {
   Maximize2,
   Workflow,
   Compass,
+  Newspaper,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PriceChart } from '@/components/charts/PriceChart';
 import { DataWrapper } from '@/components/ui/DataWrapper';
 import { DecisionCard, DecisionCardProps } from '@/components/DecisionCard';
 import WatchlistButton from '@/components/WatchlistButton';
+import NewsFeed from '@/components/news/NewsFeed';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { safeParseAnalysis, ValidatedUnifiedAnalysis } from '@/lib/schemas';
 import { useApp } from '@/context/AppContext';
@@ -70,7 +72,7 @@ export default function StockDetailClientV2({
     clearHighlight,
   } = useBorsaty();
 
-  const [activeTab, setActiveTab] = useState<'analysis' | 'tradePlan' | 'narrative'>('analysis');
+  const [activeTab, setActiveTab] = useState<'analysis' | 'tradePlan' | 'narrative' | 'news'>('analysis');
   const [decisionData, setDecisionData] = useState<DecisionCardProps['decisionData'] | null>(null);
   const [decisionLoading, setDecisionLoading] = useState(true);
   const [analysisData, setAnalysisData] = useState<ValidatedUnifiedAnalysis | null>(null);
@@ -298,6 +300,17 @@ export default function StockDetailClientV2({
         >
           <Sparkles className="w-4 h-4" />
           <span>{isAr ? 'السرد التحليلي والتقرير' : 'Narrative & Report'}</span>
+        </button>
+        <button
+          onClick={() => setActiveTab('news')}
+          className={`px-4 py-2 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer ${
+            activeTab === 'news'
+              ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-sm'
+              : 'hover:bg-slate-100 dark:hover:bg-slate-800'
+          }`}
+        >
+          <Newspaper className="w-4 h-4" />
+          <span>{isAr ? 'الأخبار والتقارير' : 'Financial News'}</span>
         </button>
       </div>
 
@@ -570,7 +583,26 @@ export default function StockDetailClientV2({
             </div>
           </motion.div>
         )}
+
+        {activeTab === 'news' && (
+          <motion.div
+            key="tab-news"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -12 }}
+            transition={{ duration: 0.25, ease: 'easeOut' }}
+          >
+            <NewsFeed symbol={company.symbol} />
+          </motion.div>
+        )}
       </AnimatePresence>
+
+      {/* Financial News Wire Section (Always visible below main charts on Technical tab) */}
+      {activeTab === 'analysis' && (
+        <div className="pt-2">
+          <NewsFeed symbol={company.symbol} />
+        </div>
+      )}
     </div>
   );
 }

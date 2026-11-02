@@ -31,6 +31,11 @@ class ElliottDetector:
     def __init__(self):
         pass
 
+    def extract_proposals(self, result: Dict[str, Any]) -> List[Any]:
+        """Expose trade proposals uniformly."""
+        from trade_plan.proposals import extract_elliott_proposals
+        return extract_elliott_proposals(result)
+
     def _extract_pivots_list(
         self, pivots_data: Union[Dict[str, Any], List[Dict[str, Any]]], min_degree: int = 1
     ) -> List[Dict[str, Any]]:

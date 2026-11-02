@@ -26,6 +26,11 @@ class HarmonicDetector:
     def __init__(self, prz_calculator: Optional[PrzCalculator] = None):
         self.prz_calc = prz_calculator or global_prz_calculator
 
+    def extract_proposals(self, result: Dict[str, Any]) -> List[Any]:
+        """Expose trade proposals uniformly."""
+        from trade_plan.proposals import extract_harmonic_proposals
+        return extract_harmonic_proposals(result)
+
     def _extract_pivots_list(
         self, pivots_data: Union[Dict[str, Any], List[Dict[str, Any]]], min_degree: int = 1
     ) -> List[Dict[str, Any]]:

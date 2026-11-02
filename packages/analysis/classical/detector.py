@@ -32,6 +32,11 @@ class ClassicalPatternDetector:
         self.vol_val = volume_validator or global_volume_validator
         self.bo_val = breakout_validator or global_breakout_validator
 
+    def extract_proposals(self, result: Dict[str, Any]) -> List[Any]:
+        """Expose trade proposals uniformly."""
+        from trade_plan.proposals import extract_classical_proposals
+        return extract_classical_proposals(result)
+
     def _extract_pivots_list(
         self, pivots_data: Union[Dict[str, Any], List[Dict[str, Any]]], min_degree: int = 1
     ) -> List[Dict[str, Any]]:

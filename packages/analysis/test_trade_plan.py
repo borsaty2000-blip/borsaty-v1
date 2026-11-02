@@ -1031,3 +1031,19 @@ def test_blended_rr_formula():
     assert math.isclose(expected_blended, 3.27, abs_tol=0.01)
 
 
+def test_position_sizing_none_when_capital_is_none():
+    engine = TradePlanEngine()
+    c_list = [make_candle(i, 100, 102, 98, 100) for i in range(20)]
+    mock_full = {
+        "confluence": {"direction": "bullish", "score": 0.8},
+        "regime": "trending_strong",
+        "candles": c_list,
+        "pivots": [{"type": "trough", "price": 95.0, "stability_score": 0.8}]
+    }
+    plan = engine.compute("TEST", "1D", mock_full, capital=None, candles=c_list)
+    assert plan["position_sizing"] is None
+    assert "أدخل رأس مالك" in plan["position_sizing_note_ar"]
+    assert "Provide capital" in plan["position_sizing_note_en"]
+
+
+

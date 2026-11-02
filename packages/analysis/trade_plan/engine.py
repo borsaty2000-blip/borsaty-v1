@@ -413,38 +413,44 @@ class TradePlanEngine:
             warnings.append("Target 3 has only 1 method — highest risk")
 
         # STEP 6: Position Sizing
-        cap_val = capital if (capital and capital > 0) else 1000.0
-        sizing_fixed = self.sizer.compute(
-            capital=cap_val,
-            entry=entry_ref,
-            stop=chosen_stop_price,
-            risk_tolerance_pct=risk_pct,
-            method="fixed_fractional",
-        )
-        sizing_atr = self.sizer.compute(
-            capital=cap_val,
-            entry=entry_ref,
-            stop=chosen_stop_price,
-            risk_tolerance_pct=risk_pct,
-            method="atr_based",
-            atr=atr,
-        )
+        if capital is None or capital <= 0:
+            position_sizing_dict = None
+            note_ar = "أدخل رأس مالك لحساب حجم المركز"
+            note_en = "Provide capital to compute position size"
+        else:
+            sizing_fixed = self.sizer.compute(
+                capital=capital,
+                entry=entry_ref,
+                stop=chosen_stop_price,
+                risk_tolerance_pct=risk_pct,
+                method="fixed_fractional",
+            )
+            sizing_atr = self.sizer.compute(
+                capital=capital,
+                entry=entry_ref,
+                stop=chosen_stop_price,
+                risk_tolerance_pct=risk_pct,
+                method="atr_based",
+                atr=atr,
+            )
 
-        position_sizing_dict = {
-            "risk_per_trade_pct": risk_pct,
-            "fixed_fractional": {
-                "units_per_1000_capital": sizing_fixed["whole_units"],
-                "max_capital_risk": sizing_fixed["max_loss"],
-                "units": sizing_fixed["units"],
-                "position_value": sizing_fixed["position_value"],
-            },
-            "atr_based": {
-                "units_per_1000_capital": sizing_atr["whole_units"],
-                "units": sizing_atr["units"],
-                "position_value": sizing_atr["position_value"],
-            },
-            "note": "User must confirm capital and risk tolerance",
-        }
+            position_sizing_dict = {
+                "risk_per_trade_pct": risk_pct,
+                "fixed_fractional": {
+                    "units_per_1000_capital": sizing_fixed["whole_units"],
+                    "max_capital_risk": sizing_fixed["max_loss"],
+                    "units": sizing_fixed["units"],
+                    "position_value": sizing_fixed["position_value"],
+                },
+                "atr_based": {
+                    "units_per_1000_capital": sizing_atr["whole_units"],
+                    "units": sizing_atr["units"],
+                    "position_value": sizing_atr["position_value"],
+                },
+                "note": "User must confirm capital and risk tolerance",
+            }
+            note_ar = "تم احتساب حجم المركز بناءً على رأس المال المدخل ونسبة المخاطرة"
+            note_en = "Position size calculated based on provided capital and risk tolerance"
 
         invalidation_dict = {
             "price": round(chosen_stop_price, 2),
@@ -485,6 +491,8 @@ class TradePlanEngine:
             "targets": targets_list,
             "risk_reward": risk_reward_dict,
             "position_sizing": position_sizing_dict,
+            "position_sizing_note_ar": note_ar,
+            "position_sizing_note_en": note_en,
             "invalidation": invalidation_dict,
             "confluence_snapshot": confluence_snapshot,
             "warnings": warnings,

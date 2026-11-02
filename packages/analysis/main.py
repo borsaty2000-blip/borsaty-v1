@@ -431,7 +431,7 @@ class TradePlanRequest(BaseModel):
     symbol: str
     timeframe: Optional[str] = "1D"
     candles: Optional[List[Candle]] = None
-    capital: Optional[float] = 1000.0
+    capital: Optional[float] = None
     risk_pct: Optional[float] = 2.0
     min_degree: Optional[int] = 1
 

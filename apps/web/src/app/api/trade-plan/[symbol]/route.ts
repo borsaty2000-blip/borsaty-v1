@@ -13,12 +13,13 @@ export async function GET(
 
   const { searchParams } = new URL(request.url);
   const timeframe = (searchParams.get("timeframe") || "1D").toUpperCase();
-  const capital = Math.max(1, parseFloat(searchParams.get("capital") || "1000"));
+  const rawCapital = searchParams.get("capital");
+  const capital = rawCapital ? Math.max(1, parseFloat(rawCapital)) : null;
   const riskPct = Math.max(0.1, parseFloat(searchParams.get("risk_pct") || "2.0"));
   const minDegree = Math.max(0, Math.min(3, parseInt(searchParams.get("min_degree") || "1", 10)));
 
   const sym = symbol.toUpperCase();
-  const cacheKey = `trade_plan:${sym}:${timeframe}:${capital}:${riskPct}:${minDegree}`;
+  const cacheKey = `trade_plan:${sym}:${timeframe}:${capital ?? "none"}:${riskPct}:${minDegree}`;
 
   // 1. Check Redis Cache
   try {
@@ -155,7 +156,7 @@ export async function GET(
         blended_rr: 2.52,
         primary_rr: 1.71,
       },
-      position_sizing: {
+      position_sizing: capital !== null ? {
         risk_per_trade_pct: riskPct,
         fixed_fractional: {
           units_per_1000_capital: Math.floor(units),
@@ -169,7 +170,13 @@ export async function GET(
           position_value: Math.round(units * 1.05 * lastPrice * 100) / 100,
         },
         note: "User must confirm capital and risk tolerance",
-      },
+      } : null,
+      position_sizing_note_ar: capital !== null
+        ? "تم احتساب حجم المركز بناءً على رأس المال المدخل ونسبة المخاطرة"
+        : "أدخل رأس مالك لحساب حجم المركز",
+      position_sizing_note_en: capital !== null
+        ? "Position size calculated based on provided capital and risk tolerance"
+        : "Provide capital to compute position size",
       invalidation: {
         price: stopPrice,
         condition: "close below",

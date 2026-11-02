@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { redis, getStockCandles } from "@borsaty/db";
+import { getPythonServiceUrl } from "@/lib/config";
 
 export async function GET(
   request: Request,
@@ -37,7 +38,7 @@ export async function GET(
     return NextResponse.json({ error: `No price data found for ${sym}` }, { status: 404 });
   }
 
-  const analysisUrl = process.env.ANALYSIS_ENGINE_URL || "http://localhost:8000";
+  const analysisUrl = getPythonServiceUrl();
   let result: any = null;
 
   try {

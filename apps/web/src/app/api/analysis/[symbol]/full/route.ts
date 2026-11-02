@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { redis, getStockCandles } from "@borsaty/db";
 import { PRIORITY_STOCKS } from "@borsaty/shared";
+import { getPythonServiceUrl } from "@/lib/config";
 
 export async function GET(
   request: Request,
@@ -35,7 +36,7 @@ export async function GET(
   }
 
   // 2. Fetch candles for symbol (Live fetch from Analysis engine with fallback to DB)
-  const analysisUrl = process.env.ANALYSIS_ENGINE_URL || "http://localhost:8000";
+  const analysisUrl = getPythonServiceUrl();
   const matchedStock = PRIORITY_STOCKS.find((s) => s.symbol.toUpperCase() === sym);
   const market = searchParams.get("market") || matchedStock?.market || "EGX";
 

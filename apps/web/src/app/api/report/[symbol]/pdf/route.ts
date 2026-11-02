@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { findCompany, getStockCandles } from "@borsaty/db";
+import { getPythonServiceUrl } from "@/lib/config";
 
 export async function GET(
   request: Request,
@@ -18,7 +19,7 @@ export async function GET(
   const market = company?.market || "EGX";
   const companyName = company?.nameAr || sym;
 
-  const analysisUrl = process.env.ANALYSIS_ENGINE_URL || "http://localhost:8000";
+  const analysisUrl = getPythonServiceUrl();
 
   try {
     const res = await fetch(`${analysisUrl}/report/${sym}/pdf`, {

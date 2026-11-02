@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getAllCompanies, redis } from "@borsaty/db";
 import { PRIORITY_STOCKS } from "@borsaty/shared";
+import { getPythonServiceUrl } from "@/lib/config";
 
 export interface MarketIndex {
   symbol: string;
@@ -41,7 +42,7 @@ export async function GET() {
 
   // 2. Fetch live benchmark indices from Python RealDataFetcher
   let liveIndices: MarketIndex[] = [];
-  const analysisUrl = process.env.ANALYSIS_ENGINE_URL || "http://localhost:8000";
+  const analysisUrl = getPythonServiceUrl();
 
   try {
     const res = await fetch(`${analysisUrl}/market/indices`, {

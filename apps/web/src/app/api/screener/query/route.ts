@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { redis, getPrismaClient } from "@borsaty/db";
+import { getPythonServiceUrl } from "@/lib/config";
 
 async function checkRateLimit(key: string, limit: number, windowSec: number = 60) {
   try {
@@ -80,7 +81,7 @@ export async function POST(request: Request) {
     }
 
     // 3. Call Analysis Engine (Python FastAPI)
-    const analysisUrl = process.env.ANALYSIS_ENGINE_URL || "http://localhost:8000";
+    const analysisUrl = getPythonServiceUrl();
     let screenerResponse: any = null;
 
     try {

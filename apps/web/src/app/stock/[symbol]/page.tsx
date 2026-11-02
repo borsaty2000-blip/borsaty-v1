@@ -4,6 +4,7 @@ import { resolveStockAlias } from "@borsaty/shared";
 import { AlertCircle } from "lucide-react";
 import Link from "next/link";
 import StockDetailClientV2 from "@/components/StockDetailClientV2";
+import { getPythonServiceUrl } from "@/lib/config";
 
 interface StockPageProps {
   params: Promise<{ symbol: string }>;
@@ -37,7 +38,7 @@ export default async function StockDetailPage({ params }: StockPageProps) {
   }
 
   // Fetch live quote and candles with graceful fallback to DB
-  const analysisUrl = process.env.ANALYSIS_ENGINE_URL || "http://localhost:8000";
+  const analysisUrl = getPythonServiceUrl();
   let currentPrice = company.currentPrice || 86.5;
   let change = company.change || 0;
   let changePct = company.changePct || 0;

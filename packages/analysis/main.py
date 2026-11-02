@@ -1,3 +1,9 @@
+import os
+from dotenv import load_dotenv
+
+# Load local environment variables from .env if present
+load_dotenv()
+
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -31,9 +37,12 @@ app = FastAPI(
     version="1.0.0"
 )
 
+cors_origins_env = os.environ.get("CORS_ORIGINS", "*")
+allowed_origins = [o.strip() for o in cors_origins_env.split(",") if o.strip()] or ["*"]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -704,13 +713,14 @@ class PDFReportRequest(BaseModel):
 @app.post("/report/{symbol}/pdf")
 @app.get("/report/{symbol}/pdf")
 def generate_pdf_report_endpoint(symbol: str, payload: Optional[PDFReportRequest] = None):
-    import sys
-    import os
-    parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    if parent_dir not in sys.path:
-        sys.path.insert(0, parent_dir)
-        
-    from reports.pdf_generator import global_pdf_generator
+    try:
+        from reports.pdf_generator import global_pdf_generator
+    except ImportError:
+        import sys
+        parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        if parent_dir not in sys.path:
+            sys.path.insert(0, parent_dir)
+        from reports.pdf_generator import global_pdf_generator
 
     sym = symbol.upper()
     comp_name = (payload.company_name if payload else None) or sym
@@ -780,4 +790,7 @@ def history_endpoint(symbol: str, market: Optional[str] = "EGX", period: Optiona
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    port = int(os.environ.get("PORT", 8000))
+    host = os.environ.get("HOST", "0.0.0.0")
+    reload = os.environ.get("ENV", "development").lower() == "development"
+    uvicorn.run("main:app", host=host, port=port, reload=reload)

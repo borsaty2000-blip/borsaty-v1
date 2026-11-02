@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { getPythonServiceUrl } from "@/lib/config";
 
 export async function POST(request: Request) {
   const startTime = Date.now();
@@ -10,7 +11,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
-  const analysisUrl = process.env.ANALYSIS_ENGINE_URL || "http://localhost:8000";
+  const analysisUrl = getPythonServiceUrl();
 
   try {
     const res = await fetch(`${analysisUrl}/backtest/leaderboard`, {

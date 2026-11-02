@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { redis, getStockCandles } from "@borsaty/db";
+import { getPythonServiceUrl } from "@/lib/config";
 
 export async function GET(
   request: Request,
@@ -41,7 +42,7 @@ export async function GET(
   }
 
   // 3. Compute Elliott Waves via Analysis Engine or deterministic fallback
-  const analysisUrl = process.env.ANALYSIS_ENGINE_URL || "http://localhost:8000";
+  const analysisUrl = getPythonServiceUrl();
   let elliottResult: any = null;
 
   try {

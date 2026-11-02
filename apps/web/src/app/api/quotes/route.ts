@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { findCompany, redis } from "@borsaty/db";
 import { resolveStockAlias } from "@borsaty/shared";
+import { getPythonServiceUrl } from "@/lib/config";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -40,7 +41,7 @@ export async function GET(request: Request) {
   // 2. Fetch live quote if not from cache
   if (quoteSource === "db") {
     try {
-      const analysisUrl = process.env.ANALYSIS_ENGINE_URL || "http://localhost:8000";
+      const analysisUrl = getPythonServiceUrl();
       const res = await fetch(`${analysisUrl}/quote/${lookupSymbol}?market=${company.market}`, {
         signal: AbortSignal.timeout(3000),
       });

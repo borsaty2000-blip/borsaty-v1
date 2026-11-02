@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { redis, getStockCandles } from "@borsaty/db";
+import { getPythonServiceUrl } from "@/lib/config";
 
 export async function GET(
   request: Request,
@@ -43,7 +44,7 @@ export async function GET(
   }
 
   // 3. Request Trade Plan from Python Analysis Service
-  const analysisUrl = process.env.ANALYSIS_ENGINE_URL || "http://localhost:8000";
+  const analysisUrl = getPythonServiceUrl();
   let planResult: any = null;
 
   try {

@@ -11,6 +11,22 @@ const isProtectedRoute = createRouteMatcher([
 export default clerkMiddleware(async (auth, req) => {
   const { pathname } = req.nextUrl;
 
+  // Validate Clerk environment configuration to prevent unexpected 500 runtime crashes
+  const hasClerkPublishable = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
+  const hasClerkSecret = Boolean(process.env.CLERK_SECRET_KEY);
+
+  if (!hasClerkPublishable || !hasClerkSecret) {
+    if (process.env.NODE_ENV !== "production") {
+      console.warn("[Clerk Middleware] Clerk keys are missing or incomplete in environment.");
+    }
+    // If route is protected but Clerk isn't configured, safely redirect to home with notice
+    if (isProtectedRoute(req)) {
+      const homeUrl = new URL("/", req.url);
+      homeUrl.searchParams.set("auth_error", "unconfigured");
+      return NextResponse.redirect(homeUrl);
+    }
+  }
+
   // 1. Maintain existing /api/admin security
   if (pathname.startsWith("/api/admin")) {
     const isProduction = process.env.NODE_ENV === "production";

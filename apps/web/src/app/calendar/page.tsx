@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import CalendarPage from '@/components/calendar/CalendarPage';
+import ErrorBoundary from '@/components/ErrorBoundary';
 
 export const metadata: Metadata = {
   title: 'Economic Calendar & Macro Markets | Borsaty — الأجندة الاقتصادية',
@@ -7,5 +8,12 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
-  return <CalendarPage />;
+  return (
+    <ErrorBoundary
+      fallbackTitleEn="Unable to load Economic Calendar"
+      fallbackTitleAr="تعذر تحميل الأجندة الاقتصادية"
+    >
+      <CalendarPage />
+    </ErrorBoundary>
+  );
 }

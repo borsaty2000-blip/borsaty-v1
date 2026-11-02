@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import PortfolioDashboard from '@/components/portfolio/PortfolioDashboard';
+import ErrorBoundary from '@/components/ErrorBoundary';
 
 export const metadata: Metadata = {
   title: 'Portfolio Terminal | Borsaty — محفظة الأوراق المالية',
@@ -7,5 +8,12 @@ export const metadata: Metadata = {
 };
 
 export default function PortfolioPage() {
-  return <PortfolioDashboard />;
+  return (
+    <ErrorBoundary
+      fallbackTitleEn="Unable to load Portfolio Terminal"
+      fallbackTitleAr="تعذر تحميل محفظة الأوراق المالية"
+    >
+      <PortfolioDashboard />
+    </ErrorBoundary>
+  );
 }

@@ -4,6 +4,7 @@ import { resolveStockAlias } from "@borsaty/shared";
 import { AlertCircle } from "lucide-react";
 import Link from "next/link";
 import StockDetailClientV2 from "@/components/StockDetailClientV2";
+import ErrorBoundary from "@/components/ErrorBoundary";
 import { CandleDataPoint } from "@/components/charts/PriceChart";
 import { getPythonServiceUrl } from "@/lib/config";
 
@@ -30,7 +31,7 @@ export default async function StockDetailPage({ params }: StockPageProps) {
         <p className="text-sm text-slate-500 dark:text-gray-400 mb-4">تأكد من كتابة رمز السهم أو اسمه بشكل صحيح</p>
         <Link
           href="/stock/COMI"
-          className="inline-flex px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-sm font-semibold shadow-sm"
+          className="inline-flex px-4 py-2 bg-black hover:bg-slate-900 text-white border border-slate-800 rounded-xl text-sm font-semibold shadow-sm transition-colors"
         >
           الانتقال إلى COMI (البنك التجاري الدولي)
         </Link>
@@ -104,10 +105,15 @@ export default async function StockDetailPage({ params }: StockPageProps) {
   };
 
   return (
-    <StockDetailClientV2
-      company={company}
-      quote={quote}
-      candles={rawCandles}
-    />
+    <ErrorBoundary
+      fallbackTitleEn={`Unable to render analysis for ${company.symbol}`}
+      fallbackTitleAr={`تعذر عرض تحليلات سهم ${company.nameAr || company.symbol}`}
+    >
+      <StockDetailClientV2
+        company={company}
+        quote={quote}
+        candles={rawCandles}
+      />
+    </ErrorBoundary>
   );
 }

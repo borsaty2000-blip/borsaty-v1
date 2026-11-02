@@ -17,6 +17,7 @@ import {
   AlertTriangle,
   Info,
 } from "lucide-react";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
 interface SignalItem {
   id: string;
@@ -118,7 +119,11 @@ export default function SignalsDashboard() {
   };
 
   return (
-    <div className="space-y-8">
+    <ErrorBoundary
+      fallbackTitleEn="Unable to render signals performance dashboard"
+      fallbackTitleAr="تعذر عرض لوحة أداء الإشارات والنسب الإحصائية"
+    >
+      <div className="space-y-8">
       {/* Header */}
       <div className="p-6 rounded-2xl bg-[#111827] border border-[#1f293d] shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
@@ -327,5 +332,6 @@ ORDER BY total_signals DESC;`}
         </pre>
       </div>
     </div>
+    </ErrorBoundary>
   );
 }

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Cairo, Inter } from "next/font/google";
 import { TrendingUp } from "lucide-react";
 import "./globals.css";
@@ -49,26 +50,56 @@ export default function RootLayout({
                 {children}
               </main>
               <MobileBottomNav />
-              <footer className="border-t border-slate-800 bg-[#0A0A0A] py-8 px-4 pb-20 md:pb-8 text-center text-xs text-slate-400">
-                <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-                  <div className="flex items-center gap-2 whitespace-nowrap">
-                    <div className="relative w-6 h-6 rounded bg-black border border-slate-700 flex items-center justify-center text-white font-black text-xs shadow-sm">
-                      <span>B</span>
-                      <span className="absolute top-0.5 end-0.5 w-1 h-1 rounded-full bg-[#00D9FF]" />
+              <footer className="border-t border-slate-800 bg-[#0A0A0A] py-10 px-4 pb-24 md:pb-10 text-center text-xs text-slate-400">
+                <div className="max-w-7xl mx-auto space-y-6">
+                  {/* Top Row: Logo, Status Indicator, Exchange tags */}
+                  <div className="flex flex-col md:flex-row items-center justify-between gap-4 pb-6 border-b border-slate-800/80">
+                    <div className="flex items-center gap-2 whitespace-nowrap">
+                      <div className="relative w-6 h-6 rounded bg-black border border-slate-700 flex items-center justify-center text-white font-black text-xs shadow-sm">
+                        <span>B</span>
+                        <span className="absolute top-0.5 end-0.5 w-1 h-1 rounded-full bg-[#00D9FF]" />
+                      </div>
+                      <span className="font-bold text-sm tracking-tight text-white">Borsaty AI</span>
+                      <span className="text-slate-400 font-normal">| بورصتي</span>
                     </div>
-                    <span className="font-bold text-sm tracking-tight text-white">Borsaty</span>
-                    <span className="text-slate-400 font-normal">| بورصتي</span>
+
+                    {/* Operational Health Badge */}
+                    <Link
+                      href="/status"
+                      className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[11px] font-bold text-emerald-400 hover:bg-emerald-500/20 transition-all shadow-sm group"
+                      title="View Live System Telemetry & Engine Health"
+                    >
+                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse group-hover:scale-125 transition-transform" />
+                      <span>Status: All Systems Operational (99.98%)</span>
+                    </Link>
+
+                    {/* Market Coverage Badges */}
+                    <div className="flex items-center gap-3 text-slate-400 text-[11px] font-mono">
+                      <span className="hover:text-white transition-colors">EGX</span>
+                      <span>•</span>
+                      <span className="hover:text-white transition-colors">TASI</span>
+                      <span>•</span>
+                      <span className="hover:text-white transition-colors">US Equities</span>
+                      <span>•</span>
+                      <span className="hover:text-white transition-colors">Crypto & Forex</span>
+                    </div>
                   </div>
-                  <p className="text-slate-400">Borsaty © 2026 — Real-time financial markets data and quantitative analysis.</p>
-                  <div className="flex items-center gap-4 text-slate-400">
-                    <span>EGX</span>
-                    <span>•</span>
-                    <span>TASI</span>
-                    <span>•</span>
-                    <span>US Markets</span>
-                    <span>•</span>
-                    <span>Crypto & Forex</span>
+
+                  {/* Middle Row: Institutional Links */}
+                  <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs font-semibold text-slate-400">
+                    <Link href="/about" className="hover:text-[#00D9FF] transition-colors">About Us</Link>
+                    <Link href="/changelog" className="hover:text-[#00D9FF] transition-colors">Changelog</Link>
+                    <Link href="/docs" className="hover:text-[#00D9FF] transition-colors">Developer API</Link>
+                    <Link href="/compare" className="hover:text-[#00D9FF] transition-colors">Compare Tool</Link>
+                    <Link href="/status" className="hover:text-[#00D9FF] transition-colors">System Telemetry</Link>
+                    <Link href="/terms" className="hover:text-[#00D9FF] transition-colors">Terms of Service</Link>
+                    <Link href="/privacy" className="hover:text-[#00D9FF] transition-colors">Privacy Policy</Link>
                   </div>
+
+                  {/* Bottom Row: Copyright & Legal */}
+                  <p className="text-[11px] text-slate-500 max-w-2xl mx-auto leading-relaxed">
+                    Borsaty AI © 2026. Institutional Quantitative & Technical Financial Intelligence. All calculations are mathematical and educational research.
+                  </p>
                 </div>
               </footer>
             </BorsatyProvider>

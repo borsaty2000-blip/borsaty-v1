@@ -398,3 +398,62 @@ def test_butterfly_rejected_if_d_does_not_extend_beyond_x():
     assert "extend beyond point X" in butterfly_rejs[0]["reason"]
 
 
+# ==============================================================================
+# PART G: CRAB AND DEEP CRAB PATTERN TESTS
+# ==============================================================================
+
+def test_perfect_bullish_crab_detected_with_high_score():
+    detector = HarmonicDetector()
+    # X=100, A=110, B=105.0 (0.50 XA), C=109.27, D=93.82 (1.618 XA extreme extension)
+    pivots = [
+        make_pivot(10, 100.0, "trough"),
+        make_pivot(20, 110.0, "peak"),
+        make_pivot(30, 105.0, "trough"),
+        make_pivot(40, 109.27, "peak"),
+        make_pivot(50, 93.82, "trough"),
+    ]
+    res = detector.detect("TEST", "1D", pivots)
+    assert res["status"] == "available"
+    assert any(p["pattern"] == "crab" for p in res["patterns"])
+    crab_pat = next(p for p in res["patterns"] if p["pattern"] == "crab")
+    assert crab_pat["direction"] == "bullish"
+    assert crab_pat["overall_score"] >= 0.95
+    assert abs(crab_pat["ratios_measured"]["D_vs_XA"] - 1.618) <= 0.01
+
+
+def test_perfect_bearish_crab_detected_with_high_score():
+    detector = HarmonicDetector()
+    # Inverted: X=110, A=100, B=105.0, C=100.73, D=116.18 (1.618 XA extreme extension)
+    pivots = [
+        make_pivot(10, 110.0, "peak"),
+        make_pivot(20, 100.0, "trough"),
+        make_pivot(30, 105.0, "peak"),
+        make_pivot(40, 100.73, "trough"),
+        make_pivot(50, 116.18, "peak"),
+    ]
+    res = detector.detect("TEST", "1D", pivots)
+    assert res["status"] == "available"
+    assert any(p["pattern"] == "crab" for p in res["patterns"])
+    crab_pat = next(p for p in res["patterns"] if p["pattern"] == "crab")
+    assert crab_pat["direction"] == "bearish"
+    assert crab_pat["overall_score"] >= 0.95
+
+
+def test_perfect_deep_crab_detected():
+    detector = HarmonicDetector()
+    # X=100, A=110, B=101.14 (0.886 XA), C=106.6, D=83.82 (2.618 XA)
+    pivots = [
+        make_pivot(10, 100.0, "trough"),
+        make_pivot(20, 110.0, "peak"),
+        make_pivot(30, 101.14, "trough"),
+        make_pivot(40, 106.6, "peak"),
+        make_pivot(50, 83.82, "trough"),
+    ]
+    res = detector.detect("TEST", "1D", pivots)
+    assert res["status"] == "available"
+    assert any(p["pattern"] == "deep_crab" for p in res["patterns"])
+    d_crab = next(p for p in res["patterns"] if p["pattern"] == "deep_crab")
+    assert d_crab["overall_score"] >= 0.95
+
+
+

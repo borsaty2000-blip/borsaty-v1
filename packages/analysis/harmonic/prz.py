@@ -75,13 +75,18 @@ class PrzCalculator:
 
         elif pattern_name in ["crab", "deep_crab"]:
             d_mult = 2.618 if pattern_name == "deep_crab" else 1.618
-            bc_mult = 3.618 if pattern_name == "crab" else 2.618
             if is_bullish:
                 projections.append(pa - d_mult * xa)
-                projections.append(pc - bc_mult * bc)
+                projections.append(pc - 2.618 * bc)
+                projections.append(pc - 3.618 * bc)
+                if pattern_name == "deep_crab":
+                    projections.append(pc - 4.236 * bc)
             else:
                 projections.append(pa + d_mult * xa)
-                projections.append(pc + bc_mult * bc)
+                projections.append(pc + 2.618 * bc)
+                projections.append(pc + 3.618 * bc)
+                if pattern_name == "deep_crab":
+                    projections.append(pc + 4.236 * bc)
 
         elif pattern_name == "shark":
             if is_bullish:

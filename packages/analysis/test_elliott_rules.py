@@ -539,6 +539,25 @@ def test_ambiguity_different_subtypes_reported():
     res = detector.detect("TEST", "1D", pivots, min_degree=2)
     assert res["alternative_count"] is not None
 
+def test_alternative_is_not_same_waves_relabeled():
+    detector = ElliottDetector()
+    pivots = [
+        make_pivot(0, 100.0, "trough"),
+        make_pivot(10, 110.0, "peak"),
+        make_pivot(20, 105.0, "trough"),
+        make_pivot(30, 125.0, "peak"),
+        make_pivot(40, 120.0, "trough"),
+        make_pivot(50, 150.0, "peak"),
+    ]
+    res = detector.detect("TEST", "1D", pivots, min_degree=2)
+    assert res["primary_count"] is not None
+    assert res["alternative_count"] is not None
+
+    pc_pivots = [(w["start"]["index"], w["end"]["index"]) for w in res["primary_count"]["waves"]]
+    ac_pivots = [(w["start"]["index"], w["end"]["index"]) for w in res["alternative_count"]["waves"]]
+    assert pc_pivots != ac_pivots
+
+
 
 # ==============================================================================
 # PART G: REAL DATA SIMULATION TESTS (10 TESTS)

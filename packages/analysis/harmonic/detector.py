@@ -20,8 +20,8 @@ class HarmonicDetector:
 
     VERSION = "1.0.0"
 
-    # Enabled patterns in phased order
-    ENABLED_PATTERNS = ["gartley", "bat", "butterfly", "crab", "deep_crab"]
+    # All harmonic patterns enabled
+    ENABLED_PATTERNS = ["gartley", "bat", "butterfly", "crab", "deep_crab", "shark", "cypher", "abcd"]
 
     def __init__(self, prz_calculator: Optional[PrzCalculator] = None):
         self.prz_calc = prz_calculator or global_prz_calculator
@@ -146,6 +146,40 @@ class HarmonicDetector:
                         "pivots_indices": [p_x.get("index"), p_a.get("index"), p_b.get("index"), p_c.get("index"), p_d.get("index")],
                         "reason": f"{pattern_name.capitalize()} structural violation: D must extend beyond point X",
                         "closest_pattern": pattern_name,
+                    }
+
+        elif pattern_name == "shark":
+            if is_bullish:
+                # B extends beyond X (vb < vx), C extends beyond A (vc > va)
+                if not (vx < va and vb < vx and vc > va and vd < vc):
+                    return False, None, {
+                        "pivots_indices": [p_x.get("index"), p_a.get("index"), p_b.get("index"), p_c.get("index"), p_d.get("index")],
+                        "reason": "Shark structural violation: B must extend beyond X and C must extend beyond A",
+                        "closest_pattern": "shark",
+                    }
+            else:
+                if not (vx > va and vb > vx and vc < va and vd > vc):
+                    return False, None, {
+                        "pivots_indices": [p_x.get("index"), p_a.get("index"), p_b.get("index"), p_c.get("index"), p_d.get("index")],
+                        "reason": "Shark structural violation: B must extend beyond X and C must extend beyond A",
+                        "closest_pattern": "shark",
+                    }
+
+        elif pattern_name == "cypher":
+            if is_bullish:
+                # B retraces XA (vb > vx, vb < va), C extends beyond A (vc > va), D retraces XC (vd < vc, vd > vx)
+                if not (vx < va and vb > vx and vb < va and vc > va and vd < vc and vd > vx):
+                    return False, None, {
+                        "pivots_indices": [p_x.get("index"), p_a.get("index"), p_b.get("index"), p_c.get("index"), p_d.get("index")],
+                        "reason": "Cypher structural violation: C must extend beyond A and D must remain above X",
+                        "closest_pattern": "cypher",
+                    }
+            else:
+                if not (vx > va and vb < vx and vb > va and vc < va and vd > vc and vd < vx):
+                    return False, None, {
+                        "pivots_indices": [p_x.get("index"), p_a.get("index"), p_b.get("index"), p_c.get("index"), p_d.get("index")],
+                        "reason": "Cypher structural violation: C must extend beyond A and D must remain below X",
+                        "closest_pattern": "cypher",
                     }
 
         # Check all required ratios for the pattern

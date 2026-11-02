@@ -75,9 +75,9 @@ HARMONIC_PATTERNS: Dict[str, Dict[str, Any]] = {
         "type": "reversal",
         "direction": "any",
         "ratios": {
-            "B_vs_XA": {"ideal": 1.27, "tolerance": 0.15},   # B beyond X
-            "C_vs_AB": {"ideal": 1.618, "tolerance": 0.20},
-            "D_vs_XA": {"ideal": 0.886, "tolerance": 0.05},
+            "B_vs_XA": {"ideal": 1.27, "tolerance": 0.15, "alt_ideals": [1.13, 1.618]},
+            "C_vs_AB": {"ideal": 1.618, "tolerance": 0.20, "alt_ideals": [2.0, 2.24]},
+            "D_vs_XA": {"ideal": 0.886, "tolerance": 0.05, "alt_ideals": [1.13]},
         },
         "prz_projections": ["1.13*XA", "0.886*XC"],
         "note": "B extends beyond X — 'shark fin' shape",
@@ -87,8 +87,8 @@ HARMONIC_PATTERNS: Dict[str, Dict[str, Any]] = {
         "type": "reversal",
         "direction": "any",
         "ratios": {
-            "B_vs_XA": {"ideal": 0.50, "tolerance": 0.10},
-            "C_vs_AB": {"ideal": 1.13, "tolerance": 0.10},
+            "B_vs_XA": {"ideal": 0.50, "tolerance": 0.10, "alt_ideals": [0.382, 0.618]},
+            "C_vs_AB": {"ideal": 1.13, "tolerance": 0.15, "alt_ideals": [1.27, 1.414]},
             "D_vs_XC": {"ideal": 0.786, "tolerance": 0.05},
         },
         "prz_projections": ["0.786*XC"],
@@ -99,8 +99,8 @@ HARMONIC_PATTERNS: Dict[str, Dict[str, Any]] = {
         "type": "continuation",
         "direction": "any",
         "ratios": {
-            "CD_vs_BC": {"ideal": 1.27, "tolerance": 0.15},
-            "AD_vs_AB": {"ideal": 0.786, "tolerance": 0.10},
+            "CD_vs_BC": {"ideal": 1.27, "tolerance": 0.15, "alt_ideals": [1.618]},
+            "AD_vs_AB": {"ideal": 0.786, "tolerance": 0.10, "alt_ideals": [1.0, 1.27]},
         },
         "prz_projections": ["1.27*BC"],
         "specificity": 1,

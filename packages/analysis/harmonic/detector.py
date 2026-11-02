@@ -21,9 +21,7 @@ class HarmonicDetector:
     VERSION = "1.0.0"
 
     # Enabled patterns in phased order
-    # Phase 1: gartley
-    # Subsequent phases enable bat, butterfly, crab, deep_crab, shark, cypher, abcd
-    ENABLED_PATTERNS = ["gartley"]
+    ENABLED_PATTERNS = ["gartley", "bat"]
 
     def __init__(self, prz_calculator: Optional[PrzCalculator] = None):
         self.prz_calc = prz_calculator or global_prz_calculator
@@ -115,22 +113,21 @@ class HarmonicDetector:
         }
 
         # Direction-specific structural checks
-        if pattern_name == "gartley":
+        if pattern_name in ["gartley", "bat"]:
             if is_bullish:
-                # Bullish Gartley: X is low, A is high, B is low (> X), C is high (< A), D is low (> X)
+                # Points must stay contained within XA boundaries
                 if not (vx < va and vb < va and vb > vx and vc > vb and vc < va and vd < vc and vd > vx):
                     return False, None, {
                         "pivots_indices": [p_x.get("index"), p_a.get("index"), p_b.get("index"), p_c.get("index"), p_d.get("index")],
-                        "reason": "Gartley structural sequence violation: points must stay contained within XA boundaries",
-                        "closest_pattern": "gartley",
+                        "reason": f"{pattern_name.capitalize()} structural sequence violation: points must stay contained within XA boundaries",
+                        "closest_pattern": pattern_name,
                     }
             else:
-                # Bearish Gartley: X is high, A is low, B is high (< X), C is low (> A), D is high (< X)
                 if not (vx > va and vb > va and vb < vx and vc < vb and vc > va and vd > vc and vd < vx):
                     return False, None, {
                         "pivots_indices": [p_x.get("index"), p_a.get("index"), p_b.get("index"), p_c.get("index"), p_d.get("index")],
-                        "reason": "Gartley structural sequence violation: points must stay contained within XA boundaries",
-                        "closest_pattern": "gartley",
+                        "reason": f"{pattern_name.capitalize()} structural sequence violation: points must stay contained within XA boundaries",
+                        "closest_pattern": pattern_name,
                     }
 
         # Check all required ratios for the pattern

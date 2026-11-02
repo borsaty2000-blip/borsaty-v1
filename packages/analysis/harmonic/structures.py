@@ -28,7 +28,7 @@ HARMONIC_PATTERNS: Dict[str, Dict[str, Any]] = {
             "B_vs_XA": {"ideal": 0.44, "tolerance": 0.06},   # 0.382-0.50
             "C_vs_AB": {"ideal": 0.618, "tolerance": 0.15},
             "D_vs_XA": {"ideal": 0.886, "tolerance": 0.03},
-            "CD_vs_BC": {"ideal": 1.85, "tolerance": 0.25, "alt_ideals": [2.0, 2.618]},
+            "CD_vs_BC": {"ideal": 1.85, "tolerance": 0.25, "alt_ideals": [1.618, 2.0, 2.24, 2.618]},
         },
         "prz_projections": ["0.886*XA", "2.618*BC"],
         "specificity": 3,

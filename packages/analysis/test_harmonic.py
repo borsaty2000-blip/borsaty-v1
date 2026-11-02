@@ -251,3 +251,88 @@ def test_prz_cluster_rejected_when_too_wide():
     prz, reason = calc.compute_prz(points, "gartley", is_bullish=True, atr=0.05)
     assert prz is None
     assert "exceeds 2 ATR" in reason
+
+
+# ==============================================================================
+# PART E: BAT PATTERN TESTS
+# ==============================================================================
+
+def test_perfect_bullish_bat_detected_with_high_score():
+    detector = HarmonicDetector()
+    # X=100, A=110, B=105.60 (0.44 XA), C=108.32 (0.618 AB), D=101.14 (0.886 XA)
+    pivots = [
+        make_pivot(10, 100.0, "trough"),
+        make_pivot(20, 110.0, "peak"),
+        make_pivot(30, 105.60, "trough"),
+        make_pivot(40, 108.32, "peak"),
+        make_pivot(50, 101.14, "trough"),
+    ]
+    res = detector.detect("TEST", "1D", pivots)
+    assert res["status"] == "available"
+    assert len(res["patterns"]) == 1
+    pat = res["patterns"][0]
+    assert pat["pattern"] == "bat"
+    assert pat["direction"] == "bullish"
+    assert pat["overall_score"] >= 0.95
+    assert abs(pat["ratios_measured"]["B_vs_XA"] - 0.44) <= 0.01
+    assert abs(pat["ratios_measured"]["D_vs_XA"] - 0.886) <= 0.01
+
+
+def test_perfect_bearish_bat_detected_with_high_score():
+    detector = HarmonicDetector()
+    # Inverted: X=110, A=100, B=104.40, C=101.68, D=108.86
+    pivots = [
+        make_pivot(10, 110.0, "peak"),
+        make_pivot(20, 100.0, "trough"),
+        make_pivot(30, 104.40, "peak"),
+        make_pivot(40, 101.68, "trough"),
+        make_pivot(50, 108.86, "peak"),
+    ]
+    res = detector.detect("TEST", "1D", pivots)
+    assert res["status"] == "available"
+    assert len(res["patterns"]) == 1
+    pat = res["patterns"][0]
+    assert pat["pattern"] == "bat"
+    assert pat["direction"] == "bearish"
+    assert pat["overall_score"] >= 0.95
+
+
+def test_bat_d_0_832_exceeds_tolerance_rejected_with_reason():
+    # User Verification item 3: D=0.832 in Bat (tol 0.03) -> rejected with reason
+    detector = HarmonicDetector()
+    # X=100, A=110, B=105.60, C=108.32. D at 0.832 of XA = 110 - 8.32 = 101.68
+    pivots = [
+        make_pivot(10, 100.0, "trough"),
+        make_pivot(20, 110.0, "peak"),
+        make_pivot(30, 105.60, "trough"),
+        make_pivot(40, 108.32, "peak"),
+        make_pivot(50, 101.68, "trough"),
+    ]
+    res = detector.detect("TEST", "1D", pivots)
+    assert len(res["patterns"]) == 0
+    assert len(res["rejected_candidates"]) >= 1
+    bat_rejections = [r for r in res["rejected_candidates"] if r.get("closest_pattern") == "bat"]
+    assert len(bat_rejections) >= 1
+    rej = bat_rejections[0]
+    assert "D_vs_XA" in rej["reason"]
+    assert "0.832" in rej["reason"]
+    assert "0.886" in rej["reason"]
+    assert "exceeds tolerance" in rej["reason"]
+
+
+def test_b_0_50_detected_as_bat_not_gartley():
+    detector = HarmonicDetector()
+    # B at 0.50 XA (105.0) falls within Bat's B range (0.382-0.50) but outside Gartley (0.618 +- 0.05)
+    # D at 0.886 = 101.14
+    pivots = [
+        make_pivot(10, 100.0, "trough"),
+        make_pivot(20, 110.0, "peak"),
+        make_pivot(30, 105.0, "trough"),
+        make_pivot(40, 108.0, "peak"),
+        make_pivot(50, 101.14, "trough"),
+    ]
+    res = detector.detect("TEST", "1D", pivots)
+    assert res["status"] == "available"
+    assert any(p["pattern"] == "bat" for p in res["patterns"])
+    assert not any(p["pattern"] == "gartley" for p in res["patterns"])
+

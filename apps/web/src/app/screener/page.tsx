@@ -84,8 +84,9 @@ export default function ScreenerPage() {
       setExplanation(rawData.explanation || null);
       setInterpretedDsl(rawData.interpreted_dsl || null);
       setExecutionMs(data.execution_ms || null);
-    } catch (err: any) {
-      setError(err.message || t("errors.fetchFailed"));
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : t("errors.fetchFailed");
+      setError(message);
     } finally {
       setLoading(false);
     }

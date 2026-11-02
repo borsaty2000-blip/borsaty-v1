@@ -18,8 +18,49 @@ import {
   Info,
 } from "lucide-react";
 
+interface SignalItem {
+  id: string;
+  symbol: string;
+  nameAr: string;
+  market: string;
+  type: string;
+  entry: number;
+  targets: number[];
+  stopLoss: number;
+  confluenceScore: number;
+  status: string;
+  resultPct: number | null;
+  createdAt: string;
+}
+
+interface PatternStats {
+  total: number;
+  closed: number;
+  isSignificant: boolean;
+  hitRate: number;
+  wilsonInterval: { lower: number; upper: number };
+  hits: number;
+  avgReturn: number;
+}
+
+interface SignalMetrics {
+  overallSignificant: boolean;
+  overallHitRate: number;
+  overallWilson: { lower: number; upper: number };
+  closedSignals: number;
+  avgReturnOverall: number;
+  activeSignals: number;
+  totalSignals: number;
+  breakdown: Record<string, PatternStats>;
+}
+
+interface SignalsData {
+  metrics: SignalMetrics;
+  signals: SignalItem[];
+}
+
 export default function SignalsDashboard() {
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<SignalsData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -158,7 +199,7 @@ export default function SignalsDashboard() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          {Object.entries(metrics.breakdown).map(([typeKey, stats]: [string, any]) => (
+          {Object.entries(metrics.breakdown || {}).map(([typeKey, stats]: [string, PatternStats]) => (
             <div key={typeKey} className="p-4 rounded-xl bg-[#141c2e] border border-[#232e48] space-y-2.5">
               <div className="flex items-center justify-between text-xs font-semibold">
                 <span className="text-gray-200">{typeKey}</span>
@@ -222,7 +263,7 @@ export default function SignalsDashboard() {
               </tr>
             </thead>
             <tbody className="divide-y divide-[#1b253b]">
-              {signals.map((sig: any) => (
+              {signals.map((sig: SignalItem) => (
                 <tr key={sig.id} className="hover:bg-[#141d30] transition-colors">
                   <td className="py-3.5 px-3">
                     <span className="font-bold text-white">{sig.symbol}</span>

@@ -19,8 +19,9 @@ export async function POST(request: Request) {
       await circuitBreaker.execute(provider, async () => {
         throw new Error(`Simulated failure #${i} from test function instance on ${provider}`);
       });
-    } catch (err: any) {
-      errors.push(err.message);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err);
+      errors.push(message);
       await metricsCollector.incFetchFailure(provider, "quote", "HTTP_500");
     }
   }

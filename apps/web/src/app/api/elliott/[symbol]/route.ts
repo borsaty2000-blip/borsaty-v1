@@ -43,7 +43,7 @@ export async function GET(
 
   // 3. Compute Elliott Waves via Analysis Engine or deterministic fallback
   const analysisUrl = getPythonServiceUrl();
-  let elliottResult: any = null;
+  let elliottResult: Record<string, unknown> | null = null;
 
   try {
     const res = await fetch(`${analysisUrl}/elliott/detect`, {

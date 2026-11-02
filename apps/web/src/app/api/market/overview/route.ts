@@ -51,7 +51,15 @@ export async function GET() {
     if (res.ok) {
       const data = await res.json();
       if (Array.isArray(data.indices) && data.indices.length > 0) {
-        liveIndices = data.indices.map((idx: any) => ({
+        liveIndices = data.indices.map((idx: {
+          symbol: string;
+          nameAr: string;
+          nameEn: string;
+          price: number;
+          change: number;
+          change_pct: number;
+          category: string;
+        }) => ({
           symbol: idx.symbol,
           nameAr: idx.nameAr,
           nameEn: idx.nameEn,

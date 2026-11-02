@@ -4,6 +4,7 @@ import { resolveStockAlias } from "@borsaty/shared";
 import { AlertCircle } from "lucide-react";
 import Link from "next/link";
 import StockDetailClientV2 from "@/components/StockDetailClientV2";
+import { CandleDataPoint } from "@/components/charts/PriceChart";
 import { getPythonServiceUrl } from "@/lib/config";
 
 interface StockPageProps {
@@ -42,7 +43,7 @@ export default async function StockDetailPage({ params }: StockPageProps) {
   let currentPrice = company.currentPrice || 86.5;
   let change = company.change || 0;
   let changePct = company.changePct || 0;
-  let rawCandles: any[] = [];
+  let rawCandles: CandleDataPoint[] = [];
 
   try {
     const [quoteRes, histRes] = await Promise.allSettled([

@@ -45,7 +45,7 @@ export async function GET(
 
   // 3. Request Trade Plan from Python Analysis Service
   const analysisUrl = getPythonServiceUrl();
-  let planResult: any = null;
+  let planResult: Record<string, unknown> | null = null;
 
   try {
     const res = await fetch(`${analysisUrl}/trade-plan/compute`, {

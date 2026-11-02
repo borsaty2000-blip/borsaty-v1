@@ -19,11 +19,12 @@ export async function POST(request: Request) {
       provider,
       ...result,
     });
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "Failed to replay DLQ";
     return NextResponse.json(
       {
         success: false,
-        error: err.message || "Failed to replay DLQ",
+        error: message,
       },
       { status: 400 }
     );

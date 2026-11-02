@@ -15,9 +15,10 @@ export async function GET() {
       items,
       count: items.length,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Failed to fetch watchlist";
     return NextResponse.json(
-      { error: error?.message || "Failed to fetch watchlist" },
+      { error: message },
       { status: 500 }
     );
   }
@@ -53,9 +54,10 @@ export async function POST(request: Request) {
       item: saved,
       message: `${rawSymbol} added to watchlist`,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Failed to add to watchlist";
     return NextResponse.json(
-      { error: error?.message || "Failed to add to watchlist" },
+      { error: message },
       { status: 500 }
     );
   }

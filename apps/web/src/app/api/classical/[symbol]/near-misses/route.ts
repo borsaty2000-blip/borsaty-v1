@@ -39,7 +39,7 @@ export async function GET(
   }
 
   const analysisUrl = getPythonServiceUrl();
-  let result: any = null;
+  let result: Record<string, unknown> | null = null;
 
   try {
     const res = await fetch(`${analysisUrl}/classical/detect`, {
@@ -61,7 +61,7 @@ export async function GET(
     // Analysis service offline
   }
 
-  const nearMisses = result?.near_misses || [];
+  const nearMisses = (Array.isArray(result?.near_misses) ? result.near_misses : []) as unknown[];
   const responseData = {
     symbol: sym,
     timeframe,

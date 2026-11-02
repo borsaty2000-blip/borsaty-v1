@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { redis, getPrismaClient } from "@borsaty/db";
+import { redis, getPrismaClient, Prisma } from "@borsaty/db";
 import { getPythonServiceUrl } from "@/lib/config";
 
 async function checkRateLimit(key: string, limit: number, windowSec: number = 60) {
@@ -82,7 +82,7 @@ export async function POST(request: Request) {
 
     // 3. Call Analysis Engine (Python FastAPI)
     const analysisUrl = getPythonServiceUrl();
-    let screenerResponse: any = null;
+    let screenerResponse: Record<string, unknown> | null = null;
 
     try {
       const resp = await fetch(`${analysisUrl}/screener/query`, {
@@ -101,7 +101,7 @@ export async function POST(request: Request) {
       }
 
       screenerResponse = await resp.json();
-    } catch (e: any) {
+    } catch {
       // Fallback for independent web development without FastAPI running
       screenerResponse = {
         interpreted: {
@@ -150,7 +150,8 @@ export async function POST(request: Request) {
       };
     }
 
-    const executionMs = screenerResponse.execution_ms || (Date.now() - startTime);
+    const resObj = screenerResponse as Record<string, unknown>;
+    const executionMs = (resObj.execution_ms as number) || (Date.now() - startTime);
 
     // 4. Audit Logging in ScreenerQuery table (Fire-and-forget or try-catch)
     try {
@@ -159,8 +160,8 @@ export async function POST(request: Request) {
         data: {
           userId: userId || null,
           queryAr: query,
-          parsedDsl: screenerResponse.interpreted || {},
-          resultCount: screenerResponse.total_matches || screenerResponse.results?.length || 0,
+          parsedDsl: (resObj.interpreted as Prisma.InputJsonValue) || {},
+          resultCount: (resObj.total_matches as number) || (Array.isArray(resObj.results) ? resObj.results.length : 0),
           executionMs: executionMs,
         },
       });
@@ -171,12 +172,13 @@ export async function POST(request: Request) {
     return NextResponse.json({
       success: true,
       query,
-      ...screenerResponse,
+      ...resObj,
       execution_ms: executionMs,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "حدث خطأ غير متوقع أثناء معالجة استعلام التصفية";
     return NextResponse.json(
-      { error: error?.message || "حدث خطأ غير متوقع أثناء معالجة استعلام التصفية" },
+      { error: message },
       { status: 500 }
     );
   }

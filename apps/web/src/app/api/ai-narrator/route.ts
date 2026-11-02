@@ -46,9 +46,10 @@ export async function POST(request: Request) {
       modelUsed: "Borsaty Narrator Agent (Deterministic Grounding)",
       timestamp: new Date().toISOString(),
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Narrator processing error";
     return NextResponse.json(
-      { success: false, error: error.message || "Narrator processing error" },
+      { success: false, error: message },
       { status: 500 }
     );
   }

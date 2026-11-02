@@ -36,7 +36,7 @@ export async function GET(
 
   // 3. Compute indicators via Analysis Service or Fallback
   const analysisUrl = getPythonServiceUrl();
-  let computedData: any = null;
+  let computedData: Record<string, unknown> | null = null;
 
   try {
     const res = await fetch(`${analysisUrl}/indicators/compute`, {

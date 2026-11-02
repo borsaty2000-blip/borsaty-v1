@@ -44,7 +44,7 @@ export async function GET(
 
   // 3. Compute Classical Patterns via Analysis Engine or deterministic fallback
   const analysisUrl = getPythonServiceUrl();
-  let classicalResult: any = null;
+  let classicalResult: Record<string, unknown> | null = null;
 
   try {
     const res = await fetch(`${analysisUrl}/classical/detect`, {

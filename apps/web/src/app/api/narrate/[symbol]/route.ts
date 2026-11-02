@@ -43,7 +43,7 @@ export async function GET(
 
   // 3. Request Narration from Python Analysis Service
   const analysisUrl = getPythonServiceUrl();
-  let narrativeResult: any = null;
+  let narrativeResult: Record<string, unknown> | null = null;
 
   try {
     const res = await fetch(`${analysisUrl}/narrate`, {

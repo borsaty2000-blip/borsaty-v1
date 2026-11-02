@@ -40,7 +40,7 @@ export async function GET(
   const matchedStock = PRIORITY_STOCKS.find((s) => s.symbol.toUpperCase() === sym);
   const market = searchParams.get("market") || matchedStock?.market || "EGX";
 
-  let candles: any[] = [];
+  let candles: Array<Record<string, unknown>> = [];
   try {
     const histRes = await fetch(`${analysisUrl}/history/${sym}?market=${market}`, {
       signal: AbortSignal.timeout(4000),
@@ -64,7 +64,7 @@ export async function GET(
   }
 
   // 3. Compute Full Unified Analysis via Analysis Orchestrator
-  let fullResult: any = null;
+  let fullResult: Record<string, unknown> | null = null;
 
   try {
     const res = await fetch(`${analysisUrl}/analysis/full`, {

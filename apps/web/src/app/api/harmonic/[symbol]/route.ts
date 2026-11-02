@@ -43,7 +43,7 @@ export async function GET(
 
   // 3. Compute Harmonic Patterns via Analysis Engine or deterministic fallback
   const analysisUrl = getPythonServiceUrl();
-  let harmonicResult: any = null;
+  let harmonicResult: Record<string, unknown> | null = null;
 
   try {
     const res = await fetch(`${analysisUrl}/harmonic/detect`, {

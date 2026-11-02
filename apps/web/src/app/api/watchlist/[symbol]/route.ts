@@ -22,9 +22,10 @@ export async function GET(
       symbol: symbol.toUpperCase(),
       inWatchlist,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Failed to check watchlist status";
     return NextResponse.json(
-      { error: error?.message || "Failed to check watchlist status" },
+      { error: message },
       { status: 500 }
     );
   }
@@ -53,9 +54,10 @@ export async function DELETE(
       symbol: sym,
       message: `${sym} removed from watchlist`,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Failed to remove from watchlist";
     return NextResponse.json(
-      { error: error?.message || "Failed to remove from watchlist" },
+      { error: message },
       { status: 500 }
     );
   }

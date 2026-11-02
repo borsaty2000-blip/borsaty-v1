@@ -35,9 +35,11 @@ export async function GET(request: Request) {
       attempted_provider_call: true,
       result: result.result,
     });
-  } catch (err: any) {
+  } catch (err: unknown) {
     const isCircuitOpen = err instanceof CircuitOpenError;
     const statusCode = isCircuitOpen ? 503 : 500;
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    const retryAfter = isCircuitOpen ? (err as CircuitOpenError).retryAfterSeconds : undefined;
 
     return NextResponse.json(
       {
@@ -45,8 +47,8 @@ export async function GET(request: Request) {
         provider,
         circuit_state: isCircuitOpen ? "OPEN" : "ERROR",
         attempted_provider_call: attemptedCall,
-        error: err.message,
-        retry_after_s: isCircuitOpen ? err.retryAfterSeconds : undefined,
+        error: errorMessage,
+        retry_after_s: retryAfter,
         reason: isCircuitOpen ? "CIRCUIT_OPEN_FAST_FAIL" : "PROVIDER_CALL_FAILED",
       },
       { status: statusCode }

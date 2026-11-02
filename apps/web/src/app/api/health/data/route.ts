@@ -6,7 +6,7 @@ import {
   redis,
 } from "@borsaty/db";
 
-let cachedResponse: { data: any; expiresAt: number } | null = null;
+let cachedResponse: { data: unknown; expiresAt: number } | null = null;
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);

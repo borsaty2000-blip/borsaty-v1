@@ -43,7 +43,7 @@ export async function GET(
 
   // 3. Compute HSPD Pivots via Analysis Service or deterministic fallback
   const analysisUrl = getPythonServiceUrl();
-  let hspdResult: any = null;
+  let hspdResult: Record<string, unknown> | null = null;
 
   try {
     const res = await fetch(`${analysisUrl}/pivots/detect`, {

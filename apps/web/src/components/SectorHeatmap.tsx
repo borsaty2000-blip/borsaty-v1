@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { LayoutGrid, TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight, Layers, Sparkles } from "lucide-react";
+import { LayoutGrid, ArrowUpRight, ArrowDownRight } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 
 export interface SectorStock {

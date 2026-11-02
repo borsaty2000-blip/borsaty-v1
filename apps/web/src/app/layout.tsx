@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Cairo, Inter } from "next/font/google";
-import { TrendingUp } from "lucide-react";
 import "./globals.css";
 import Header from "@/components/Header";
 import CommandPalette from "@/components/CommandPalette";

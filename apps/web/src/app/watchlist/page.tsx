@@ -19,6 +19,7 @@ import {
   User
 } from "lucide-react";
 import { useApp } from "@/context/AppContext";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
 interface WatchlistItem {
   id: string;

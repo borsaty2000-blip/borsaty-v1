@@ -16,6 +16,8 @@ import {
 } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 import { DataWrapper } from "@/components/ui/DataWrapper";
+import ErrorBoundary from "@/components/ErrorBoundary";
+import { ScreenerResponseSchema } from "@/lib/schemas";
 
 interface ScreenerResult {
   symbol: string;
@@ -74,10 +76,13 @@ export default function ScreenerPage() {
         throw new Error("فشل تنفيذ الاستعلام، يرجى المحاولة مرة أخرى");
       }
 
-      const data = await res.json();
+      const rawData = await res.json();
+      const parsed = ScreenerResponseSchema.safeParse(rawData);
+      const data = parsed.success ? parsed.data : rawData;
+
       setResults(data.results || []);
-      setExplanation(data.explanation || null);
-      setInterpretedDsl(data.interpreted_dsl || null);
+      setExplanation(rawData.explanation || null);
+      setInterpretedDsl(rawData.interpreted_dsl || null);
       setExecutionMs(data.execution_ms || null);
     } catch (err: any) {
       setError(err.message || t("errors.fetchFailed"));
@@ -155,24 +160,25 @@ export default function ScreenerPage() {
         </div>
       </div>
 
-      {/* 2. Results Section with DataWrapper */}
-      <DataWrapper
-        isLoading={loading}
-        error={error}
-        data={results}
-        onRetry={() => handleSearch()}
-        emptyState={
-          results !== null && results.length === 0 ? (
-            <div className="p-10 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0b0f19] text-center space-y-2">
-              <AlertCircle className="w-8 h-8 text-slate-400 mx-auto" />
-              <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200">
-                {t("screener.emptyResults")}
-              </h4>
-            </div>
-          ) : undefined
-        }
-      >
-        {(stkList) => (
+      {/* 2. Results Section with DataWrapper & ErrorBoundary */}
+      <ErrorBoundary fallbackTitleEn="Screener Results Error" fallbackTitleAr="تعذر عرض نتائج التصفية">
+        <DataWrapper
+          isLoading={loading}
+          error={error}
+          data={results}
+          onRetry={() => handleSearch()}
+          emptyState={
+            results !== null && results.length === 0 ? (
+              <div className="p-10 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0b0f19] text-center space-y-2">
+                <AlertCircle className="w-8 h-8 text-slate-400 mx-auto" />
+                <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200">
+                  {t("screener.emptyResults")}
+                </h4>
+              </div>
+            ) : undefined
+          }
+        >
+          {(stkList) => (
           <div className="space-y-4">
             {/* Interpreted Explanation Box */}
             {explanation && (
@@ -264,6 +270,7 @@ export default function ScreenerPage() {
           </div>
         )}
       </DataWrapper>
+      </ErrorBoundary>
     </div>
   );
 }

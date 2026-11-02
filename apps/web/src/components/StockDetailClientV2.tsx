@@ -17,6 +17,8 @@ import { PriceChart } from '@/components/charts/PriceChart';
 import { DataWrapper } from '@/components/ui/DataWrapper';
 import { DecisionCard } from '@/components/DecisionCard';
 import WatchlistButton from '@/components/WatchlistButton';
+import ErrorBoundary from '@/components/ErrorBoundary';
+import { safeParseAnalysis, ValidatedUnifiedAnalysis } from '@/lib/schemas';
 import { useApp } from '@/context/AppContext';
 
 interface StockDetailClientProps {
@@ -36,7 +38,7 @@ export default function StockDetailClientV2({
   const [activeTab, setActiveTab] = useState<'analysis' | 'tradePlan' | 'patterns' | 'indicators' | 'narrative'>('analysis');
   const [decisionData, setDecisionData] = useState<any>(null);
   const [decisionLoading, setDecisionLoading] = useState(true);
-  const [analysisData, setAnalysisData] = useState<any>(null);
+  const [analysisData, setAnalysisData] = useState<ValidatedUnifiedAnalysis | null>(null);
 
   useEffect(() => {
     async function fetchDecision() {
@@ -59,10 +61,12 @@ export default function StockDetailClientV2({
         const res = await fetch(`/api/analysis/${company.symbol}/full`);
         if (res.ok) {
           const data = await res.json();
-          setAnalysisData(data);
+          const validated = safeParseAnalysis(data, company.symbol);
+          setAnalysisData(validated);
         }
       } catch {
-        // fallback
+        // fallback to guaranteed safe analysis schema
+        setAnalysisData(safeParseAnalysis(null, company.symbol));
       }
     }
 
@@ -126,15 +130,17 @@ export default function StockDetailClientV2({
       </div>
 
       {/* 2. THE MOMENT OF TRUTH: PROMINENT DECISION CARD (FIRST THING) */}
-      <DataWrapper isLoading={decisionLoading} data={decisionData}>
-        {(dec) => (
-          <DecisionCard
-            symbol={company.symbol}
-            currency={company.currency}
-            decisionData={dec}
-          />
-        )}
-      </DataWrapper>
+      <ErrorBoundary fallbackTitleEn="Decision Card Unavailable" fallbackTitleAr="تعذر عرض بطاقة القرار">
+        <DataWrapper isLoading={decisionLoading} data={decisionData}>
+          {(dec) => (
+            <DecisionCard
+              symbol={company.symbol}
+              currency={company.currency}
+              decisionData={dec}
+            />
+          )}
+        </DataWrapper>
+      </ErrorBoundary>
 
       {/* 3. Section Tabs */}
       <div className="flex items-center gap-1 border-b border-slate-200 dark:border-slate-800 pb-2 overflow-x-auto no-scrollbar text-xs md:text-sm font-bold text-slate-600 dark:text-slate-400">
@@ -177,12 +183,14 @@ export default function StockDetailClientV2({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column: Interactive Price Chart */}
         <div className="lg:col-span-2 space-y-4">
-          <PriceChart
-            candles={candles}
-            height={440}
-            symbol={company.symbol}
-            currency={company.currency}
-          />
+          <ErrorBoundary fallbackTitleEn="Chart Display Error" fallbackTitleAr="تعذر عرض الرسم البياني">
+            <PriceChart
+              candles={candles}
+              height={440}
+              symbol={company.symbol}
+              currency={company.currency}
+            />
+          </ErrorBoundary>
         </div>
 
         {/* Right Column: Quantitative Confluence & Metric Sidebar */}

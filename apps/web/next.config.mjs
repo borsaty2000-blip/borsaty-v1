@@ -3,6 +3,8 @@ const nextConfig = {
   transpilePackages: ["@borsaty/shared", "@borsaty/db", "@borsaty/ui"],
   reactStrictMode: true,
   productionBrowserSourceMaps: false,
+  poweredByHeader: false,
+  compress: true,
   compiler: {
     removeConsole:
       process.env.NODE_ENV === "production" ? { exclude: ["error", "warn"] } : false,
@@ -12,6 +14,10 @@ const nextConfig = {
       {
         source: "/:path*",
         headers: [
+          {
+            key: "Content-Security-Policy",
+            value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.clerk.accounts.dev https://*.clerk.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://*.clerk.accounts.dev https://api.clerk.com https://*.clerk.com; font-src 'self' data:; worker-src 'self' blob:;",
+          },
           {
             key: "X-Frame-Options",
             value: "DENY",
@@ -30,7 +36,11 @@ const nextConfig = {
           },
           {
             key: "Permissions-Policy",
-            value: "camera=(), microphone=(), geolocation=(), browsing-topics=()",
+            value: "camera=(), microphone=(), geolocation=(), interest-cohort=(), browsing-topics=()",
+          },
+          {
+            key: "X-Borsaty-Origin",
+            value: "proprietary",
           },
         ],
       },

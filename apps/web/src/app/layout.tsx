@@ -11,6 +11,7 @@ import { BorsatyProvider } from "@/context/BorsatyContext";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "sonner";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
+import DevToolsGuard from "@/components/DevToolsGuard";
 
 const cairo = Cairo({
   subsets: ["arabic", "latin"],
@@ -45,6 +46,7 @@ export default function RootLayout({
           <AppProvider>
             <BorsatyProvider>
               <ServiceWorkerRegister />
+              <DevToolsGuard />
               <CommandPalette />
               <Toaster position="bottom-right" richColors />
               <Header />

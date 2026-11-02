@@ -1017,3 +1017,17 @@ def test_coverage_position_sizer_returns_history():
     assert res["units"] > 0
     assert res["whole_units"] > 0
 
+
+def test_blended_rr_formula():
+    """Verify blended_rr = Σ(rr_i × (1/rank_i)) / Σ(1/rank_i)."""
+    targets = [
+        {"rank": 1, "r_multiple": 2.0},
+        {"rank": 2, "r_multiple": 4.0},
+        {"rank": 3, "r_multiple": 6.0},
+    ]
+    rank_weights = [1.0 / t["rank"] for t in targets]
+    sum_w = sum(rank_weights)
+    expected_blended = round(sum(t["r_multiple"] * w for t, w in zip(targets, rank_weights)) / sum_w, 2)
+    assert math.isclose(expected_blended, 3.27, abs_tol=0.01)
+
+

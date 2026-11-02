@@ -54,6 +54,11 @@ A plan is certified as `actionable` only when all 5 binary criteria pass:
 4. Stop distance $\ge 1.5 \times \text{ATR}$ and $\ge 1.5\%$ (`status_reason = "stop_too_tight"`).
 5. Valid targets exist in the trade direction (`status_reason = "no_targets_found"`).
 
+### Blended Risk-to-Reward Formula (معادلة العائد للمخاطرة الموزون)
+The aggregate risk-to-reward ratio (`blended_rr`) weights each target's $R$-multiple inversely by its rank:
+$$\text{Blended RR} = \frac{\sum_{i=1}^N \left(\text{rr}_i \times \frac{1}{\text{rank}_i}\right)}{\sum_{i=1}^N \frac{1}{\text{rank}_i}}$$
+For 3 targets, rank weights are $1.0$, $0.5$, and $0.333$, giving Target 1 ~54.5% of the blended weight.
+
 ### Step 6 — Multi-Method Position Sizing
 Four distinct position sizing methodologies are computed:
 1. **Fixed Fractional:**

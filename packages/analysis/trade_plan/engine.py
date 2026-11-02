@@ -370,7 +370,12 @@ class TradePlanEngine:
         r1 = targets_list[0]["r_multiple"] if len(targets_list) > 0 else 0.0
         r2 = targets_list[1]["r_multiple"] if len(targets_list) > 1 else 0.0
         r3 = targets_list[2]["r_multiple"] if len(targets_list) > 2 else 0.0
-        blended_rr = round(r1 * 0.5 + r2 * 0.3 + r3 * 0.2, 2) if targets_list else 0.0
+        if targets_list:
+            rank_weights = [1.0 / t["rank"] for t in targets_list]
+            sum_w = sum(rank_weights)
+            blended_rr = round(sum(t["r_multiple"] * w for t, w in zip(targets_list, rank_weights)) / sum_w, 2)
+        else:
+            blended_rr = 0.0
 
         risk_reward_dict = {
             "target_1_rr": r1,

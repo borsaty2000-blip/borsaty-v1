@@ -1,0 +1,44 @@
+{
+  "common": {
+    "appName": "Borsaty",
+    "tagline": "Intelligent Quantitative & Technical Analysis for Arab and Global Markets",
+    "searchPlaceholder": "Search ticker, company, or index (e.g., COMI, 1120, AAPL)...",
+    "loading": "Loading...",
+    "error": "An unexpected error occurred",
+    "retry": "Retry",
+    "noData": "No data available at the moment",
+    "insufficientData": "Insufficient data for evaluation",
+    "themeLight": "Light Mode",
+    "themeDark": "Dark Mode",
+    "language": "Language",
+    "ar": "العربية",
+    "en": "English",
+    "disclaimer": "This analysis is strictly educational and quantitative, and does not constitute financial or investment advice. All trading decisions remain the sole responsibility of the user."
+  },
+  "nav": {
+    "markets": "Markets",
+    "screener": "Smart Screener",
+    "tradePlan": "Trade Plan",
+    "signals": "Technical Signals",
+    "backtest": "Backtest",
+    "portfolio": "Portfolio"
+  },
+  "analysis": {
+    "confluenceScore": "Confluence Score",
+    "regime": "Market Regime",
+    "verdict": "Technical Verdict",
+    "entryZone": "Entry Zone",
+    "stopLoss": "Stop Loss",
+    "target": "Target",
+    "riskReward": "Risk/Reward Ratio",
+    "positionSize": "Suggested Position",
+    "summary": "Technical Summary",
+    "chart": "Chart",
+    "engines": "Analytical Engines"
+  },
+  "errors": {
+    "fetchFailed": "Failed to retrieve data from server",
+    "networkError": "Please check your network connection and try again",
+    "notFound": "Item not found or has been moved"
+  }
+}

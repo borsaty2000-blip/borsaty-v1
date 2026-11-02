@@ -4,19 +4,37 @@
 
 @layer base {
   :root {
+    --background: 255 255 255;
+    --foreground: 15 23 42;
+    --surface: 248 250 252;
+    --surface-card: 255 255 255;
+    --surface-border: 226 232 240;
+  }
+
+  .dark {
     --background: 11 15 25;
+    --foreground: 243 244 246;
     --surface: 17 24 39;
     --surface-card: 26 34 52;
     --surface-border: 35 46 72;
   }
 
   body {
+    background-color: #ffffff;
+    color: #0f172a;
+    font-family: var(--font-cairo), var(--font-inter), 'Cairo', system-ui, -apple-system, sans-serif;
+    font-feature-settings: 'tnum' on, 'lnum' on;
+  }
+
+  .dark body {
     background-color: #0b0f19;
     color: #f3f4f6;
-    font-family: 'Cairo', 'IBM Plex Sans Arabic', system-ui, -apple-system, sans-serif;
-    direction: rtl;
-    text-align: right;
   }
+}
+
+/* Tabular figures for numbers */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
 }
 
 /* Custom scrollbars */
@@ -26,14 +44,18 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #0b0f19;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #232e48;
+  background: #cbd5e1;
   border-radius: 3px;
 }
 
+.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+
 ::-webkit-scrollbar-thumb:hover {
-  background: #374151;
+  background: #94a3b8;
 }

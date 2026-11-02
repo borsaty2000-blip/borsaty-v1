@@ -361,8 +361,8 @@ class HarmonicDetector:
         elif len(confirmed_patterns) == 0:
             status = "unavailable"
             status_reason = "no_valid_pattern"
-            status_message_ar = "لا توجد نماذج هارمونيك مؤكدة تحقق نسب فيبوناتشي الصارمة"
-            status_message_en = "No confirmed harmonic patterns satisfied exact Fibonacci ratio criteria"
+            status_message_ar = "السوق في نطاق عرضي — لا تتوفر نماذج هارمونية موثوقة حالياً"
+            status_message_en = "Range-bound market — no reliable harmonic patterns available"
         else:
             status = "available"
             status_reason = None
@@ -378,7 +378,10 @@ class HarmonicDetector:
             "status_reason": status_reason,
             "status_message_ar": status_message_ar,
             "status_message_en": status_message_en,
+            "message_ar": status_message_ar,
+            "message_en": status_message_en,
             "patterns": confirmed_patterns,
+            "prz": confirmed_patterns[0]["prz"] if confirmed_patterns else None,
             "rejected_candidates": rejected_candidates,
             "data_quality": {
                 "pivots_used": len(pivots_list),

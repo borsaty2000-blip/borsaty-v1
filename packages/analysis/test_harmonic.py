@@ -218,6 +218,25 @@ def test_random_pivots_no_false_positive():
     assert len(res["patterns"]) == 0
 
 
+def test_harmonic_unavailable_on_range_bound():
+    detector = HarmonicDetector()
+    # Market consolidating / range-bound with no harmonic ratios matching
+    pivots = [
+        make_pivot(10, 100.0, "trough"),
+        make_pivot(20, 102.0, "peak"),
+        make_pivot(30, 100.2, "trough"),
+        make_pivot(40, 101.8, "peak"),
+        make_pivot(50, 100.5, "trough"),
+    ]
+    res = detector.detect("CONSOL", "1D", pivots)
+    assert res["status"] == "unavailable"
+    assert res["status_reason"] == "no_valid_pattern"
+    assert res["message_ar"] == "السوق في نطاق عرضي — لا تتوفر نماذج هارمونية موثوقة حالياً"
+    assert res["message_en"] == "Range-bound market — no reliable harmonic patterns available"
+    assert res["patterns"] == []
+    assert res["prz"] is None
+
+
 # ==============================================================================
 # PART D: PRZ TESTS
 # ==============================================================================

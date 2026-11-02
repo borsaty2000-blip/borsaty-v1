@@ -133,8 +133,8 @@ export default function AskAIDialog({
                   <div
                     className={`w-8 h-8 rounded-lg shrink-0 flex items-center justify-center text-xs font-bold ${
                       msg.sender === "user"
-                        ? "bg-emerald-600 text-white"
-                        : "bg-[#1c263c] text-emerald-400 border border-[#283552]"
+                        ? "bg-black text-white border border-slate-700"
+                        : "bg-[#1c263c] text-[#00D9FF] border border-[#283552]"
                     }`}
                   >
                     {msg.sender === "user" ? "أنت" : "بورصتي"}
@@ -142,7 +142,7 @@ export default function AskAIDialog({
                   <div
                     className={`max-w-[80%] rounded-2xl p-3.5 leading-relaxed text-xs sm:text-sm ${
                       msg.sender === "user"
-                        ? "bg-emerald-600 text-white"
+                        ? "bg-slate-900 text-white border border-slate-800"
                         : "bg-[#151e30] border border-[#232e48] text-gray-200 whitespace-pre-line"
                     }`}
                   >
@@ -151,7 +151,7 @@ export default function AskAIDialog({
                 </div>
               ))}
               {loading && (
-                <div className="flex items-center gap-2 text-xs text-emerald-400 p-2">
+                <div className="flex items-center gap-2 text-xs text-[#00D9FF] p-2">
                   <RefreshCw className="w-4 h-4 animate-spin" />
                   <span>المساعد يراجع مخرجات محركات Elliott و Gann والقيمة العادلة...</span>
                 </div>
@@ -184,12 +184,12 @@ export default function AskAIDialog({
                 value={question}
                 onChange={(e) => setQuestion(e.target.value)}
                 placeholder="اكتب استفسارك هنا (مثلاً: ما هي أدلة الشراء أو البيع؟)..."
-                className="flex-1 bg-[#0b0f19] border border-[#232e48] rounded-xl px-4 py-2.5 text-sm text-gray-100 placeholder-gray-500 focus:outline-none focus:border-emerald-500"
+                className="flex-1 bg-[#0b0f19] border border-[#232e48] rounded-xl px-4 py-2.5 text-sm text-gray-100 placeholder-gray-500 focus:outline-none focus:border-[#00D9FF]"
               />
               <button
                 type="submit"
                 disabled={loading || !question.trim()}
-                className="p-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white transition-colors"
+                className="p-2.5 rounded-xl bg-black hover:bg-slate-900 border border-slate-700 disabled:opacity-50 text-white transition-colors"
               >
                 <Send className="w-4 h-4 rotate-180" />
               </button>

@@ -11,14 +11,14 @@ import { ClerkProvider } from "@clerk/nextjs";
 
 const cairo = Cairo({
   subsets: ["arabic", "latin"],
-  weight: ["300", "400", "500", "600", "700", "800"],
+  weight: ["400", "600", "700"],
   display: "swap",
   variable: "--font-cairo",
 });
 
 const inter = Inter({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["400", "600", "700"],
   display: "swap",
   variable: "--font-inter",
 });
@@ -49,16 +49,17 @@ export default function RootLayout({
                 {children}
               </main>
               <MobileBottomNav />
-              <footer className="border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#0B1120]/80 py-6 px-4 pb-20 md:pb-6 text-center text-xs text-slate-500 dark:text-gray-500">
+              <footer className="border-t border-slate-800 bg-[#0A0A0A] py-8 px-4 pb-20 md:pb-8 text-center text-xs text-slate-400">
                 <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
                   <div className="flex items-center gap-2 whitespace-nowrap">
-                    <div className="w-6 h-6 rounded bg-emerald-600 flex items-center justify-center text-white font-bold text-xs shadow-sm">
-                      <TrendingUp className="w-3.5 h-3.5" />
+                    <div className="relative w-6 h-6 rounded bg-black border border-slate-700 flex items-center justify-center text-white font-black text-xs shadow-sm">
+                      <span>B</span>
+                      <span className="absolute top-0.5 end-0.5 w-1 h-1 rounded-full bg-[#00D9FF]" />
                     </div>
-                    <span className="font-bold text-sm tracking-tight text-slate-900 dark:text-white">Borsaty</span>
+                    <span className="font-bold text-sm tracking-tight text-white">Borsaty</span>
                     <span className="text-slate-400 font-normal">| بورصتي</span>
                   </div>
-                  <p>Borsaty © 2026 — Real-time financial markets data and quantitative analysis.</p>
+                  <p className="text-slate-400">Borsaty © 2026 — Real-time financial markets data and quantitative analysis.</p>
                   <div className="flex items-center gap-4 text-slate-400">
                     <span>EGX</span>
                     <span>•</span>

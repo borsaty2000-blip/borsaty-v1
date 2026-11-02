@@ -20,7 +20,7 @@ export default function AuthButton() {
         <UserButton
           appearance={{
             elements: {
-              avatarBox: "w-8 h-8 rounded-lg ring-2 ring-emerald-500/30",
+              avatarBox: "w-8 h-8 rounded-lg ring-2 ring-slate-400 dark:ring-slate-700",
             },
           }}
         />
@@ -30,7 +30,7 @@ export default function AuthButton() {
 
   return (
     <SignInButton mode="modal">
-      <button className="flex items-center gap-1.5 h-9 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow-sm shadow-emerald-600/20">
+      <button className="flex items-center gap-1.5 h-9 px-3 rounded-lg bg-black hover:bg-slate-900 text-white text-xs font-bold transition-all shadow-sm border border-slate-800">
         <User className="w-3.5 h-3.5" />
         <span>{language === "ar" ? "تسجيل الدخول" : "Sign In"}</span>
       </button>

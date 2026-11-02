@@ -578,7 +578,7 @@ export default function StockDetailClientV2({
               </div>
               <button
                 onClick={highlightTradePlan}
-                className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+                className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-black dark:bg-slate-800 dark:hover:bg-slate-700 text-white text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer border border-slate-800"
               >
                 <Target className="w-4 h-4" />
                 <span>{isAr ? 'عرض المستويات على الرسم البياني' : 'Plot All Levels on Chart'}</span>
@@ -648,9 +648,9 @@ export default function StockDetailClientV2({
               </div>
               <button
                 onClick={() => window.open(`/api/reports/${company.symbol}/download?lang=${language}`, '_blank')}
-                className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-900 text-xs font-bold flex items-center gap-2 shadow-sm transition-colors cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-black dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-900 text-xs font-bold flex items-center gap-2 shadow-sm transition-colors cursor-pointer border border-slate-800"
               >
-                <FileDown className="w-4 h-4 text-emerald-500" />
+                <FileDown className="w-4 h-4 text-[#00D9FF] dark:text-slate-900" />
                 <span>{isAr ? 'تحميل التقرير الكامل PDF' : 'Download Institutional PDF'}</span>
               </button>
             </div>

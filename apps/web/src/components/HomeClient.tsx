@@ -336,7 +336,7 @@ export default function HomeClient() {
                       <td className="py-2.5 text-center">
                         <Link
                           href={`/stock/${stock.symbol}`}
-                          className="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-emerald-600 hover:text-white text-slate-700 dark:text-slate-300 text-[11px] font-bold inline-flex items-center gap-1 transition-colors"
+                          className="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-900 hover:text-white dark:hover:bg-white dark:hover:text-black text-slate-700 dark:text-slate-300 text-[11px] font-bold inline-flex items-center gap-1 transition-colors"
                         >
                           <span>{isAr ? 'عرض' : 'View'}</span>
                           <ArrowUpRight className="w-3 h-3" />

@@ -99,8 +99,9 @@ export default function Header() {
           </button>
 
           <Link href="/" className="flex items-center gap-2.5 whitespace-nowrap group">
-            <div className="w-8 h-8 rounded-lg bg-emerald-600 flex items-center justify-center text-white shadow-sm shadow-emerald-500/20 group-hover:bg-emerald-700 transition-colors">
-              <TrendingUp className="w-4 h-4" />
+            <div className="relative w-8 h-8 rounded-lg bg-black text-white flex items-center justify-center font-black text-base shadow-sm group-hover:bg-slate-900 transition-colors border border-slate-800">
+              <span>B</span>
+              <span className="absolute top-1 end-1 w-1.5 h-1.5 rounded-full bg-[#00D9FF]" />
             </div>
             <span className="text-xl font-black tracking-tight text-slate-900 dark:text-white">
               {isAr ? "بورصتي" : "Borsaty"}
@@ -227,8 +228,9 @@ export default function Header() {
             {/* Header */}
             <div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800">
               <div className="flex items-center gap-2 whitespace-nowrap">
-                <div className="w-7 h-7 rounded-lg bg-emerald-600 flex items-center justify-center text-white shadow-sm">
-                  <TrendingUp className="w-3.5 h-3.5" />
+                <div className="relative w-7 h-7 rounded-lg bg-black text-white flex items-center justify-center font-black text-sm shadow-sm border border-slate-800">
+                  <span>B</span>
+                  <span className="absolute top-0.5 end-0.5 w-1.5 h-1.5 rounded-full bg-[#00D9FF]" />
                 </div>
                 <span className="text-lg font-black tracking-tight text-slate-900 dark:text-white">
                   {isAr ? "بورصتي" : "Borsaty"}

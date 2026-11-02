@@ -68,7 +68,7 @@ export default function MobileBottomNav() {
                 whileTap={{ scale: 0.9 }}
                 className={`flex flex-col items-center gap-0.5 transition-colors ${
                   active
-                    ? 'text-emerald-600 dark:text-emerald-400 font-extrabold'
+                    ? 'text-black dark:text-[#00D9FF] font-extrabold'
                     : 'text-slate-500 dark:text-slate-400 font-medium hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
@@ -77,7 +77,7 @@ export default function MobileBottomNav() {
                   {active && (
                     <motion.span
                       layoutId="nav-pill"
-                      className="absolute -bottom-1 inset-x-0 h-0.5 bg-emerald-600 dark:bg-emerald-400 rounded-full"
+                      className="absolute -bottom-1 inset-x-0 h-0.5 bg-black dark:bg-[#00D9FF] rounded-full"
                       transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                     />
                   )}

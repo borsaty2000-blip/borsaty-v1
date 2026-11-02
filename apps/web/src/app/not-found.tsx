@@ -58,12 +58,12 @@ export default function NotFound() {
                 ? "ابحث عن سهم (مثال: COMI, 2222, AAPL)..."
                 : "Search a stock (e.g. COMI, 2222, AAPL)..."
             }
-            className="w-full h-11 px-4 ps-10 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:border-emerald-500 transition-colors shadow-inner"
+            className="w-full h-11 px-4 ps-10 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:border-slate-800 dark:focus:border-slate-500 transition-colors shadow-inner"
           />
           <Search className="w-4 h-4 text-slate-400 absolute start-3.5 top-3.5 pointer-events-none" />
           <button
             type="submit"
-            className="absolute end-1.5 top-1.5 bottom-1.5 px-3 rounded-lg bg-emerald-600 text-white font-bold text-xs hover:bg-emerald-700 transition-colors"
+            className="absolute end-1.5 top-1.5 bottom-1.5 px-3 rounded-lg bg-slate-900 text-white font-bold text-xs hover:bg-black transition-colors"
           >
             {isAr ? "بحث" : "Search"}
           </button>

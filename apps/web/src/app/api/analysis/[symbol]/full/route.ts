@@ -29,6 +29,10 @@ export async function GET(
         ...parsed,
         cache: "hit",
         execution_ms: Date.now() - startTime,
+      }, {
+        headers: {
+          "Cache-Control": "public, s-maxage=300, stale-while-revalidate=60",
+        },
       });
     }
   } catch {
@@ -182,5 +186,9 @@ export async function GET(
     ...fullResult,
     cache: "miss",
     execution_ms: Date.now() - startTime,
+  }, {
+    headers: {
+      "Cache-Control": "public, s-maxage=300, stale-while-revalidate=60",
+    },
   });
 }

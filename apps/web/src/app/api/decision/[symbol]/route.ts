@@ -32,7 +32,11 @@ export async function GET(
 
     if (res.ok) {
       const data = await res.json();
-      return NextResponse.json(data);
+      return NextResponse.json(data, {
+        headers: {
+          "Cache-Control": "public, s-maxage=300, stale-while-revalidate=60",
+        },
+      });
     }
   } catch {
     // fallback gracefully
@@ -80,5 +84,9 @@ export async function GET(
     },
     disclaimer_ar: "هذا التحليل والقرار تعليمي وكمي بحت، ولا يُعتبر توصية استثمارية مباشرة بالبيع أو الشراء. القرارات الاستثمارية هي مسؤولية المستخدم بالكامل.",
     disclaimer_en: "This analysis is strictly educational and quantitative, and does not constitute financial or investment advice. All trading decisions remain the sole responsibility of the user."
+  }, {
+    headers: {
+      "Cache-Control": "public, s-maxage=300, stale-while-revalidate=60",
+    },
   });
 }

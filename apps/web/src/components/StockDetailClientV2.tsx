@@ -18,7 +18,19 @@ import {
   Newspaper,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { PriceChart } from '@/components/charts/PriceChart';
+import dynamic from 'next/dynamic';
+
+const PriceChart = dynamic(
+  () => import('@/components/charts/PriceChart').then((mod) => mod.PriceChart),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-[460px] w-full rounded-2xl bg-slate-100 dark:bg-slate-900/40 animate-pulse border border-slate-200 dark:border-slate-800 flex items-center justify-center text-xs text-slate-400">
+        Loading interactive chart engine...
+      </div>
+    ),
+  }
+);
 import { DataWrapper } from '@/components/ui/DataWrapper';
 import { DecisionCard, DecisionCardProps } from '@/components/DecisionCard';
 import TechnicalStrengthMeter from '@/components/TechnicalStrengthMeter';

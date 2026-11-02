@@ -96,5 +96,9 @@ export async function GET(request: Request) {
       missingFields: !hasOrderBook ? ["Bid/Ask Depth L2"] : [],
       verifiedAt: new Date().toISOString(),
     },
+  }, {
+    headers: {
+      "Cache-Control": "public, s-maxage=60, stale-while-revalidate=30",
+    },
   });
 }

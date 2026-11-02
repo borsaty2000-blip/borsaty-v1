@@ -19,6 +19,7 @@ from elliott.multi_tf import MultiTfElliott
 from harmonic.detector import global_harmonic_detector, HarmonicDetector
 from harmonic.prz import global_prz_calculator, PrzCalculator
 from classical.detector import global_classical_detector, ClassicalPatternDetector
+from orchestrator import global_orchestrator, AnalysisOrchestrator
 from screener.nlu import global_screener_nlu
 from screener.builder import global_screener_engine
 from datetime import datetime, timezone
@@ -401,6 +402,29 @@ def compute_indicators_endpoint(payload: IndicatorComputeRequest):
         "computed_at": datetime.now(timezone.utc).isoformat(),
         "indicators": results
     }
+
+class FullAnalysisRequest(BaseModel):
+    symbol: str
+    timeframe: Optional[str] = "1D"
+    candles: Optional[List[Candle]] = None
+    min_degree: Optional[int] = 1
+
+@app.post("/analysis/full")
+def full_analysis_endpoint(payload: FullAnalysisRequest):
+    sym = payload.symbol.upper()
+    tf = payload.timeframe or "1D"
+    min_d = max(0, min(3, payload.min_degree if payload.min_degree is not None else 1))
+
+    if not payload.candles:
+        raise HTTPException(status_code=400, detail="Candles list cannot be empty for full analysis")
+
+    raw_candles = [c.model_dump() for c in payload.candles]
+    return global_orchestrator.run(
+        symbol=sym,
+        timeframe=tf,
+        candles=raw_candles,
+        min_degree=min_d,
+    )
 
 if __name__ == "__main__":
     import uvicorn

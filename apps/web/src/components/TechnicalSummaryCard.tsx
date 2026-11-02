@@ -14,6 +14,7 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
+import InfoTooltip from '@/components/ui/InfoTooltip';
 
 export interface TechnicalSummaryCardProps {
   trendScore?: number;
@@ -48,6 +49,8 @@ export default function TechnicalSummaryCard({
       detail: isAr ? 'السعر أعلى من EMA 20 و EMA 50' : 'Price > EMA 20 & EMA 50',
       isBull: trendScore > 0,
       badgeColor: trendScore > 0 ? 'text-emerald-500 bg-emerald-500/10' : 'text-rose-500 bg-rose-500/10',
+      tooltipEn: 'Trend alignment determined by EMA 20, 50, and 200 moving averages.',
+      tooltipAr: 'اتجاه السعر السائد استناداً إلى ترتيب المتوسطات المتحركة الأسية EMA 20 و EMA 50.',
     },
     {
       category: isAr ? 'زخم الحركة' : 'Momentum',
@@ -57,6 +60,8 @@ export default function TechnicalSummaryCard({
       detail: `RSI ${rsi} • MACD ${macdCross === 'BULLISH' ? (isAr ? 'تقاطع صاعد' : 'Bullish Cross') : (isAr ? 'تقاطع هابط' : 'Bearish Cross')}`,
       isBull: momentumScore > 0,
       badgeColor: momentumScore > 0 ? 'text-emerald-500 bg-emerald-500/10' : 'text-rose-500 bg-rose-500/10',
+      tooltipEn: 'RSI & MACD momentum: RSI > 70 denotes overbought, < 30 denotes oversold.',
+      tooltipAr: 'مؤشر القوة النسبية RSI و MACD؛ فوق 70 تشبع شرائي وتحت 30 تشبع بيعي.',
     },
     {
       category: isAr ? 'معدل التذبذب' : 'Volatility',
@@ -66,6 +71,8 @@ export default function TechnicalSummaryCard({
       detail: isAr ? 'نطاقات بولينجر تتسع إيجابياً' : 'Bollinger Bandwidth 4.2%',
       isBull: true,
       badgeColor: 'text-indigo-500 bg-indigo-500/10',
+      tooltipEn: 'Bollinger Bandwidth & Average True Range measuring price expansion.',
+      tooltipAr: 'عرض نطاقات بولينجر ومؤشر ATR لقياس مدى تمدد السعر أو ضيقه.',
     },
     {
       category: isAr ? 'السيولة والأحجام' : 'Volume',
@@ -75,6 +82,8 @@ export default function TechnicalSummaryCard({
       detail: isAr ? 'أعلى من متوسط 20 يوم بـ 1.4x' : '1.4x 20-Day Volume SMA',
       isBull: volumeScore >= 0,
       badgeColor: volumeScore >= 0 ? 'text-emerald-500 bg-emerald-500/10' : 'text-rose-500 bg-rose-500/10',
+      tooltipEn: 'Volume accumulation versus 20-day Simple Moving Average benchmark.',
+      tooltipAr: 'مقارنة حجم التداول الفعلي بالمتوسط المتحرك البسيط للأحجام لـ 20 يوماً.',
     },
     {
       category: isAr ? 'هيكل السوق (HSPD)' : 'Structure',
@@ -84,6 +93,8 @@ export default function TechnicalSummaryCard({
       detail: isAr ? 'تأكيد هيكلي عبر قيعان HSPD' : 'Higher Lows validated by HSPD',
       isBull: structureScore >= 0,
       badgeColor: structureScore >= 0 ? 'text-emerald-500 bg-emerald-500/10' : 'text-rose-500 bg-rose-500/10',
+      tooltipEn: 'High-Significance Pivot Detection algorithm mapping structural swing levels.',
+      tooltipAr: 'محرك HSPD لرصد القمم والقيعان المحورية ذات الأهمية الإحصائية العالية.',
     },
     {
       category: isAr ? 'النماذج الفنية' : 'Patterns',
@@ -93,6 +104,8 @@ export default function TechnicalSummaryCard({
       detail: detectedPatterns.slice(0, 2).join(' • ') || (isAr ? 'في انتظار تشكل نماذج جديدة' : 'Awaiting confirmation'),
       isBull: patternsScore >= 0,
       badgeColor: 'text-cyan-500 bg-cyan-500/10',
+      tooltipEn: 'Harmonic PRZ, Elliott Wave impulse, and Classical geometric recognition.',
+      tooltipAr: 'نماذج الهارمونيك ونقاط الانعكاس المحتملة PRZ وموجات إليوت الدافعة.',
     },
   ];
 
@@ -125,9 +138,15 @@ export default function TechnicalSummaryCard({
                   <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${card.badgeColor}`}>
                     <Icon className="w-3.5 h-3.5" />
                   </div>
-                  <span className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                    {card.category}
-                  </span>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                      {card.category}
+                    </span>
+                    <InfoTooltip
+                      content={isAr ? card.tooltipAr : card.tooltipEn}
+                      contentAr={card.tooltipAr}
+                    />
+                  </div>
                 </div>
                 <span className="text-[11px] font-mono font-black text-slate-500">
                   {card.score}

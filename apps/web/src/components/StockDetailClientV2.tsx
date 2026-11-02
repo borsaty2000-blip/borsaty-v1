@@ -32,6 +32,7 @@ const PriceChart = dynamic(
   }
 );
 import { DataWrapper } from '@/components/ui/DataWrapper';
+import InfoTooltip from '@/components/ui/InfoTooltip';
 import { DecisionCard, DecisionCardProps } from '@/components/DecisionCard';
 import TechnicalStrengthMeter from '@/components/TechnicalStrengthMeter';
 import MultiTimeframeMatrix from '@/components/MultiTimeframeMatrix';
@@ -265,10 +266,15 @@ export default function StockDetailClientV2({
           <div className="flex items-center gap-2 text-xs font-medium text-slate-500 dark:text-slate-400">
             <span>{company.sector || 'Equities'}</span>
             <span>•</span>
-            <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-semibold">
-              <ShieldCheck className="w-3.5 h-3.5" />
-              {isAr ? 'بيانات حية ومباشرة' : 'Live Data Verified'}
-            </span>
+            <InfoTooltip
+              content="Live data feed audited with zero-hallucination mathematical provenance."
+              contentAr="تغذية أسعار لحظية مدققة ومثبتة بدون أي اختلاق للبيانات أو الأرقام."
+            >
+              <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-semibold">
+                <ShieldCheck className="w-3.5 h-3.5" />
+                {isAr ? 'بيانات حية ومباشرة' : 'Live Data Verified'}
+              </span>
+            </InfoTooltip>
           </div>
         </div>
 

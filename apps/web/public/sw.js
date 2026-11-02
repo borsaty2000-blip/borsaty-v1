@@ -1,13 +1,13 @@
-const CACHE_NAME = "borsaty-cache-v1";
+// Borsaty AI - High-Performance PWA Service Worker
+const CACHE_NAME = 'borsaty-ai-v2.4';
 const STATIC_ASSETS = [
-  "/",
-  "/manifest.json",
-  "/stock/COMI",
-  "/stock/2222",
-  "/signals"
+  '/',
+  '/icon.svg',
+  '/favicon.svg',
+  '/manifest.json'
 ];
 
-self.addEventListener("install", (event) => {
+self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(STATIC_ASSETS);
@@ -16,41 +16,46 @@ self.addEventListener("install", (event) => {
   self.skipWaiting();
 });
 
-self.addEventListener("activate", (event) => {
+self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
-        keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
+        keys.map((key) => {
+          if (key !== CACHE_NAME) {
+            return caches.delete(key);
+          }
+        })
       );
     })
   );
   self.clients.claim();
 });
 
-self.addEventListener("fetch", (event) => {
-  // Stale-while-revalidate for API requests, Cache-first for static assets
-  if (event.request.url.includes("/api/")) {
-    event.respondWith(
-      fetch(event.request)
+self.addEventListener('fetch', (event) => {
+  // Only handle GET requests and skip API / Clerk routes
+  if (
+    event.request.method !== 'GET' ||
+    event.request.url.includes('/api/') ||
+    event.request.url.includes('/__clerk')
+  ) {
+    return;
+  }
+
+  event.respondWith(
+    caches.match(event.request).then((cached) => {
+      const fetchPromise = fetch(event.request)
         .then((response) => {
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+          if (response && response.status === 200 && response.type === 'basic') {
+            const responseToCache = response.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, responseToCache);
+            });
+          }
           return response;
         })
-        .catch(() => caches.match(event.request))
-    );
-  } else {
-    event.respondWith(
-      caches.match(event.request).then((cachedResponse) => {
-        return (
-          cachedResponse ||
-          fetch(event.request).then((response) => {
-            const clone = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
-            return response;
-          })
-        );
-      })
-    );
-  }
+        .catch(() => cached);
+
+      return cached || fetchPromise;
+    })
+  );
 });

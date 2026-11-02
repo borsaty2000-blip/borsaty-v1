@@ -1,4 +1,5 @@
 import React from "react";
+import type { Metadata } from "next";
 import { findCompany, getStockCandles } from "@borsaty/db";
 import { resolveStockAlias } from "@borsaty/shared";
 import { AlertCircle } from "lucide-react";
@@ -10,6 +11,31 @@ import { getPythonServiceUrl } from "@/lib/config";
 
 interface StockPageProps {
   params: Promise<{ symbol: string }>;
+}
+
+export async function generateMetadata({ params }: StockPageProps): Promise<Metadata> {
+  const resolvedParams = await params;
+  const rawSymbol = resolvedParams.symbol.toUpperCase();
+  const aliasMatch = resolveStockAlias(rawSymbol);
+  const symbol = aliasMatch ? aliasMatch.symbol : rawSymbol;
+  const company = await findCompany(symbol);
+
+  const name = company?.nameAr || company?.nameEn || symbol;
+  const market = company?.market || "EGX";
+
+  return {
+    title: `تحليل سهم ${name} (${symbol}) - قرار شراء/بيع وتوافق فني | Borsaty AI`,
+    description: `تحليل فني وكمي مباشر لسهم ${name} في سوق ${market}. تفكيك موجات إليوت، نماذج الهارمونيك، مستويات الدخول، وقف الخسارة، ونسبة العائد للمخاطرة على بورصتي AI.`,
+    openGraph: {
+      title: `${symbol} - ${name} | Borsaty AI Quantitative Terminal`,
+      description: `Institutional deterministic stock analysis, wave counts, and trade plans for ${symbol}.`,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `تحليل سهم ${symbol} | Borsaty AI`,
+      description: `التحليل الكمي والفني لسهم ${name} على منصة بورصتي AI.`,
+    },
+  };
 }
 
 export default async function StockDetailPage({ params }: StockPageProps) {

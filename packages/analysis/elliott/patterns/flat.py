@@ -3,7 +3,7 @@ Flat corrective wave pattern evaluation and scoring.
 3-wave corrective sequence (A-B-C / 3-3-5).
 """
 
-from typing import Dict, Any, List, Tuple
+from typing import Optional, Tuple, List, Dict, Any, Union
 from ..structures import score_range, geometric_mean
 
 

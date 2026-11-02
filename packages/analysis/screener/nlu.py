@@ -1,7 +1,7 @@
 import re
 import os
 import json
-from typing import Dict, Any, Tuple
+from typing import Optional, Tuple, List, Dict, Any, Union
 from .dsl import ScreenQuery, Condition, ALLOWLIST_FIELDS, ALLOWLIST_OPERATORS
 
 class ScreenerNLU:

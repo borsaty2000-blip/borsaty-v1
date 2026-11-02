@@ -1,7 +1,7 @@
 import pytest
 import re
 from datetime import datetime, timezone, timedelta
-from typing import Dict, Any, List
+from typing import Optional, Tuple, List, Dict, Any, Union
 
 from engines.indicators import (
     calculate_sma,

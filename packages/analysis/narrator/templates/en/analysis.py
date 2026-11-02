@@ -4,7 +4,7 @@ Written originally in English institutional trading style.
 Version 2.0.0
 """
 
-from typing import Dict, Any
+from typing import Optional, Tuple, List, Dict, Any, Union
 from narrator.number_formatting import format_price
 from narrator.templates.en.fragments import (
     REGIME_DESCRIPTIONS_EN,

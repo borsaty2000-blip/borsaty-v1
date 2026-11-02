@@ -20,7 +20,7 @@ import math
 import time
 from dataclasses import dataclass, field
 from datetime import date, datetime, timezone
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Optional, Tuple, List, Dict, Any, Union
 
 from orchestrator import AnalysisOrchestrator
 from trade_plan.engine import TradePlanEngine

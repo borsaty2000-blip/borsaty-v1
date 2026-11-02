@@ -4,7 +4,7 @@ Deterministic. Fibonacci-gated. Zero tolerance for unverified ratios.
 Version 1.0.0
 """
 
-from typing import Dict, Any, List, Optional, Tuple, Union
+from typing import Optional, Tuple, List, Dict, Any, Union
 from datetime import datetime, timezone
 import math
 

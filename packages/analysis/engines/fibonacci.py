@@ -1,4 +1,4 @@
-from typing import Dict, Any
+from typing import Optional, Tuple, List, Dict, Any, Union
 
 def calculate_fibonacci_levels(high: float, low: float, trend: str = "UP") -> Dict[str, Any]:
     diff = high - low

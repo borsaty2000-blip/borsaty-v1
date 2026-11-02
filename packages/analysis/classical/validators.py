@@ -3,7 +3,7 @@ Classical Pattern Validators: Volume and Breakout.
 Deterministic evaluation of volume profiles, breakout confirmation (close vs wick), and retests.
 """
 
-from typing import List, Dict, Any, Optional, Tuple
+from typing import Optional, Tuple, List, Dict, Any, Union
 import math
 
 

@@ -5,7 +5,7 @@ Zero LLM. Zero Translation. Pure Template + Facts.
 Version 2.0.0
 """
 
-from typing import Dict, Any, List, Optional
+from typing import Optional, Tuple, List, Dict, Any, Union
 from datetime import datetime, timezone
 
 from narrator.facts_extractor import FactsExtractor

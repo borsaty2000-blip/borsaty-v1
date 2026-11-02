@@ -4,7 +4,7 @@ Runs all 4 analytical engines, detects market regime, and derives unified conflu
 Version 1.0.0
 """
 
-from typing import Dict, Any, List, Optional, Union
+from typing import Optional, Tuple, List, Dict, Any, Union
 from datetime import datetime, timezone
 import time
 

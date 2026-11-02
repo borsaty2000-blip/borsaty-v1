@@ -1,4 +1,4 @@
-from typing import Dict, Any, List
+from typing import Optional, Tuple, List, Dict, Any, Union
 
 def calculate_confluence_score(
     symbol: str,

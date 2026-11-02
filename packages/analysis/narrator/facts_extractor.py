@@ -4,7 +4,7 @@ Extracts authorized facts and computes the whitelist of authorized numbers.
 Version 2.0.0
 """
 
-from typing import Dict, Any, Set, List, Optional
+from typing import Optional, Tuple, List, Dict, Any, Union, Set
 import re
 from narrator.number_formatting import resolve_currency
 

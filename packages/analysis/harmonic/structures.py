@@ -4,7 +4,7 @@ Pure deterministic. Zero tolerance for unverified ratios.
 Version 1.0.0
 """
 
-from typing import Dict, Any, List, Optional, Tuple
+from typing import Optional, Tuple, List, Dict, Any, Union
 import math
 
 

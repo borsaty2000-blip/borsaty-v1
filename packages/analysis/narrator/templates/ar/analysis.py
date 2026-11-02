@@ -4,7 +4,7 @@ Written originally in Arabic financial rhetoric.
 Version 2.0.0
 """
 
-from typing import Dict, Any
+from typing import Optional, Tuple, List, Dict, Any, Union
 from narrator.number_formatting import format_price
 from narrator.templates.ar.fragments import (
     REGIME_DESCRIPTIONS_AR,

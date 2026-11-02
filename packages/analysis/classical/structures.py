@@ -3,7 +3,7 @@ Classical Pattern Definitions and Specifications.
 Deterministic structural rules, logic gates, time constraints, and projection targets.
 """
 
-from typing import Dict, Any, List
+from typing import Optional, Tuple, List, Dict, Any, Union
 
 
 CLASSICAL_PATTERNS: Dict[str, Dict[str, Any]] = {

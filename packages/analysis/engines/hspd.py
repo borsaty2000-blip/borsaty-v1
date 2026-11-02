@@ -4,7 +4,7 @@ Pure deterministic. No LLM. No heuristics.
 Version 1.0.0
 """
 
-from typing import List, Dict, Any, Optional, Union
+from typing import Optional, Tuple, List, Dict, Any, Union
 from datetime import datetime, timezone
 import math
 

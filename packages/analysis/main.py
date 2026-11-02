@@ -7,7 +7,7 @@ load_dotenv()
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from typing import List, Dict, Any, Optional, Union
+from typing import Optional, Tuple, List, Dict, Any, Union
 
 from engines.indicators import calculate_all_indicators
 from engines.gann import calculate_square_of_nine, calculate_gann_angles, calculate_time_cycles

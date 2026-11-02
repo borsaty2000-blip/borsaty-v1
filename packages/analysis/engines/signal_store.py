@@ -1,5 +1,5 @@
 from datetime import datetime, timezone, timedelta
-from typing import List, Dict, Any, Optional
+from typing import Optional, Tuple, List, Dict, Any, Union
 
 class SignalStore:
     """

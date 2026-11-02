@@ -2,7 +2,7 @@
 Original Arabic Authoring: Harmonic Patterns Narrative.
 """
 
-from typing import Dict, Any
+from typing import Optional, Tuple, List, Dict, Any, Union
 from narrator.templates.ar.fragments import HARMONIC_NAMES_AR
 
 

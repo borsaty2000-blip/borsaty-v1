@@ -9,7 +9,7 @@ the Narrator Engine (Phase ز): numbers only from payload.
 
 from __future__ import annotations
 
-from typing import Any, Optional
+from typing import Optional, Tuple, List, Dict, Any, Union
 
 from backtest.engine import BacktestResult
 from backtest.walk_forward import WalkForwardResult

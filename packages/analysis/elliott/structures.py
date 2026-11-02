@@ -5,7 +5,7 @@ Version 1.0.0
 """
 
 import math
-from typing import Dict, Any, List, Tuple
+from typing import Optional, Tuple, List, Dict, Any, Union
 
 # Comprehensive Pattern Definitions
 PATTERNS = {

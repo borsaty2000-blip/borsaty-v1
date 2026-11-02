@@ -4,7 +4,7 @@ PRZ is a ZONE (two price bounds), not a single price level.
 Version 1.0.0
 """
 
-from typing import Dict, Any, List, Optional, Tuple
+from typing import Optional, Tuple, List, Dict, Any, Union
 import math
 
 

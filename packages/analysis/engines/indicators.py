@@ -1,4 +1,4 @@
-from typing import List, Dict, Any
+from typing import Optional, Tuple, List, Dict, Any, Union
 import math
 
 def calculate_sma(prices: List[float], period: int) -> List[float | None]:

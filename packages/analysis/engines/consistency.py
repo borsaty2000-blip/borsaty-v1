@@ -3,7 +3,7 @@ Cross-Engine Structural Consistency Verifier.
 Validates structural alignment between Elliott Wave derivations and Harmonic Pattern completions.
 """
 
-from typing import Dict, Any, List, Optional
+from typing import Optional, Tuple, List, Dict, Any, Union
 
 
 def check_elliott_harmonic_consistency(

@@ -1,4 +1,4 @@
-from typing import List, Dict, Any
+from typing import Optional, Tuple, List, Dict, Any, Union
 import math
 
 def calculate_square_of_nine(base_price: float, levels: int = 4) -> Dict[str, List[float]]:

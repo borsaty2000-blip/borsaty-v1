@@ -8,7 +8,7 @@ Version 2.0.0
 import pytest
 import math
 import time
-from typing import Dict, Any, List
+from typing import Optional, Tuple, List, Dict, Any, Union
 
 from narrator.engine import NarratorEngine
 from narrator.facts_extractor import FactsExtractor

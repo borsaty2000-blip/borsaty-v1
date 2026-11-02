@@ -1,4 +1,4 @@
-from typing import List, Dict, Any
+from typing import Optional, Tuple, List, Dict, Any, Union
 
 def detect_harmonic_patterns(candles: List[Dict[str, Any]]) -> Dict[str, Any]:
     if len(candles) < 30:

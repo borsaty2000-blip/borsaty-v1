@@ -24,7 +24,7 @@ import math
 import json
 import dataclasses
 import pytest
-from typing import List, Dict, Any, Optional
+from typing import Optional, Tuple, List, Dict, Any, Union
 from unittest.mock import MagicMock
 
 from backtest.engine import (

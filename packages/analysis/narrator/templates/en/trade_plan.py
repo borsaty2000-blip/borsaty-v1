@@ -2,7 +2,7 @@
 Original English Authoring: Unified Trade Plan & Risk Management Narrative.
 """
 
-from typing import Dict, Any
+from typing import Optional, Tuple, List, Dict, Any, Union
 from narrator.number_formatting import format_price
 
 

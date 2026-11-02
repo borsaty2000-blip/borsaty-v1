@@ -7,7 +7,7 @@ regime-weighted evidence aggregation, and contradiction detection.
 import pytest
 import math
 import random
-from typing import List, Dict, Any
+from typing import Optional, Tuple, List, Dict, Any, Union
 
 from regime.detector import RegimeDetector, global_regime_detector
 

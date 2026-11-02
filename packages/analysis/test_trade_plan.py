@@ -8,7 +8,7 @@ import pytest
 import math
 import random
 import time
-from typing import List, Dict, Any
+from typing import Optional, Tuple, List, Dict, Any, Union
 
 from trade_plan.engine import TradePlanEngine, REGIME_TARGET_WEIGHTS
 from trade_plan.proposals import (

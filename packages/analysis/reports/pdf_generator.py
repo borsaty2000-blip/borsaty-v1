@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import io
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional
+from typing import Optional, Tuple, List, Dict, Any, Union
 
 import arabic_reshaper
 from bidi.algorithm import get_display

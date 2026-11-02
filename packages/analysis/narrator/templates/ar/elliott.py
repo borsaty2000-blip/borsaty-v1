@@ -3,7 +3,7 @@ Original Arabic Authoring: Elliott Wave Narrative.
 Written in natural Arabic financial idiom without translation.
 """
 
-from typing import Dict, Any
+from typing import Optional, Tuple, List, Dict, Any, Union
 from narrator.number_formatting import format_wave_ar
 
 

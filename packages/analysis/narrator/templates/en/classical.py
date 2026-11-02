@@ -2,7 +2,7 @@
 Original English Authoring: Classical Chart Patterns Narrative.
 """
 
-from typing import Dict, Any
+from typing import Optional, Tuple, List, Dict, Any, Union
 from narrator.templates.en.fragments import CLASSICAL_NAMES_EN
 
 

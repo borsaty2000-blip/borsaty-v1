@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional
+from typing import Optional, Tuple, List, Dict, Any, Union
 
 from backtest.engine import BacktestEngine, BacktestResult
 

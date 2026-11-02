@@ -1,5 +1,5 @@
 import time
-from typing import List, Dict, Any, Optional
+from typing import Optional, Tuple, List, Dict, Any, Union
 from .dsl import ScreenQuery
 
 class ScreenerEngine:

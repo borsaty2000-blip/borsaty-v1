@@ -4,7 +4,7 @@ Enhanced for Dual-Authored Narrator v2.0.0.
 Strictly verifies that no unauthorized numbers or forbidden claims exist in narrated text.
 """
 
-from typing import Set, List, Dict, Any
+from typing import Optional, Tuple, List, Dict, Any, Union, Set
 import re
 
 

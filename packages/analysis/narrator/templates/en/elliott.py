@@ -3,7 +3,7 @@ Original English Authoring: Elliott Wave Narrative.
 Written in natural English institutional market style.
 """
 
-from typing import Dict, Any
+from typing import Optional, Tuple, List, Dict, Any, Union
 
 
 def narrate_elliott_en(facts: Dict[str, Any], style: str = "professional") -> str:

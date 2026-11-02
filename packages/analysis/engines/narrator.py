@@ -1,5 +1,5 @@
 import re
-from typing import Dict, Any, Set, List
+from typing import Optional, Tuple, List, Dict, Any, Union, Set
 
 class HallucinationError(Exception):
     """Raised when an engine or narrator attempts to output fabricated numbers."""

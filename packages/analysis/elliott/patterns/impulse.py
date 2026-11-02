@@ -3,7 +3,7 @@ Impulse wave pattern evaluation and scoring.
 5-wave motive sequence (1-2-3-4-5).
 """
 
-from typing import Dict, Any, List, Tuple
+from typing import Optional, Tuple, List, Dict, Any, Union
 from ..structures import score_range, geometric_mean
 
 

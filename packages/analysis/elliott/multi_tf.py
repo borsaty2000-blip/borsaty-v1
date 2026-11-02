@@ -4,7 +4,7 @@ Evaluates structural alignment across Weekly, Daily, and 4H scales.
 Version 1.0.0
 """
 
-from typing import Tuple, Dict, Any
+from typing import Optional, Tuple, List, Dict, Any, Union
 from datetime import datetime, timezone
 
 from .detector import ElliottDetector, global_elliott_detector

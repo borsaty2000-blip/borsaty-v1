@@ -1,4 +1,4 @@
-from typing import List, Dict, Any
+from typing import Optional, Tuple, List, Dict, Any, Union
 from datetime import datetime, timezone
 
 def validate_data_quality(

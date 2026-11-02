@@ -4,7 +4,7 @@ Multi-Method Risk Management: Fixed Fractional, ATR-Based, Kelly Criterion, Vola
 Version 1.0.0
 """
 
-from typing import Dict, Any, List, Optional
+from typing import Optional, Tuple, List, Dict, Any, Union
 import math
 
 

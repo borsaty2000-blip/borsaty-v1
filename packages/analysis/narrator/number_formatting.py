@@ -7,7 +7,7 @@ Modern Arab financial institutions (EGX, TASI, Central Banks) standardly use Wes
 for financial statements and quote displays.
 """
 
-from typing import Union, Optional
+from typing import Optional, Tuple, List, Dict, Any, Union
 
 CURRENCY_SYMBOLS_AR = {
     "EGP": "ج.م",

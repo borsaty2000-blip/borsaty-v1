@@ -1,4 +1,4 @@
-from typing import List, Dict, Any
+from typing import Optional, Tuple, List, Dict, Any, Union
 
 def analyze_elliott_wave(candles: List[Dict[str, Any]]) -> Dict[str, Any]:
     if len(candles) < 20:

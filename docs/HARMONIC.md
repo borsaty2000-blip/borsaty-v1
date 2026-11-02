@@ -25,6 +25,44 @@ The Borsaty Harmonic Patterns Engine is a **purely deterministic, Fibonacci-gate
 | **Cypher** | Reversal | **D measured from XC** at 78.6% | `0.500 ± 0.10` | `1.130 - 1.414` | `0.786 ± 0.05 (XC)` | `1.414 ± 0.25` |
 | **ABCD** | Continuation | 3-swing harmonic symmetry | — | `0.618 ± 0.15` | `AD: 0.786 - 1.27` | `1.270 - 1.618` |
 
+### 2.5 Tolerance Rationale Table
+
+The engine enforces mathematically defensible tolerances derived from established literature. Tolerances allow for market microstructure (bid-ask spread, tick discrete intervals) without diluting geometric integrity:
+
+| Pattern | Ratio | Ideal | Tolerance | Rationale | Academic Source |
+| :--- | :--- | :---: | :---: | :--- | :--- |
+| **Gartley** | $B \text{ vs } XA$ | `0.618` | `±0.05` | Crucial boundary: separating true Gartley from shallow Bat; ±0.05 accommodates discrete market ticks | Scott Carney, *The Harmonic Trader* (1999) |
+| **Gartley** | $C \text{ vs } AB$ | `0.618` | `±0.06` | Standard internal swing retracement bounded within `[0.382, 0.886]` | Larry Pesavento, *Fibonacci Ratios with Pattern Recognition* (1997) |
+| **Gartley** | $D \text{ vs } XA$ | `0.786` | `±0.03` | Definitive terminal reversal level; tight tolerance prevents overlap with Bat 0.886 | Scott Carney, *Harmonic Trading Vol. 1* (2004) |
+| **Gartley** | $CD \text{ vs } BC$ | `1.272 - 1.618` | range | Reciprocal Fibonacci harmonic extension | H.M. Gartley, *Profits in the Stock Market* (1935); Carney (2004) |
+| **Bat** | $B \text{ vs } XA$ | `0.440` | `±0.06` | Shallow retracement strictly capped at 0.500; distinguishes Bat from Gartley | Scott Carney (2001) |
+| **Bat** | $C \text{ vs } AB$ | `0.618` | `±0.15` | Flexible internal swing range `[0.382, 0.886]` | Scott Carney (2004) |
+| **Bat** | $D \text{ vs } XA$ | `0.886` | `±0.03` | Signature deep reversal point ($\sqrt{0.786}$); tight tolerance prevents extension beyond X | Scott Carney (2001, 2004) |
+| **Bat** | $CD \text{ vs } BC$ | `1.618 - 2.618` | range | Extreme projection matching the deep 88.6% retracement | Scott Carney (2004) |
+| **Butterfly** | $B \text{ vs } XA$ | `0.786` | `±0.03` | Deep primary retracement; tight tolerance separates from Gartley (0.618) | Bryce Gilmore (1998); Carney (2004) |
+| **Butterfly** | $C \text{ vs } AB$ | `0.618` | `±0.15` | Intermediate swing retracement | Larry Pesavento (1997); Carney (2004) |
+| **Butterfly** | $D \text{ vs } XA$ | `1.270 - 1.618` | range | Must extend strictly beyond X; establishes breakout-reversal geometry | Bryce Gilmore (1998); Carney (2004) |
+| **Butterfly** | $CD \text{ vs } BC$ | `1.618 - 2.240` | range | Reciprocal harmonic extension into PRZ confluence | Scott Carney (2004) |
+| **Crab** | $B \text{ vs } XA$ | `0.500` | `±0.12` | Variable shallow retracement `[0.382, 0.618]` | Scott Carney (2000) |
+| **Crab** | $C \text{ vs } AB$ | `0.618` | `±0.15` | Internal swing retracement | Scott Carney (2004) |
+| **Crab** | $D \text{ vs } XA$ | `1.618` | `±0.08` | Extreme extension beyond X; signature reversal level | Scott Carney (2000, 2004) |
+| **Crab** | $CD \text{ vs } BC$ | `2.618 - 3.618` | range | Parabolic extension required to meet extreme 1.618 XA | Scott Carney (2004) |
+| **Deep Crab** | $B \text{ vs } XA$ | `0.886` | `±0.05` | Deep retracement distinguishing Deep Crab from standard Crab | Scott Carney (2004) |
+| **Deep Crab** | $C \text{ vs } AB$ | `0.618` | `±0.15` | Internal swing retracement | Scott Carney (2004) |
+| **Deep Crab** | $D \text{ vs } XA$ | `1.618 - 2.618` | range | Extended PRZ target beyond initial swing origin | Scott Carney (2004) |
+| **Deep Crab** | $CD \text{ vs } BC$ | `2.618 - 4.236` | range | Extreme reciprocal projection | Scott Carney (2004) |
+| **Shark** | $B \text{ vs } XA$ | `1.270` | `±0.15` | B point extends beyond origin X `[1.13, 1.414]` | Scott Carney (2010) |
+| **Shark** | $C \text{ vs } AB$ | `1.618` | `±0.20` | C point extends beyond A `[1.618, 2.24]` | Scott Carney (2010) |
+| **Shark** | $D \text{ vs } XA$ | `0.886` | `±0.05` | Overall retracement to 88.6% of original reference leg | Scott Carney (2010) |
+| **Shark** | $CD \text{ vs } BC$ | `1.618` | `±0.30` | Harmonic reciprocal projection | Scott Carney (2010) |
+| **Cypher** | $B \text{ vs } XA$ | `0.500` | `±0.10` | Intermediate retracement between 0.382 and 0.618 | Darren Oglesbee (2009) |
+| **Cypher** | $C \text{ vs } AB$ | `1.130 - 1.414` | range | C extends beyond point A | Darren Oglesbee (2009) |
+| **Cypher** | $D \text{ vs } XC$ | `0.786` | `±0.05` | Retracement measured strictly from origin X to extreme C | Darren Oglesbee (2009) |
+| **Cypher** | $CD \text{ vs } BC$ | `1.414` | `±0.25` | Counter-extension confirming PRZ | Darren Oglesbee (2009) |
+| **ABCD** | $C \text{ vs } AB$ | `0.618` | `±0.15` | Retracement of primary impulse swing | Larry Pesavento (1997) |
+| **ABCD** | $AD \text{ vs } AB$ | `0.786 - 1.27` | range | Swing symmetry constraint ($AB \approx CD$) | Larry Pesavento (1997) |
+| **ABCD** | $CD \text{ vs } BC$ | `1.270 - 1.618` | range | Reciprocal completion target | Larry Pesavento (1997) |
+
 ---
 
 ## 3. Potential Reversal Zone (PRZ) Confluence Rules

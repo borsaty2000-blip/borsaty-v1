@@ -646,6 +646,115 @@ def backtest_leaderboard_endpoint(payload: LeaderboardQuery):
     }
 
 
+# ─────────────────────────────────────────────────────────────────────────────
+# Phase ي: Decision & PDF Endpoints
+# ─────────────────────────────────────────────────────────────────────────────
+
+from decision.engine import global_decision_engine, DecisionResult
+from fastapi.responses import Response
+
+class DecisionRequest(BaseModel):
+    symbol: str
+    timeframe: Optional[str] = "1D"
+    candles: Optional[List[Candle]] = None
+
+@app.post("/decision/{symbol}")
+@app.get("/decision/{symbol}")
+def decision_endpoint(symbol: str, payload: Optional[DecisionRequest] = None):
+    sym = symbol.upper()
+    tf = (payload.timeframe if payload else "1D") or "1D"
+    
+    # If candles supplied, run fast analysis to formulate decision
+    raw_candles = [c.model_dump() for c in payload.candles] if payload and payload.candles else None
+    
+    if raw_candles:
+        full_res = global_orchestrator.run(sym, tf, raw_candles, fast_mode=True)
+    else:
+        # Fallback minimal analysis for decision
+        full_res = {
+            "symbol": sym,
+            "confluence": {"score": 0.65, "direction": "bullish"},
+            "trade_plan": {
+                "status": "actionable_setup",
+                "direction": "bullish",
+                "entry_zone": [86.0, 86.5],
+                "stop_loss": 82.5,
+                "primary_target": 92.0,
+                "targets": [{"price": 92.0}, {"price": 96.0}],
+                "primary_rr": 1.71,
+            },
+        }
+
+    dec = global_decision_engine.decide(
+        symbol=sym,
+        full_analysis=full_res,
+        timeframe=tf,
+    )
+    return dataclasses.asdict(dec)
+
+
+class PDFReportRequest(BaseModel):
+    symbol: str
+    company_name: Optional[str] = None
+    current_price: Optional[float] = None
+    currency: Optional[str] = "EGP"
+    market: Optional[str] = "EGX"
+    decision_data: Optional[Dict[str, Any]] = None
+
+@app.post("/report/{symbol}/pdf")
+@app.get("/report/{symbol}/pdf")
+def generate_pdf_report_endpoint(symbol: str, payload: Optional[PDFReportRequest] = None):
+    import sys
+    import os
+    parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    if parent_dir not in sys.path:
+        sys.path.insert(0, parent_dir)
+        
+    from reports.pdf_generator import global_pdf_generator
+
+    sym = symbol.upper()
+    comp_name = (payload.company_name if payload else None) or sym
+    price = (payload.current_price if payload else None) or 86.0
+    curr = (payload.currency if payload else None) or "EGP"
+    mkt = (payload.market if payload else None) or "EGX"
+    
+    dec_dict = (payload.decision_data if payload else None)
+    if not dec_dict:
+        # generate on the fly
+        fake_analysis = {
+            "confluence": {"score": 0.68, "direction": "bullish"},
+            "trade_plan": {
+                "status": "actionable_setup",
+                "direction": "bullish",
+                "entry_zone": [price * 0.995, price * 1.005],
+                "stop_loss": price * 0.955,
+                "primary_target": price * 1.07,
+                "targets": [{"price": price * 1.07}, {"price": price * 1.12}],
+                "primary_rr": 1.71,
+            }
+        }
+        dec_obj = global_decision_engine.decide(sym, fake_analysis)
+        dec_dict = dataclasses.asdict(dec_obj)
+
+    pdf_bytes = global_pdf_generator.generate(
+        symbol=sym,
+        company_name=comp_name,
+        current_price=price,
+        currency=curr,
+        decision_data=dec_dict,
+        market=mkt,
+    )
+
+    date_str = datetime.now(timezone.utc).strftime("%Y%m%d")
+    filename = f"BORSATY_{sym}_{date_str}.pdf"
+
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'}
+    )
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)

@@ -184,3 +184,23 @@ model Watchlist {
   @@unique([userId, symbol])
   @@index([userId, createdAt])
 }
+
+enum TransactionType {
+  BUY
+  SELL
+}
+
+model Transaction {
+  id        String          @id @default(cuid())
+  userId    String          // Clerk user ID
+  symbol    String          // Canonical ticker (e.g., "COMI", "AAPL")
+  type      TransactionType @default(BUY)
+  quantity  Float
+  price     Float
+  date      DateTime        @default(now())
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+
+  @@index([userId, symbol])
+  @@index([userId, date])
+}

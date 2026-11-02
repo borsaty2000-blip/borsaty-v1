@@ -144,6 +144,105 @@ export async function isInWatchlist(userId: string, symbol: string): Promise<boo
   return userItems.some((w) => w.symbol === sym);
 }
 
+// Portfolio Transactions Store & Helpers
+export interface TransactionRecord {
+  id: string;
+  userId: string;
+  symbol: string;
+  type: 'BUY' | 'SELL';
+  quantity: number;
+  price: number;
+  date: Date;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const inMemoryTransactions = new Map<string, TransactionRecord[]>();
+
+export async function getTransactions(userId: string): Promise<TransactionRecord[]> {
+  if (process.env.DATABASE_URL) {
+    try {
+      const client = getPrismaClient();
+      const list = await client.transaction.findMany({
+        where: { userId },
+        orderBy: { date: 'desc' },
+      });
+      return list as TransactionRecord[];
+    } catch {
+      // Non-blocking fallback
+    }
+  }
+  return inMemoryTransactions.get(userId) || [];
+}
+
+export async function addTransaction(item: {
+  userId: string;
+  symbol: string;
+  type: 'BUY' | 'SELL';
+  quantity: number;
+  price: number;
+  date?: Date;
+}): Promise<TransactionRecord> {
+  const sym = item.symbol.toUpperCase();
+  const txDate = item.date || new Date();
+
+  if (process.env.DATABASE_URL) {
+    try {
+      const client = getPrismaClient();
+      const record = await client.transaction.create({
+        data: {
+          userId: item.userId,
+          symbol: sym,
+          type: item.type,
+          quantity: item.quantity,
+          price: item.price,
+          date: txDate,
+        },
+      });
+      return record as TransactionRecord;
+    } catch {
+      // Non-blocking fallback
+    }
+  }
+
+  const userTx = inMemoryTransactions.get(item.userId) || [];
+  const record: TransactionRecord = {
+    id: `tx_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+    userId: item.userId,
+    symbol: sym,
+    type: item.type,
+    quantity: item.quantity,
+    price: item.price,
+    date: txDate,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+  userTx.unshift(record);
+  inMemoryTransactions.set(item.userId, userTx);
+  return record;
+}
+
+export async function deleteTransaction(id: string, userId: string): Promise<boolean> {
+  if (process.env.DATABASE_URL) {
+    try {
+      const client = getPrismaClient();
+      await client.transaction.deleteMany({
+        where: { id, userId },
+      });
+      return true;
+    } catch {
+      // Non-blocking fallback
+    }
+  }
+
+  const userTx = inMemoryTransactions.get(userId) || [];
+  inMemoryTransactions.set(
+    userId,
+    userTx.filter((t) => t.id !== id)
+  );
+  return true;
+}
+
 export async function findCompany(symbolOrQuery: string) {
   const sym = symbolOrQuery.trim().toUpperCase();
   const match = inMemoryStore.companies.get(sym);

@@ -26,9 +26,18 @@ import dynamic from 'next/dynamic';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import HeroDecisionSection from '@/components/HeroDecisionSection';
-import FairValueCard from '@/components/FairValueCard';
-import EarningsInsightCard from '@/components/EarningsInsightCard';
-import InsiderActivityCard from '@/components/InsiderActivityCard';
+const FairValueCard = dynamic(() => import('@/components/FairValueCard'), {
+  ssr: false,
+  loading: () => <div className="h-64 rounded-xl bg-slate-100 dark:bg-slate-900/40 animate-pulse border border-slate-200 dark:border-slate-800" />,
+});
+const EarningsInsightCard = dynamic(() => import('@/components/EarningsInsightCard'), {
+  ssr: false,
+  loading: () => <div className="h-64 rounded-xl bg-slate-100 dark:bg-slate-900/40 animate-pulse border border-slate-200 dark:border-slate-800" />,
+});
+const InsiderActivityCard = dynamic(() => import('@/components/InsiderActivityCard'), {
+  ssr: false,
+  loading: () => <div className="h-64 rounded-xl bg-slate-100 dark:bg-slate-900/40 animate-pulse border border-slate-200 dark:border-slate-800" />,
+});
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { safeParseAnalysis, ValidatedUnifiedAnalysis } from '@/lib/schemas';
 import { useApp } from '@/context/AppContext';

@@ -39,10 +39,12 @@ import {
 } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { toast } from 'sonner';
-import AddTransactionModal from './AddTransactionModal';
-import ApplyStrategyModal from './ApplyStrategyModal';
+import dynamic from 'next/dynamic';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import AnimatedNumber from '@/components/ui/AnimatedNumber';
+
+const AddTransactionModal = dynamic(() => import('./AddTransactionModal'), { ssr: false });
+const ApplyStrategyModal = dynamic(() => import('./ApplyStrategyModal'), { ssr: false });
 
 interface Holding {
   symbol: string;

@@ -311,7 +311,7 @@ export default function HeroDecisionSection({
               <span className="text-xs uppercase tracking-wider font-semibold opacity-90 block mb-1">
                 {isAr ? 'القرار الفني المباشر' : 'IMMEDIATE TECHNICAL VERDICT'}
               </span>
-              <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight leading-none text-white drop-shadow-sm">
+              <h1 className="text-[48px] sm:text-5xl md:text-[64px] font-black tracking-tight leading-none text-white drop-shadow-sm">
                 {actionWord}
               </h1>
             </div>

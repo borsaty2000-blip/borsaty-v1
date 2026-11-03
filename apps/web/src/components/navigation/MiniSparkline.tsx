@@ -7,6 +7,7 @@ interface MiniSparklineProps {
   isPositive: boolean;
   width?: number;
   height?: number;
+  stroke?: string;
 }
 
 export default function MiniSparkline({
@@ -14,6 +15,7 @@ export default function MiniSparkline({
   isPositive,
   width = 54,
   height = 22,
+  stroke,
 }: MiniSparklineProps) {
   if (!data || data.length < 2) {
     return <div style={{ width, height }} className="opacity-0" />;
@@ -34,7 +36,7 @@ export default function MiniSparkline({
     })
     .join(' ');
 
-  const strokeColor = isPositive ? '#10B981' : '#F43F5E';
+  const strokeColor = stroke || (isPositive ? '#059669' : '#dc2626');
   const fillGradientId = `sparkline-grad-${isPositive ? 'pos' : 'neg'}-${width}-${height}`;
 
   // Area points closed at bottom for subtle gradient

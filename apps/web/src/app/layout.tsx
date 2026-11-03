@@ -5,6 +5,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import CommandPalette from "@/components/CommandPalette";
 import MobileBottomNav from "@/components/MobileBottomNav";
+import ThePulse from "@/components/ThePulse";
 import Logo from "@/components/branding/Logo";
 import { AppProvider } from "@/context/AppContext";
 import { BorsatyProvider } from "@/context/BorsatyContext";
@@ -59,9 +60,10 @@ export default function RootLayout({
               <CommandPalette />
               <Toaster position="top-right" richColors closeButton />
               <Header />
-              <main className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 pb-20 md:pb-6">
+              <main className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 pb-28 md:pb-16">
                 {children}
               </main>
+              <ThePulse />
               <MobileBottomNav />
               <footer className="border-t border-slate-800 bg-[#0A0A0A] py-10 px-4 pb-24 md:pb-10 text-center text-xs text-slate-400">
                 <div className="max-w-7xl mx-auto space-y-6">

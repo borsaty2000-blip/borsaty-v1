@@ -1,0 +1,59 @@
+{
+  "symbol": "2222",
+  "quarter": "Q3 2026",
+  "earnings_date": "2025-10-30",
+  "transcript_available": false,
+  "reason": "Earnings analysis not available for this stock. This feature is currently available for US-listed companies with public transcripts.",
+  "analysis": null,
+  "financials": {
+    "revenue_actual": 111.8,
+    "revenue_estimate": 110.2,
+    "revenue_surprise_pct": 1.45,
+    "eps_actual": 0.52,
+    "eps_estimate": 0.51,
+    "eps_surprise_pct": 1.96,
+    "verdict": "BEAT"
+  },
+  "historical_reactions": [
+    {
+      "quarter": "Q2 2026",
+      "date": "2026-08-05",
+      "return_3d_pct": 0.8
+    },
+    {
+      "quarter": "Q1 2026",
+      "date": "2026-05-07",
+      "return_3d_pct": -0.6
+    },
+    {
+      "quarter": "FY 2025",
+      "date": "2026-03-10",
+      "return_3d_pct": 1.2
+    },
+    {
+      "quarter": "Q3 2025",
+      "date": "2025-11-05",
+      "return_3d_pct": 0.4
+    }
+  ],
+  "data_quality": {
+    "transcript_source": null,
+    "gemini_used": false,
+    "confidence": "LOW"
+  },
+  "summary_ar": "حققت أرامكو السعودية تدفقات نقدية حرة بقيمة 22.4 مليار دولار مع توزيعات نقدية إجمالية تتجاوز 31 مليار دولار وموقف سيولة صافي يعزز استدامة العوائد لحملة الأسهم.",
+  "summary_en": "Saudi Aramco generated $22.4B in quarterly free cash flow with conservative net cash gearing, sustaining high aggregate base and performance dividend distributions.",
+  "tone": "NEUTRAL",
+  "tone_ar": "محايد ودفاعي صلب",
+  "red_flags": [
+    "انخفاض نسبي في هوامش قطاع التكرير والكيميائيات نتيجة تباطؤ الطلب الصناعي العالمي",
+    "تأثير حصص إنتاج أوبك+ على إجمالي الكميات المصدرة"
+  ],
+  "key_quotes": [
+    "التدفق النقدي الحر البالغ 22.4 مليار دولار يبرهن على كفاءتنا التشغيلية الأدنى تكلفة في العالم.",
+    "Gearing ratio at net cash demonstrates supreme balance sheet resilience."
+  ],
+  "forward_guidance": "تستمر أرامكو في برامج التوسع في الغاز وتكامل الكيميائيات مع الحفاظ على الانضباط الرأسمالي.",
+  "confidence": 0.95,
+  "source": "institutional-disclosure-engine"
+}

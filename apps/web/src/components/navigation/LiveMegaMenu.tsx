@@ -8,6 +8,8 @@ import {
   SlidersHorizontal,
   Briefcase,
   Calendar,
+  Bell,
+  Star,
   GitCompare,
   History,
   Activity,
@@ -189,6 +191,15 @@ export default function LiveMegaMenu({ language, onLinkClick }: LiveMegaMenuProp
         >
           <Calendar className="w-3.5 h-3.5 text-slate-600 dark:text-slate-400" />
           <span>{isAr ? 'الأجندة' : 'Calendar'}</span>
+        </Link>
+        <Link
+          href="/alerts"
+          prefetch
+          onClick={onLinkClick}
+          className="flex items-center gap-1.5 px-3 py-2 rounded-lg hover:bg-slate-100/80 dark:hover:bg-slate-800/60 transition-colors"
+        >
+          <Bell className="w-3.5 h-3.5 text-slate-600 dark:text-slate-400" />
+          <span>{isAr ? 'التنبيهات' : 'Alerts'}</span>
         </Link>
       </div>
 

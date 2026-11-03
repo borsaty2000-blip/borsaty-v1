@@ -15,6 +15,7 @@ import {
   Loader2,
 } from 'lucide-react';
 import WatchlistButton from '@/components/WatchlistButton';
+import AlertButton from '@/components/AlertButton';
 import AnimatedNumber from '@/components/ui/AnimatedNumber';
 import Logo from '@/components/branding/Logo';
 import { useApp } from '@/context/AppContext';
@@ -217,6 +218,10 @@ export default function HeroDecisionSection({
             symbol={company.symbol}
             nameEn={company.nameEn}
             nameAr={company.nameAr}
+          />
+          <AlertButton
+            symbol={company.symbol}
+            currentPrice={quote.price}
           />
           {getStrategyBadges(company.symbol).length > 0 && (
             <>

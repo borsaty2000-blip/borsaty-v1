@@ -204,3 +204,33 @@ model Transaction {
   @@index([userId, symbol])
   @@index([userId, date])
 }
+
+enum AlertType {
+  PRICE
+  RSI
+  FAIR_VALUE
+  HARMONIC
+}
+
+enum AlertCondition {
+  ABOVE
+  BELOW
+  CROSSES_ABOVE
+  CROSSES_BELOW
+}
+
+model Alert {
+  id        String         @id @default(cuid())
+  userId    String         // Clerk user ID
+  symbol    String         // Canonical ticker (e.g., "COMI", "AAPL")
+  type      AlertType      @default(PRICE)
+  condition AlertCondition @default(ABOVE)
+  threshold Float
+  note      String?
+  triggered Boolean        @default(false)
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  @@index([userId, triggered])
+  @@index([symbol, triggered])
+}

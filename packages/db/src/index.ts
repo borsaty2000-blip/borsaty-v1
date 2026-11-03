@@ -144,6 +144,145 @@ export async function isInWatchlist(userId: string, symbol: string): Promise<boo
   return userItems.some((w) => w.symbol === sym);
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Alert Center Store & Helpers
+// ─────────────────────────────────────────────────────────────────────────────
+export interface AlertRecord {
+  id: string;
+  userId: string;
+  symbol: string;
+  type: 'PRICE' | 'RSI' | 'FAIR_VALUE' | 'HARMONIC';
+  condition: 'ABOVE' | 'BELOW' | 'CROSSES_ABOVE' | 'CROSSES_BELOW';
+  threshold: number;
+  note?: string;
+  triggered: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const inMemoryAlerts = new Map<string, AlertRecord[]>();
+
+export async function getAlerts(userId: string): Promise<AlertRecord[]> {
+  if (process.env.DATABASE_URL) {
+    try {
+      const client = getPrismaClient();
+      const list = await (client as any).alert.findMany({
+        where: { userId },
+        orderBy: { createdAt: 'desc' },
+      });
+      return list;
+    } catch {
+      // Fallback
+    }
+  }
+  return inMemoryAlerts.get(userId) || [];
+}
+
+export async function createAlert(item: {
+  userId: string;
+  symbol: string;
+  type?: 'PRICE' | 'RSI' | 'FAIR_VALUE' | 'HARMONIC';
+  condition?: 'ABOVE' | 'BELOW' | 'CROSSES_ABOVE' | 'CROSSES_BELOW';
+  threshold: number;
+  note?: string;
+}): Promise<AlertRecord> {
+  const sym = item.symbol.toUpperCase();
+  const alertType = item.type || 'PRICE';
+  const cond = item.condition || 'ABOVE';
+
+  if (process.env.DATABASE_URL) {
+    try {
+      const client = getPrismaClient();
+      return await (client as any).alert.create({
+        data: {
+          userId: item.userId,
+          symbol: sym,
+          type: alertType,
+          condition: cond,
+          threshold: item.threshold,
+          note: item.note || null,
+        },
+      });
+    } catch {
+      // Fallback
+    }
+  }
+
+  const userAlerts = inMemoryAlerts.get(item.userId) || [];
+  const entry: AlertRecord = {
+    id: `alert_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+    userId: item.userId,
+    symbol: sym,
+    type: alertType,
+    condition: cond,
+    threshold: item.threshold,
+    note: item.note,
+    triggered: false,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+  userAlerts.unshift(entry);
+  inMemoryAlerts.set(item.userId, userAlerts);
+  return entry;
+}
+
+export async function deleteAlert(alertId: string, userId: string): Promise<boolean> {
+  if (process.env.DATABASE_URL) {
+    try {
+      const client = getPrismaClient();
+      await (client as any).alert.deleteMany({
+        where: { id: alertId, userId },
+      });
+      return true;
+    } catch {
+      // Fallback
+    }
+  }
+
+  const userAlerts = inMemoryAlerts.get(userId) || [];
+  inMemoryAlerts.set(userId, userAlerts.filter((a) => a.id !== alertId));
+  return true;
+}
+
+export async function checkAndTriggerAlerts(userId: string): Promise<AlertRecord[]> {
+  const alerts = await getAlerts(userId);
+  const activeAlerts = alerts.filter((a) => !a.triggered);
+  const newlyTriggered: AlertRecord[] = [];
+
+  for (const alert of activeAlerts) {
+    const comp = inMemoryStore.companies.get(alert.symbol);
+    const price = comp?.currentPrice || 100;
+
+    let isTriggered = false;
+    if (alert.type === 'PRICE') {
+      if (alert.condition === 'ABOVE' || alert.condition === 'CROSSES_ABOVE') {
+        if (price >= alert.threshold) isTriggered = true;
+      } else if (alert.condition === 'BELOW' || alert.condition === 'CROSSES_BELOW') {
+        if (price <= alert.threshold) isTriggered = true;
+      }
+    }
+
+    if (isTriggered) {
+      alert.triggered = true;
+      alert.updatedAt = new Date();
+      newlyTriggered.push(alert);
+      if (process.env.DATABASE_URL) {
+        try {
+          const client = getPrismaClient();
+          await (client as any).alert.update({
+            where: { id: alert.id },
+            data: { triggered: true },
+          });
+        } catch {
+          // ignore
+        }
+      }
+    }
+  }
+
+  return newlyTriggered;
+}
+
 // Portfolio Transactions Store & Helpers
 export interface TransactionRecord {
   id: string;

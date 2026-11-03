@@ -16,6 +16,7 @@ import {
   Info,
   ChevronDown,
   Star,
+  Bell,
   BarChart3,
   Globe,
   Sun,
@@ -328,6 +329,20 @@ export default function MobileNavSheet({
                           <div className="font-bold">{isAr ? 'قائمة المتابعة الخاصة' : 'Personal Watchlist'}</div>
                           <div className="text-[11px] text-slate-400 font-normal">
                             {isAr ? 'متابعة الأسهم المفضلة لديك' : 'Track your starred assets in real-time'}
+                          </div>
+                        </div>
+                      </Link>
+
+                      <Link
+                        href="/alerts"
+                        onClick={onClose}
+                        className="flex items-center gap-3 min-h-[48px] px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/60 text-xs font-semibold hover:border-slate-400 transition-colors"
+                      >
+                        <Bell className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+                        <div>
+                          <div className="font-bold">{isAr ? 'مركز التنبيهات الذكية' : 'Smart Alert Center'}</div>
+                          <div className="text-[11px] text-slate-400 font-normal">
+                            {isAr ? 'إدارة التنبيهات السعرية والفنية' : 'Manage price and indicator targets'}
                           </div>
                         </div>
                       </Link>

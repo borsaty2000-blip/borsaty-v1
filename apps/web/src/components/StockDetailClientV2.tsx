@@ -19,6 +19,7 @@ import {
   ChevronUp,
   ShieldCheck,
   Info,
+  Sparkles,
 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -70,6 +71,11 @@ const NewsFeed = dynamic(() => import('@/components/news/NewsFeed'), {
   loading: () => <div className="h-48 rounded-lg bg-slate-100 dark:bg-slate-900/40 animate-pulse" />,
 });
 
+const EarningsCard = dynamic(() => import('@/components/intelligence/EarningsCard'), {
+  ssr: false,
+  loading: () => <div className="h-64 rounded-2xl bg-slate-100 dark:bg-slate-900/40 animate-pulse" />,
+});
+
 interface CompanyInfo {
   symbol: string;
   nameEn: string;
@@ -95,7 +101,7 @@ interface StockDetailClientProps {
   candles: CandleDataPoint[];
 }
 
-export type AdvancedTabType = 'technical' | 'patterns' | 'multitf' | 'tradePlan';
+export type AdvancedTabType = 'technical' | 'patterns' | 'multitf' | 'tradePlan' | 'earnings';
 
 export default function StockDetailClientV2({
   company,
@@ -322,6 +328,7 @@ export default function StockDetailClientV2({
     { id: 'patterns', labelAr: 'الأنماط والموجات', labelEn: 'Patterns & Waves', icon: <Workflow className="w-3.5 h-3.5" /> },
     { id: 'multitf', labelAr: 'الفريمات', labelEn: 'Timeframes', icon: <Layers className="w-3.5 h-3.5" /> },
     { id: 'tradePlan', labelAr: 'تفاصيل الصفقة', labelEn: 'Trade Details', icon: <Target className="w-3.5 h-3.5" /> },
+    { id: 'earnings', labelAr: 'تحليل الأرباح', labelEn: 'Earnings', icon: <Sparkles className="w-3.5 h-3.5" /> },
   ];
 
   // Tab 4 Position sizing calculations
@@ -708,6 +715,15 @@ export default function StockDetailClientV2({
 
             {/* 4. Financial News Wire */}
             <NewsFeed symbol={company.symbol} />
+          </div>
+        );
+
+      case 'earnings':
+        return (
+          <div className="space-y-6">
+            <ErrorBoundary fallbackTitleEn="Earnings Analysis Error" fallbackTitleAr="تعذر عرض تحليل نتائج الأعمال">
+              <EarningsCard symbol={company.symbol} />
+            </ErrorBoundary>
           </div>
         );
     }

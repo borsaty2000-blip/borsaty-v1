@@ -258,6 +258,18 @@ class PdfReportGenerator:
             f"The formulated trade plan presents an attractive risk/reward profile of {risk_reward:.2f}:1, establishing a disciplined stop loss barrier at {stop_loss:.2f} {currency} to safeguard portfolio equity against unexpected adverse volatility."
         ]
 
+        # Integrate Earnings Call Intelligence on Page 4 (replace middle paragraph if available)
+        try:
+            from intelligence.earnings_analyzer import global_earnings_analyzer
+            earnings_res = global_earnings_analyzer.analyze(symbol)
+            if earnings_res:
+                if earnings_res.get("summary_ar"):
+                    narrative_paragraphs_ar[1] = f"رؤية نتائج الأعمال والأرباح: {earnings_res['summary_ar']}"
+                if earnings_res.get("summary_en"):
+                    narrative_paragraphs_en[1] = f"Earnings Intelligence Insight: {earnings_res['summary_en']}"
+        except Exception as e:
+            logger.debug(f"Earnings intelligence not merged into PDF for {symbol}: {e}")
+
         key_risks_ar = [
             f"كسر مستوى وقف الخسارة عند {stop_loss:.2f} {currency_ar} يلغي صلاحية خطة التداول ويستوجب الخروج الفوري.",
             "أي تباطؤ غير متوقع في مؤشرات الاقتصاد الكلي قد يؤثر على وتيرة السيولة في قطاع السهم.",

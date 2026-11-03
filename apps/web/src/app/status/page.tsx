@@ -98,42 +98,42 @@ export default function StatusPage() {
 
         {/* Global Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="p-5 rounded-2xl bg-white dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
+          <div className="p-6 rounded-lg bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow flex items-center justify-between">
             <div>
-              <div className="text-xs font-bold text-slate-400">{isAr ? "متوسط الجاهزية (90 يوم)" : "90-Day Uptime"}</div>
-              <div className="text-2xl font-black text-slate-900 dark:text-white font-mono mt-0.5">99.98%</div>
+              <div className="text-xs font-semibold text-slate-500">{isAr ? "متوسط الجاهزية (90 يوم)" : "90-Day Uptime"}</div>
+              <div className="text-2xl font-bold text-slate-900 dark:text-white font-mono mt-0.5">99.98%</div>
             </div>
-            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center font-bold">
+            <div className="w-10 h-10 rounded-lg bg-emerald-500/10 text-emerald-500 flex items-center justify-center font-bold">
               <CheckCircle2 className="w-5 h-5" />
             </div>
           </div>
 
-          <div className="p-5 rounded-2xl bg-white dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
+          <div className="p-6 rounded-lg bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow flex items-center justify-between">
             <div>
-              <div className="text-xs font-bold text-slate-400">{isAr ? "متوسط زمن الاستجابة" : "Avg API Latency"}</div>
-              <div className="text-2xl font-black text-slate-900 dark:text-white font-mono mt-0.5">38 ms</div>
+              <div className="text-xs font-semibold text-slate-500">{isAr ? "متوسط زمن الاستجابة" : "Avg API Latency"}</div>
+              <div className="text-2xl font-bold text-slate-900 dark:text-white font-mono mt-0.5">38 ms</div>
             </div>
-            <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white flex items-center justify-center font-bold">
+            <div className="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white flex items-center justify-center font-bold">
               <Zap className="w-5 h-5" />
             </div>
           </div>
 
-          <div className="p-5 rounded-2xl bg-white dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
+          <div className="p-6 rounded-lg bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow flex items-center justify-between">
             <div>
-              <div className="text-xs font-bold text-slate-400">{isAr ? "الحوادث التشغيلية (30 يوم)" : "Incidents (30d)"}</div>
-              <div className="text-2xl font-black text-emerald-600 dark:text-emerald-400 font-mono mt-0.5">0</div>
+              <div className="text-xs font-semibold text-slate-500">{isAr ? "الحوادث التشغيلية (30 يوم)" : "Incidents (30d)"}</div>
+              <div className="text-2xl font-bold text-emerald-600 dark:text-emerald-400 font-mono mt-0.5">0</div>
             </div>
-            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center font-bold">
+            <div className="w-10 h-10 rounded-lg bg-emerald-500/10 text-emerald-500 flex items-center justify-center font-bold">
               <ShieldCheck className="w-5 h-5" />
             </div>
           </div>
         </div>
 
         {/* Services List Table */}
-        <div className="p-6 md:p-8 rounded-2xl bg-white dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
-          <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
-            <h3 className="text-base font-black text-slate-900 dark:text-white">
-              {isAr ? "الخدمات والمحركات المراقبة" : "Monitored Microservices & Pipelines"}
+        <div className="p-6 md:p-8 rounded-lg bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow space-y-4">
+          <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+              {isAr ? "الخدمات والمحركات المراقبة" : "MONITORED MICROSERVICES & PIPELINES"}
             </h3>
             <span className="text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400">
               12 / 12 Active
@@ -154,7 +154,7 @@ export default function StatusPage() {
                     </div>
                     <div className="text-[11px] text-slate-400 font-medium">
                       {svc.category === "engine"
-                        ? isAr ? "محرك حسابي حتمي" : "Deterministic Engine"
+                        ? isAr ? "محرك حسابي كمي" : "Quantitative Engine"
                         : svc.category === "feed"
                         ? isAr ? "تغذية أسعار لحظية" : "Market Data Feed"
                         : isAr ? "بنية تحتية وتخزين" : "Infrastructure"}
@@ -175,7 +175,7 @@ export default function StatusPage() {
         </div>
 
         {/* Past 30 Days Activity / Incidents Bar */}
-        <div className="p-6 md:p-8 rounded-2xl bg-white dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+        <div className="p-6 md:p-8 rounded-lg bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow space-y-4">
           <div className="flex items-center justify-between text-xs font-bold text-slate-400">
             <span>{isAr ? "سجل الاستقرار لآخر 30 يوماً" : "30-Day Historical Availability"}</span>
             <span className="text-emerald-600 dark:text-emerald-400 font-mono">100% Seamless</span>

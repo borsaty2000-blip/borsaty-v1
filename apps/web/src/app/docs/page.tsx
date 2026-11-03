@@ -74,8 +74,8 @@ console.log(quote.price, quote.dataQuality);`,
     path: "/api/decision/{symbol}",
     titleEn: "Quantitative Trade Decision",
     titleAr: "القرار الاستثماري الكمي ونقاط الدخول",
-    descriptionEn: "Deterministic algorithmic verdict (BUY / SELL / HOLD) with multi-target plan and stop loss.",
-    descriptionAr: "القرار الفني الحتمي (شراء / بيع / ترقب) متضمناً مستويات الأهداف ووقف الخسارة ونسبة R:R.",
+    descriptionEn: "Algorithmic quantitative verdict (BUY / SELL / HOLD) with multi-target plan and stop loss.",
+    descriptionAr: "القرار الفني والكمي (شراء / بيع / ترقب) متضمناً مستويات الأهداف ووقف الخسارة ونسبة R:R.",
     params: [
       { name: "symbol", type: "string", required: true, descEn: "Target equity symbol", descAr: "رمز السهم المستهدف" },
     ],
@@ -140,7 +140,7 @@ console.log(fullAnalysis.confluence_score, fullAnalysis.regime);`,
     path: "/api/screener/query",
     titleEn: "Natural Language Quantitative Screener",
     titleAr: "مصفّي الأسهم باللغة الطبيعية (NLU Engine)",
-    descriptionEn: "Parses Arabic and English natural text queries into deterministic filtering criteria.",
+    descriptionEn: "Parses Arabic and English natural text queries into structured quantitative filtering criteria.",
     descriptionAr: "معالجة الاستعلامات باللغة الطبيعية وتحويلها إلى فلاتر كمية رياضية على كافة أسهم السوق.",
     params: [
       { name: "query", type: "string", required: true, descEn: "Search query (e.g. 'أسهم مصرية بـ RSI تحت 30')", descAr: "نص الاستعلام المطلوب تصفيته" },
@@ -300,7 +300,7 @@ export default function DocsPage() {
 
           {/* Right / Endpoint Details Column */}
           <div className="lg:col-span-8 space-y-6">
-            <div className="p-6 md:p-8 rounded-2xl bg-white dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
+            <div className="p-6 md:p-8 rounded-lg bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow space-y-6">
               {/* Endpoint Header */}
               <div className="space-y-2">
                 <div className="flex items-center gap-2.5">

@@ -24,8 +24,8 @@ export default function TermsPage() {
           <p className="text-xs text-slate-500">Effective Date: November 2026 | سارية المفعول اعتباراً من نوفمبر 2026</p>
         </div>
 
-        <div className="p-6 md:p-8 rounded-2xl bg-white dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 space-y-6 text-xs md:text-sm text-slate-700 dark:text-slate-300 leading-relaxed shadow-sm">
-          <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-800 dark:text-amber-300 flex items-start gap-3">
+        <div className="p-6 md:p-8 rounded-lg bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 space-y-6 text-xs md:text-sm text-slate-700 dark:text-slate-300 leading-relaxed shadow-sm hover:shadow-md transition-shadow">
+          <div className="p-4 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-800 dark:text-amber-300 flex items-start gap-3">
             <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
             <p>
               {isAr
@@ -36,12 +36,12 @@ export default function TermsPage() {
 
           <section className="space-y-2">
             <h2 className="text-base font-bold text-slate-900 dark:text-white">
-              {isAr ? "1. طبيعة الخدمة والتحليلات الحتمية" : "1. Nature of Service & Deterministic Analysis"}
+              {isAr ? "1. طبيعة الخدمة والتحليلات الكمية" : "1. Nature of Service & Quantitative Analysis"}
             </h2>
             <p>
               {isAr
-                ? "تعتمد المنصة على خوارزميات حتمية (Deterministic Algorithms) لمعالجة البيانات السعرية والتاريخية. بينما تسعى المنصة لأعلى درجات الدقة والنزاهة، فإن أسواق الأسهم تنطوي دائماً على مخاطر تقلب قد تؤدي إلى خسارة جزء أو كل رأس المال المستثمر."
-                : "The platform relies on deterministic algorithms to evaluate market dynamics. While we uphold uncompromised statistical integrity, financial markets inherently carry risk of capital loss."}
+                ? "تعتمد المنصة على نماذج وخوارزميات كمية (Quantitative Algorithms) لمعالجة البيانات السعرية والتاريخية. بينما تسعى المنصة لأعلى درجات الدقة والنزاهة، فإن أسواق الأسهم تنطوي دائماً على مخاطر تقلب قد تؤدي إلى خسارة جزء أو كل رأس المال المستثمر."
+                : "The platform relies on quantitative algorithms and statistical models to evaluate market dynamics. While we uphold uncompromised statistical integrity, financial markets inherently carry risk of capital loss."}
             </p>
           </section>
 
@@ -63,7 +63,7 @@ export default function TermsPage() {
             <p>
               {isAr
                 ? "جميع المحركات الرياضية، والأكواد المصدرية، ونماذج التوافق، وتصاميم واجهات المستخدم هي حقوق ملكية حصرية لمنصة بورصتي © 2026."
-                : "All proprietary deterministic engines, source algorithms, confluence models, and user terminal interfaces are the exclusive intellectual property of Borsaty © 2026."}
+                : "All proprietary quantitative engines, source algorithms, confluence models, and user terminal interfaces are the exclusive intellectual property of Borsaty © 2026."}
             </p>
           </section>
         </div>

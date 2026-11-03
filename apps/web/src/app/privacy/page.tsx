@@ -24,7 +24,7 @@ export default function PrivacyPage() {
           <p className="text-xs text-slate-500">Last updated: November 2026 | آخر تحديث: نوفمبر 2026</p>
         </div>
 
-        <div className="p-6 md:p-8 rounded-2xl bg-white dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 space-y-6 text-xs md:text-sm text-slate-700 dark:text-slate-300 leading-relaxed shadow-sm">
+        <div className="p-6 md:p-8 rounded-lg bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 space-y-6 text-xs md:text-sm text-slate-700 dark:text-slate-300 leading-relaxed shadow-sm hover:shadow-md transition-shadow">
           <section className="space-y-2">
             <h2 className="text-base font-bold text-slate-900 dark:text-white">
               {isAr ? "1. التزامنا بحماية الخصوصية" : "1. Our Commitment to Privacy"}

@@ -144,8 +144,8 @@ const CHANGELOG_DATA: ChangelogEntry[] = [
     tag: "Genesis",
     date: "August 2026",
     dateAr: "أغسطس 2026",
-    titleEn: "Genesis: 8 Deterministic Engines & Institutional PDF Engine",
-    titleAr: "الإطلاق التأسيسي: 8 محركات كمية حتمية وتقارير PDF عالية الدقة",
+    titleEn: "Genesis: 8 Quantitative Engines & Institutional PDF Engine",
+    titleAr: "الإطلاق التأسيسي: 8 محركات كمية وخوارزمية وتقارير PDF عالية الدقة",
     descriptionEn:
       "Core mathematical engine deployment connecting HSPD, Elliott Waves, Harmonics, Classical Patterns, Confluence, and WeasyPrint PDF publication.",
     descriptionAr:
@@ -209,7 +209,7 @@ export default function ChangelogPage() {
                 />
 
                 {/* Card Container */}
-                <div className="p-6 md:p-8 rounded-2xl bg-white dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 shadow-sm transition-all group-hover:border-slate-400 dark:group-hover:border-slate-700">
+                <div className="p-6 md:p-8 rounded-lg bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-all group-hover:border-slate-400 dark:group-hover:border-slate-700">
                   {/* Top Bar: Version + Tag + Date */}
                   <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
                     <div className="flex items-center gap-2.5">
@@ -264,7 +264,7 @@ export default function ChangelogPage() {
         </div>
 
         {/* Footer Navigation CTA */}
-        <div className="p-6 md:p-8 rounded-2xl bg-slate-900 text-white dark:bg-black border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="p-6 md:p-8 rounded-lg bg-slate-900 text-white dark:bg-black border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
             <h4 className="text-base font-bold text-white mb-1">
               {isAr ? "استكشف محركات التحليل المباشرة" : "Explore Quantitative Engines Live"}
@@ -272,12 +272,12 @@ export default function ChangelogPage() {
             <p className="text-xs text-slate-400">
               {isAr
                 ? "جرب الفحص اللحظي المباشر لأي سهم في البورصة المصرية أو السوق السعودي الآن."
-                : "Experience deterministic multi-engine analysis across EGX, TASI, and US Equities."}
+                : "Experience quantitative multi-engine analysis across EGX, TASI, and US Equities."}
             </p>
           </div>
           <Link
             href="/stock/COMI"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white text-slate-900 font-bold text-xs hover:bg-slate-100 transition-colors shrink-0"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-white text-slate-900 font-bold text-xs hover:bg-slate-100 transition-colors shrink-0"
           >
             <span>{isAr ? "فحص سهم CIB مصر" : "Inspect COMI Stock"}</span>
             <ArrowIcon className="w-4 h-4" />

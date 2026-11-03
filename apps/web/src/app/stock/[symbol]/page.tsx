@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: StockPageProps): Promise<Meta
     description: `تحليل فني وكمي مباشر لسهم ${name} في سوق ${market}. تفكيك موجات إليوت، نماذج الهارمونيك، مستويات الدخول، وقف الخسارة، ونسبة العائد للمخاطرة على بورصتي.`,
     openGraph: {
       title: `${symbol} - ${name} | Borsaty Quantitative Terminal`,
-      description: `Institutional deterministic stock analysis, wave counts, and trade plans for ${symbol}.`,
+      description: `Institutional quantitative stock analysis, wave counts, and trade plans for ${symbol}.`,
     },
     twitter: {
       card: "summary_large_image",

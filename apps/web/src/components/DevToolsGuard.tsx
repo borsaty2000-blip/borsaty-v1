@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 export default function DevToolsGuard() {
   useEffect(() => {
     // 1. Console deterrent warning
-    const warningTitle = '%c⚠️ BORSATY AI — PROPRIETARY SYSTEM';
+    const warningTitle = '%c⚠️ BORSATY — PROPRIETARY SYSTEM';
     const warningStyle1 = 'color: #ef4444; font-size: 20px; font-weight: 900; -webkit-text-stroke: 1px black;';
     const warningBody =
       '%cThis is a proprietary financial analysis platform. Unauthorized access, automated scraping, decompilation, or reverse engineering of quantitative algorithms is strictly prohibited and violates platform Terms of Service. All sessions are logged and telemetry is monitored.';

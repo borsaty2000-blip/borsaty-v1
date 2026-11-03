@@ -96,14 +96,13 @@ export default function MobileNavSheet({
               <Link href="/" onClick={onClose} className="flex items-center gap-2.5">
                 <div className="relative w-8 h-8 rounded-lg bg-black text-white flex items-center justify-center font-black text-base shadow-sm border border-slate-800">
                   <span>B</span>
-                  <span className="absolute top-1 end-1 w-1.5 h-1.5 rounded-full bg-[#00D9FF]" />
                 </div>
                 <div>
                   <span className="text-lg font-black tracking-tight block">
-                    {isAr ? 'بورصتي' : 'Borsaty AI'}
+                    {isAr ? 'بورصتي' : 'Borsaty'}
                   </span>
-                  <span className="text-[10px] font-mono text-emerald-500 font-bold uppercase tracking-wider block -mt-1">
-                    Terminal v2.4
+                  <span className="text-[10px] font-mono text-slate-500 font-bold uppercase tracking-wider block -mt-1">
+                    Terminal
                   </span>
                 </div>
               </Link>
@@ -249,9 +248,9 @@ export default function MobileNavSheet({
                       >
                         <SlidersHorizontal className="w-4 h-4 text-cyan-500 shrink-0" />
                         <div>
-                          <div className="font-bold">{isAr ? 'الفلتر الذكي للأسهم' : 'AI Market Screener'}</div>
+                          <div className="font-bold">{isAr ? 'مصفّي الأسهم' : 'Stock Screener'}</div>
                           <div className="text-[11px] text-slate-400 font-normal">
-                            {isAr ? 'تصفية كمية باللغة الطبيعية' : 'Quantitative natural language screening'}
+                            {isAr ? 'تصفية كمية متقدمة للأسهم' : 'Advanced quantitative market screener'}
                           </div>
                         </div>
                       </Link>

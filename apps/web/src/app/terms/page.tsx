@@ -15,7 +15,7 @@ export default function TermsPage() {
       <div className="max-w-4xl mx-auto space-y-8 pb-16 pt-4">
         <div className="space-y-3">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-300">
-            <FileText className="w-3.5 h-3.5 text-[#00D9FF]" />
+            <FileText className="w-3.5 h-3.5 text-slate-900 dark:text-white" />
             <span>{isAr ? "الشروط والضوابط القانونية" : "Terms & Disclaimers"}</span>
           </div>
           <h1 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white">
@@ -29,8 +29,8 @@ export default function TermsPage() {
             <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
             <p>
               {isAr
-                ? "إخلاء مسؤولية مالي صريح: جميع مخرجات بورصتي AI هي تحليلات رياضية وحسابية وتعليمية لأغراض البحث فقط، ولا تُعتبر بأي شكل من الأشكال استشارة مالية أو توصية مباشرة بشراء أو بيع أي ورقة مالية."
-                : "Strict Financial Disclaimer: All outputs, confluence scores, wave analyses, and trade plans provided by Borsaty AI are solely for mathematical and educational research. They do NOT constitute investment advice or trading recommendations."}
+                ? "إخلاء مسؤولية مالي صريح: جميع مخرجات بورصتي هي تحليلات رياضية وحسابية وتعليمية لأغراض البحث فقط، ولا تُعتبر بأي شكل من الأشكال استشارة مالية أو توصية مباشرة بشراء أو بيع أي ورقة مالية."
+                : "Strict Financial Disclaimer: All outputs, confluence scores, wave analyses, and trade plans provided by Borsaty are solely for mathematical and educational research. They do NOT constitute investment advice or trading recommendations."}
             </p>
           </div>
 
@@ -62,8 +62,8 @@ export default function TermsPage() {
             </h2>
             <p>
               {isAr
-                ? "جميع المحركات الرياضية، والأكواد المصدرية، ونماذج التوافق، وتصاميم واجهات المستخدم هي حقوق ملكية حصرية لمنصة بورصتي AI © 2026."
-                : "All proprietary deterministic engines, source algorithms, confluence models, and user terminal interfaces are the exclusive intellectual property of Borsaty AI © 2026."}
+                ? "جميع المحركات الرياضية، والأكواد المصدرية، ونماذج التوافق، وتصاميم واجهات المستخدم هي حقوق ملكية حصرية لمنصة بورصتي © 2026."
+                : "All proprietary deterministic engines, source algorithms, confluence models, and user terminal interfaces are the exclusive intellectual property of Borsaty © 2026."}
             </p>
           </section>
         </div>

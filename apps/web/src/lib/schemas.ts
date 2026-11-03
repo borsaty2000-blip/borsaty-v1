@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 /**
- * Borsaty AI — Strict Zero-Defect Zod Validation Schemas
+ * Borsaty — Strict Zero-Defect Zod Validation Schemas
  * Prevents UI crashes from malformed, missing, or partial API payloads.
  */
 

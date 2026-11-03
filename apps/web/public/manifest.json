@@ -1,6 +1,6 @@
 {
-  "name": "Borsaty AI — Financial Markets & Quantitative Intelligence",
-  "short_name": "Borsaty AI",
+  "name": "Borsaty — Financial Markets & Quantitative Terminal",
+  "short_name": "Borsaty",
   "description": "Investing-grade quantitative technical decision engine and multi-asset market terminal.",
   "start_url": "/",
   "display": "standalone",

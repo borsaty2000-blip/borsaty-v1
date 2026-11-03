@@ -1,5 +1,5 @@
-// Borsaty AI - High-Performance PWA Service Worker
-const CACHE_NAME = 'borsaty-ai-v2.4';
+// Borsaty - High-Performance PWA Service Worker
+const CACHE_NAME = 'borsaty-v2.5';
 const STATIC_ASSETS = [
   '/',
   '/icon.svg',

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Sparkles, Bot, Send, X, ShieldCheck, RefreshCw } from "lucide-react";
+import { BarChart3, Send, X, ShieldCheck, RefreshCw } from "lucide-react";
 
 interface AskAIDialogProps {
   symbol: string;
@@ -29,10 +29,10 @@ export default function AskAIDialog({
   const [isOpen, setIsOpen] = useState(false);
   const [question, setQuestion] = useState("");
   const [loading, setLoading] = useState(false);
-  const [conversation, setConversation] = useState<Array<{ sender: "user" | "ai"; text: string }>>([
+  const [conversation, setConversation] = useState<Array<{ sender: "user" | "analyst"; text: string }>>([
     {
-      sender: "ai",
-      text: `أهلاً بك! أنا المساعد الذكي لبورصتي (Narrator Agent). أقوم بتحليل سهم **${nameAr} (${symbol})** بالاعتماد الحصري على المحركات الحتمية (Elliott, Gann, Fair Value, Confluence). لا أختلق أي أرقام من عندي، وكل رقم معلن له أساسه الرياضي. يمكنك سؤالي مثل: "إيه رأيك في ${symbol}؟" أو "ما هي الأهداف الفنية ووقف الخسارة؟"`,
+      sender: "analyst",
+      text: `أهلاً بك! أنا المحلل الكمي لبورصتي. أقوم بتحليل سهم **${nameAr} (${symbol})** بالاعتماد الحصري على المحركات الحتمية (Elliott, Gann, Fair Value, Confluence). لا يتم تخمين أي أرقام، وكل مستوى معلن له أساسه الرياضي. يمكنك سؤالي مثل: "ما هو التقييم الفني لسهم ${symbol}؟" أو "ما هي الأهداف الفنية ومستويات وقف الخسارة؟"`,
     },
   ]);
 
@@ -64,12 +64,12 @@ export default function AskAIDialog({
       });
 
       const data = await res.json();
-      setConversation((prev) => [...prev, { sender: "ai", text: data.reply }]);
+      setConversation((prev) => [...prev, { sender: "analyst", text: data.reply }]);
     } catch {
       setConversation((prev) => [
         ...prev,
         {
-          sender: "ai",
+          sender: "analyst",
           text: `بناءً على المحركات الحتمية لسهم ${nameAr} (${symbol}): السعر الحالي ${currentPrice}، توافق الأدوات ${confluenceScore}/100 بتصنيف ${certainty}. الهدف الأول عند ${targets[0]?.price} (${targets[0]?.method}) ووقف الخسارة الحتمي عند ${stopLoss?.price} (${stopLoss?.method}). القيمة العادلة المرجحة: ${fairValue.mid} (${fairValue.verdictAr}).`,
         },
       ]);
@@ -79,7 +79,7 @@ export default function AskAIDialog({
   };
 
   const sampleQuestions = [
-    `إيه رأيك في ${symbol} اليوم؟`,
+    `ما هو التقييم الفني لسهم ${symbol} اليوم؟`,
     `ما هي الأهداف الفنية ومستوى وقف الخسارة؟`,
     `هل سعر السهم أقل من قيمته العادلة؟`,
   ];
@@ -89,10 +89,10 @@ export default function AskAIDialog({
       {/* Trigger Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white font-semibold text-sm shadow-lg shadow-emerald-500/25 transition-all hover:scale-105 active:scale-95"
+        className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-black hover:bg-slate-900 border border-slate-700 text-white font-semibold text-sm shadow-md transition-all cursor-pointer"
       >
-        <Sparkles className="w-4 h-4" />
-        <span>اسأل الذكاء الاصطناعي (Ask AI)</span>
+        <BarChart3 className="w-4 h-4" />
+        <span>التحليل الكمي الاستفساري (Quantitative Insights)</span>
       </button>
 
       {/* Modal Dialog */}
@@ -102,14 +102,14 @@ export default function AskAIDialog({
             {/* Modal Header */}
             <div className="p-4 bg-[#141c2e] border-b border-[#232e48] flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
-                  <Bot className="w-5 h-5" />
+                <div className="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-white">
+                  <BarChart3 className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-white text-base">مساعد بورصتي للتحليل المالي</h3>
+                  <h3 className="font-bold text-white text-base">محلل بورصتي الكمي</h3>
                   <p className="text-xs text-gray-400 flex items-center gap-1.5">
-                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                    <span>مرتبط بمحرك التحليل الحتمي — صفر هلوسة</span>
+                    <ShieldCheck className="w-3.5 h-3.5 text-slate-300" />
+                    <span>مرتبط بمحرك التحليل الحتمي — تدقيق رياضي كامل</span>
                   </p>
                 </div>
               </div>

@@ -180,7 +180,7 @@ export default function ChangelogPage() {
         {/* Header */}
         <div className="text-center space-y-3 pt-4">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-slate-200">
-            <GitCommit className="w-3.5 h-3.5 text-[#00D9FF]" />
+            <GitCommit className="w-3.5 h-3.5 text-slate-900 dark:text-white" />
             <span>{isAr ? "سجل الإصدارات المؤسسي" : "Institutional Changelog"}</span>
           </div>
           <h1 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white tracking-tight">
@@ -188,7 +188,7 @@ export default function ChangelogPage() {
           </h1>
           <p className="text-sm md:text-base text-slate-600 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
             {isAr
-              ? "توثيق مستمر لكل إصدار وترقية وتحديث أمني أو كمي يطرأ على منصة بورصتي AI لضمان الشفافية المؤسسية الكاملة."
+              ? "توثيق مستمر لكل إصدار وترقية وتحديث أمني أو كمي يطرأ على منصة بورصتي لضمان الشفافية المؤسسية الكاملة."
               : "Continuous institutional documentation of releases, mathematical engines, performance benchmarks, and security enhancements."}
           </p>
         </div>

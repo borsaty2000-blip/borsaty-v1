@@ -437,7 +437,7 @@ export default function LiveMegaMenu({ language, onLinkClick }: LiveMegaMenuProp
             {activeMenu === 'tools' && (
               <div className="p-6">
                 <div className="grid grid-cols-2 gap-4">
-                  {/* Card 1: AI Screener */}
+                  {/* Card 1: Stock Screener */}
                   <Link
                     href="/screener"
                     prefetch
@@ -452,7 +452,7 @@ export default function LiveMegaMenu({ language, onLinkClick }: LiveMegaMenuProp
                     </div>
                     <div>
                       <div className="text-sm font-bold text-slate-900 dark:text-white group-hover:text-cyan-500 transition-colors">
-                        {isAr ? 'فلتر الأسهم الذكي (AI Screener)' : 'AI Market Screener'}
+                        {isAr ? 'مصفّي الأسهم المؤسسي' : 'Stock Screener'}
                       </div>
                       <div className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
                         {isAr
@@ -626,7 +626,7 @@ export default function LiveMegaMenu({ language, onLinkClick }: LiveMegaMenuProp
                     </div>
                     <div>
                       <div className="text-xs font-bold text-slate-900 dark:text-white group-hover:text-blue-500 transition-colors">
-                        {isAr ? 'عن المنصة والرؤية الكمية' : 'About Borsaty AI'}
+                        {isAr ? 'عن المنصة والرؤية الكمية' : 'About Borsaty'}
                       </div>
                       <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
                         {isAr ? 'الركائز الرياضية ومحركات التحليل المؤسسي الـ 8' : 'Mission statement and proprietary 8-engine architecture'}

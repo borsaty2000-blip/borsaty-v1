@@ -60,9 +60,8 @@ export default function RootLayout({
                     <div className="flex items-center gap-2 whitespace-nowrap">
                       <div className="relative w-6 h-6 rounded bg-black border border-slate-700 flex items-center justify-center text-white font-black text-xs shadow-sm">
                         <span>B</span>
-                        <span className="absolute top-0.5 end-0.5 w-1 h-1 rounded-full bg-[#00D9FF]" />
                       </div>
-                      <span className="font-bold text-sm tracking-tight text-white">Borsaty AI</span>
+                      <span className="font-bold text-sm tracking-tight text-white">Borsaty</span>
                       <span className="text-slate-400 font-normal">| بورصتي</span>
                     </div>
 
@@ -90,18 +89,18 @@ export default function RootLayout({
 
                   {/* Middle Row: Institutional Links */}
                   <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs font-semibold text-slate-400">
-                    <Link href="/about" className="hover:text-[#00D9FF] transition-colors">About Us</Link>
-                    <Link href="/changelog" className="hover:text-[#00D9FF] transition-colors">Changelog</Link>
-                    <Link href="/docs" className="hover:text-[#00D9FF] transition-colors">Developer API</Link>
-                    <Link href="/compare" className="hover:text-[#00D9FF] transition-colors">Compare Tool</Link>
-                    <Link href="/status" className="hover:text-[#00D9FF] transition-colors">System Telemetry</Link>
-                    <Link href="/terms" className="hover:text-[#00D9FF] transition-colors">Terms of Service</Link>
-                    <Link href="/privacy" className="hover:text-[#00D9FF] transition-colors">Privacy Policy</Link>
+                    <Link href="/about" className="hover:text-white transition-colors">About Us</Link>
+                    <Link href="/changelog" className="hover:text-white transition-colors">Changelog</Link>
+                    <Link href="/docs" className="hover:text-white transition-colors">Developer API</Link>
+                    <Link href="/compare" className="hover:text-white transition-colors">Compare Tool</Link>
+                    <Link href="/status" className="hover:text-white transition-colors">System Telemetry</Link>
+                    <Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
+                    <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
                   </div>
 
                   {/* Bottom Row: Copyright & Legal */}
                   <p className="text-[11px] text-slate-500 max-w-2xl mx-auto leading-relaxed">
-                    Borsaty AI © 2026. Institutional Quantitative & Technical Financial Intelligence. All calculations are mathematical and educational research.
+                    Borsaty © 2026. Institutional Quantitative & Technical Financial Terminal. All calculations are mathematical and educational research.
                   </p>
                 </div>
               </footer>

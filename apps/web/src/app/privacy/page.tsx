@@ -15,7 +15,7 @@ export default function PrivacyPage() {
       <div className="max-w-4xl mx-auto space-y-8 pb-16 pt-4">
         <div className="space-y-3">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-300">
-            <Lock className="w-3.5 h-3.5 text-[#00D9FF]" />
+            <Lock className="w-3.5 h-3.5 text-slate-900 dark:text-white" />
             <span>{isAr ? "حماية وخصوصية البيانات" : "Data Privacy & Protection"}</span>
           </div>
           <h1 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white">
@@ -31,8 +31,8 @@ export default function PrivacyPage() {
             </h2>
             <p>
               {isAr
-                ? "في بورصتي AI، نعتبر بيانات محفظتك وصفقاتك وقوائم متابعتك سرية تماماً. نحن لا نبيع بيانات التداول أو اهتمامات المستخدمين لأي أطراف ثالثة أو شركات تسويق على الإطلاق."
-                : "At Borsaty AI, your portfolio positions, transaction logs, and watchlist preferences are strictly confidential. We never monetize, sell, or distribute your private trading data to third-party brokers or advertisers."}
+                ? "في بورصتي، نعتبر بيانات محفظتك وصفقاتك وقوائم متابعتك سرية تماماً. نحن لا نبيع بيانات التداول أو اهتمامات المستخدمين لأي أطراف ثالثة أو شركات تسويق على الإطلاق."
+                : "At Borsaty, your portfolio positions, transaction logs, and watchlist preferences are strictly confidential. We never monetize, sell, or distribute your private trading data to third-party brokers or advertisers."}
             </p>
           </section>
 

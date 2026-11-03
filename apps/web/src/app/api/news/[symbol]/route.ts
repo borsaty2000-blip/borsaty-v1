@@ -144,14 +144,14 @@ export async function GET(
       news = [
         {
           id: 'n_us_1',
-          titleEn: `${sym}: Institutional volume surges following earnings guidance beat and cloud AI growth`,
-          titleAr: `${sym}: أحجام تداول مؤسسية قياسية بعد تجاوز توقعات الأرباح ونمو الذكاء الاصطناعي`,
+          titleEn: `${sym}: Institutional volume surges following earnings guidance beat and cloud computing growth`,
+          titleAr: `${sym}: أحجام تداول مؤسسية قياسية بعد تجاوز توقعات الأرباح ونمو الحوسبة السحابية`,
           source: 'Bloomberg Technology',
           timeAgoEn: '30 mins ago',
           timeAgoAr: 'منذ 30 دقيقة',
           url: 'https://bloomberg.com',
           sentiment: 'bullish',
-          category: 'Earnings & AI',
+          category: 'Earnings & Cloud',
         },
         {
           id: 'n_us_2',

@@ -355,7 +355,7 @@ export default function CommandPalette() {
               >
                 <div className="flex items-center gap-3">
                   <SlidersHorizontal className="w-4 h-4 text-cyan-600" />
-                  <span>{isAr ? 'الفلتر الذكي للأسهم (AI Screener)' : 'AI Market Screener'}</span>
+                  <span>{isAr ? 'مصفّي الأسهم (Stock Screener)' : 'Stock Screener'}</span>
                 </div>
                 <kbd className="text-[10px] text-slate-400 font-mono">G + S</kbd>
               </Command.Item>
@@ -457,7 +457,7 @@ export default function CommandPalette() {
               >
                 <div className="flex items-center gap-3">
                   <Info className="w-4 h-4 text-blue-500" />
-                  <span>{isAr ? 'عن بورصتي والرؤية المؤسسية (About)' : 'About Borsaty AI'}</span>
+                  <span>{isAr ? 'عن بورصتي والرؤية المؤسسية (About)' : 'About Borsaty'}</span>
                 </div>
               </Command.Item>
             </Command.Group>

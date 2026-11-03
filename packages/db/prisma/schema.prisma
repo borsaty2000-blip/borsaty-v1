@@ -234,3 +234,15 @@ model Alert {
   @@index([userId, triggered])
   @@index([symbol, triggered])
 }
+
+model EarningsCache {
+  id        String   @id @default(cuid())
+  symbol    String   // Canonical ticker (e.g., "AAPL", "COMI")
+  quarter   String   // e.g., "Q4 2025"
+  dataJson  Json     // Full earnings analysis payload
+  fetchedAt DateTime @default(now())
+  createdAt DateTime @default(now())
+
+  @@unique([symbol, quarter])
+  @@index([symbol, fetchedAt])
+}

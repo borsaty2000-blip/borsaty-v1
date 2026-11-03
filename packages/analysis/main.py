@@ -922,6 +922,17 @@ def get_earnings_intelligence_endpoint(symbol: str, force_refresh: bool = False)
     return global_earnings_analyzer.analyze(symbol, force_refresh=force_refresh)
 
 
+@app.get("/intelligence/earnings/{symbol}/history")
+def get_earnings_history_endpoint(symbol: str):
+    res = global_earnings_analyzer.analyze(symbol)
+    return {
+        "symbol": symbol.upper().strip(),
+        "historical_reactions": res.get("historical_reactions", []),
+        "financials": res.get("financials", {}),
+        "transcript_available": res.get("transcript_available", False),
+    }
+
+
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Insider & Institutional Tracking Endpoints

@@ -1,0 +1,57 @@
+{
+  "symbol": "XYZ_CORP",
+  "quarter": "Q3 2026",
+  "earnings_date": "2025-10-30",
+  "transcript_available": false,
+  "reason": "Earnings analysis not available for this stock. This feature is currently available for US-listed companies with public transcripts.",
+  "analysis": null,
+  "financials": {
+    "revenue_actual": 50.0,
+    "revenue_estimate": 49.0,
+    "revenue_surprise_pct": 2.04,
+    "eps_actual": 1.2,
+    "eps_estimate": 1.15,
+    "eps_surprise_pct": 4.35,
+    "verdict": "BEAT"
+  },
+  "historical_reactions": [
+    {
+      "quarter": "Q3 2025",
+      "date": "2025-08-01",
+      "return_3d_pct": 2.4
+    },
+    {
+      "quarter": "Q2 2025",
+      "date": "2025-05-02",
+      "return_3d_pct": -1.1
+    },
+    {
+      "quarter": "Q1 2025",
+      "date": "2025-02-04",
+      "return_3d_pct": 3.6
+    },
+    {
+      "quarter": "Q4 2024",
+      "date": "2024-11-06",
+      "return_3d_pct": 0.5
+    }
+  ],
+  "data_quality": {
+    "transcript_source": null,
+    "gemini_used": false,
+    "confidence": "LOW"
+  },
+  "summary_ar": "أظهرت النتائج المالية الدورية لسهم XYZ_CORP استقراراً تشغيلياً مع نمو متوازن في الإيرادات.",
+  "summary_en": "Periodic financial results for XYZ_CORP demonstrate operational resilience with steady top-line growth.",
+  "tone": "NEUTRAL",
+  "tone_ar": "محايد",
+  "red_flags": [
+    "لا يتوفر نص مفرغ رسمي لمؤتمر الأرباح"
+  ],
+  "key_quotes": [
+    "Disclosures available through exchange regulatory filings."
+  ],
+  "forward_guidance": "يرجى مراجعة القوائم المالية وإفصاحات مجلس الإدارة.",
+  "confidence": 0.85,
+  "source": "institutional-disclosure-engine"
+}

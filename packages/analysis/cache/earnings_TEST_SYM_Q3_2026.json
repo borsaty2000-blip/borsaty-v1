@@ -1,0 +1,82 @@
+{
+  "symbol": "TEST_SYM",
+  "quarter": "Q3 2026",
+  "earnings_date": "2025-10-30",
+  "transcript_available": true,
+  "analysis": {
+    "key_points": [
+      "Record quarterly revenue",
+      "Strong margin expansion"
+    ],
+    "management_tone": "OPTIMISTIC",
+    "tone_change_vs_previous": "IMPROVED",
+    "sentiment_score": 0.85,
+    "guidance": {
+      "revenue": "Low-to-mid single digits",
+      "eps": "not provided",
+      "changed_vs_previous": "RAISED"
+    },
+    "red_flags": [
+      "Foreign exchange headwind"
+    ],
+    "key_quotes": [
+      {
+        "speaker": "CEO",
+        "quote": "Highest revenue in company history."
+      }
+    ],
+    "operational_highlights": [
+      "Cloud business expanded 30%"
+    ],
+    "capital_allocation": "$10B returned via buybacks"
+  },
+  "financials": {
+    "revenue_actual": 50.0,
+    "revenue_estimate": 49.0,
+    "revenue_surprise_pct": 2.04,
+    "eps_actual": 1.2,
+    "eps_estimate": 1.15,
+    "eps_surprise_pct": 4.35,
+    "verdict": "BEAT"
+  },
+  "historical_reactions": [
+    {
+      "quarter": "Q3 2025",
+      "date": "2025-08-01",
+      "return_3d_pct": 2.4
+    },
+    {
+      "quarter": "Q2 2025",
+      "date": "2025-05-02",
+      "return_3d_pct": -1.1
+    },
+    {
+      "quarter": "Q1 2025",
+      "date": "2025-02-04",
+      "return_3d_pct": 3.6
+    },
+    {
+      "quarter": "Q4 2024",
+      "date": "2024-11-06",
+      "return_3d_pct": 0.5
+    }
+  ],
+  "data_quality": {
+    "transcript_source": "Motley Fool",
+    "gemini_used": true,
+    "confidence": "HIGH"
+  },
+  "summary_ar": "أظهرت نتائج أعمال TEST_SYM (Q3 2026) أداءً متفوقاً بتسجيل إيرادات قدرها $50.0B وأرباح للسهم بلغت $1.2 بنتيجة (BEAT).",
+  "summary_en": "TEST_SYM (Q3 2026) reported revenue of $50.0B and diluted EPS of $1.2, delivering an earnings BEAT.",
+  "tone": "OPTIMISTIC",
+  "tone_ar": "متفائل",
+  "red_flags": [
+    "Foreign exchange headwind"
+  ],
+  "key_quotes": [
+    "CEO: \"Highest revenue in company history.\""
+  ],
+  "forward_guidance": "Low-to-mid single digits",
+  "confidence": 0.95,
+  "source": "gemini-api"
+}

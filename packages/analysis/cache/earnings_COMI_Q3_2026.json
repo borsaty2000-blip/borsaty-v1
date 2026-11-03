@@ -1,5 +1,46 @@
 {
+  "symbol": "COMI",
   "quarter": "Q3 2026",
+  "earnings_date": "2025-10-30",
+  "transcript_available": false,
+  "reason": "Earnings analysis not available for this stock. This feature is currently available for US-listed companies with public transcripts.",
+  "analysis": null,
+  "financials": {
+    "revenue_actual": 28.5,
+    "revenue_estimate": 27.8,
+    "revenue_surprise_pct": 2.52,
+    "eps_actual": 4.85,
+    "eps_estimate": 4.7,
+    "eps_surprise_pct": 3.19,
+    "verdict": "BEAT"
+  },
+  "historical_reactions": [
+    {
+      "quarter": "Q2 2026",
+      "date": "2026-08-10",
+      "return_3d_pct": 1.8
+    },
+    {
+      "quarter": "Q1 2026",
+      "date": "2026-05-12",
+      "return_3d_pct": 3.4
+    },
+    {
+      "quarter": "FY 2025",
+      "date": "2026-02-15",
+      "return_3d_pct": -0.5
+    },
+    {
+      "quarter": "Q3 2025",
+      "date": "2025-11-10",
+      "return_3d_pct": 2.1
+    }
+  ],
+  "data_quality": {
+    "transcript_source": null,
+    "gemini_used": false,
+    "confidence": "LOW"
+  },
   "summary_ar": "سجل البنك التجاري الدولي نمواً قوياً في صافي دخل الفائدة بنسبة 31% مع اتساع هامش الفائدة الصافي إلى 8.2% ونسبة كفاية رأس مال استثنائية عند 31.4%، ما يعكس صلابة المركز المالي.",
   "summary_en": "CIB Egypt delivered robust 31% YoY growth in net interest income with NIM expansion to 8.2% and a resilient 31.4% capital adequacy ratio reflecting balance sheet strength.",
   "tone": "OPTIMISTIC",
@@ -14,7 +55,5 @@
   ],
   "forward_guidance": "تستهدف الإدارة عائداً سنوياً على متوسط حقوق الملكية (RoAE) بين 38% و40% بنهاية العام المالي.",
   "confidence": 0.94,
-  "symbol": "COMI",
-  "company_name": "Commercial International Bank (CIB Egypt)",
   "source": "institutional-disclosure-engine"
 }

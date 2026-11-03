@@ -1,0 +1,92 @@
+{
+  "symbol": "AAPL",
+  "quarter": "Q4 2025",
+  "earnings_date": "2025-10-30",
+  "transcript_available": true,
+  "analysis": {
+    "key_points": [
+      "Quarterly revenue hit record $94.9B (+6% YoY), driven by Services record $25.2B (+14% YoY).",
+      "iPhone returned to positive growth with strong upgrade momentum across all geographic segments.",
+      "Active installed base reached an all-time historical high across every device category.",
+      "Gross margin expanded to 46.2%, at the upper limit of management guidance range."
+    ],
+    "management_tone": "OPTIMISTIC",
+    "tone_change_vs_previous": "STABLE",
+    "sentiment_score": 0.65,
+    "guidance": {
+      "revenue": "Low-to-mid single digits YoY growth in December quarter",
+      "eps": "not provided",
+      "changed_vs_previous": "MAINTAINED"
+    },
+    "red_flags": [
+      "Foreign exchange headwinds expected to drag revenue growth by ~150 bps in Q1.",
+      "Intense competitive pressures in Greater China smartphone landscape."
+    ],
+    "key_quotes": [
+      {
+        "speaker": "Tim Cook",
+        "quote": "We generated all-time record Services revenue of $25.2 billion, up 14% year over year."
+      },
+      {
+        "speaker": "Luca Maestri",
+        "quote": "Gross margin at 46.2% reflected disciplined cost management and favorable product mix."
+      }
+    ],
+    "operational_highlights": [
+      "Apple Intelligence rollout driving early user engagement and device upgrade interest",
+      "$25B+ returned to shareholders through aggressive share buybacks and dividends"
+    ],
+    "capital_allocation": "Over $25 billion returned to shareholders via $20.4B share repurchases and $3.7B cash dividends."
+  },
+  "financials": {
+    "revenue_actual": 94.93,
+    "revenue_estimate": 94.5,
+    "revenue_surprise_pct": 0.45,
+    "eps_actual": 1.64,
+    "eps_estimate": 1.6,
+    "eps_surprise_pct": 2.5,
+    "verdict": "BEAT"
+  },
+  "historical_reactions": [
+    {
+      "quarter": "Q3 2025",
+      "date": "2025-07-31",
+      "return_3d_pct": 2.8
+    },
+    {
+      "quarter": "Q2 2025",
+      "date": "2025-05-01",
+      "return_3d_pct": -1.2
+    },
+    {
+      "quarter": "Q1 2025",
+      "date": "2025-01-30",
+      "return_3d_pct": 4.1
+    },
+    {
+      "quarter": "Q4 2024",
+      "date": "2024-10-31",
+      "return_3d_pct": -0.8
+    }
+  ],
+  "data_quality": {
+    "transcript_source": "Motley Fool",
+    "gemini_used": false,
+    "confidence": "MEDIUM"
+  },
+  "summary_ar": "أظهرت نتائج أعمال AAPL (Q4 2025) أداءً متفوقاً بتسجيل إيرادات قدرها $94.93B وأرباح للسهم بلغت $1.64 بنتيجة (BEAT).",
+  "summary_en": "AAPL (Q4 2025) reported revenue of $94.93B and diluted EPS of $1.64, delivering an earnings BEAT.",
+  "tone": "OPTIMISTIC",
+  "tone_ar": "متفائل",
+  "red_flags": [
+    "Foreign exchange headwinds expected to drag revenue growth by ~150 bps in Q1.",
+    "Intense competitive pressures in Greater China smartphone landscape."
+  ],
+  "key_quotes": [
+    "Tim Cook: \"We generated all-time record Services revenue of $25.2 billion, up 14% year over year.\"",
+    "Luca Maestri: \"Gross margin at 46.2% reflected disciplined cost management and favorable product mix.\""
+  ],
+  "forward_guidance": "Low-to-mid single digits YoY growth in December quarter",
+  "confidence": 0.9,
+  "source": "institutional-earnings-engine"
+}

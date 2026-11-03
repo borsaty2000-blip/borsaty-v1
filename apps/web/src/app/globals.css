@@ -43,6 +43,8 @@
 /* Tabular figures for numbers */
 .tabular-nums {
   font-variant-numeric: tabular-nums;
+  direction: ltr;
+  unicode-bidi: embed;
 }
 
 /* Institutional Design Tokens & Micro-Interactions */

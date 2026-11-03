@@ -242,7 +242,7 @@ export default function HeroDecisionSection({
             <AnimatedNumber value={quote.price} decimals={2} />
           </div>
           <span className="text-xl sm:text-2xl font-bold text-slate-400 dark:text-slate-500">
-            {quote.currency}
+            {isAr ? (quote.currency === 'EGP' ? 'ج.م' : quote.currency === 'SAR' ? 'ر.س' : quote.currency) : quote.currency}
           </span>
           <div
             className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm sm:text-base font-bold font-mono tabular-nums ${

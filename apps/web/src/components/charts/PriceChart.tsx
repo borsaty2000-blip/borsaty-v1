@@ -231,9 +231,12 @@ export function PriceChart({
     const grid = isDark ? '#1e293b' : '#f1f5f9';
     const border = isDark ? '#334155' : '#e2e8f0';
 
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
+    const chartHeight = height !== undefined ? height : (isMobile ? 300 : 500);
+
     const mainChart = createChart(mainContainerRef.current, {
       width: mainContainerRef.current.clientWidth,
-      height: Math.max(340, height),
+      height: chartHeight,
       layout: {
         background: { type: ColorType.Solid, color: bg },
         textColor: text,
@@ -398,8 +401,11 @@ export function PriceChart({
     // Resize Handler
     const handleResize = () => {
       if (mainContainerRef.current && mainChartRef.current) {
+        const isMob = window.innerWidth < 640;
+        const h = height !== undefined ? height : (isMob ? 300 : 500);
         mainChartRef.current.applyOptions({
           width: mainContainerRef.current.clientWidth,
+          height: h,
         });
       }
     };

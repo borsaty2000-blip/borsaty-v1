@@ -160,7 +160,7 @@ export async function POST(request: Request) {
         data: {
           userId: userId || null,
           queryAr: query,
-          parsedDsl: (resObj.interpreted as Record<string, unknown>) || {},
+          parsedDsl: (resObj.interpreted as any) || {},
           resultCount: (resObj.total_matches as number) || (Array.isArray(resObj.results) ? resObj.results.length : 0),
           executionMs: executionMs,
         },

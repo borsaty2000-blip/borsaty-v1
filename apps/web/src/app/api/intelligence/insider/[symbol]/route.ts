@@ -17,7 +17,7 @@ export async function GET(
   if (process.env.DATABASE_URL) {
     try {
       const client = getPrismaClient();
-      const cached = await (client as any).insiderCache?.findUnique({
+      const cached = await client.insiderCache.findUnique({
         where: { symbol: sym },
       });
 
@@ -53,7 +53,7 @@ export async function GET(
       if (process.env.DATABASE_URL) {
         try {
           const client = getPrismaClient();
-          await (client as any).insiderCache?.upsert({
+          await client.insiderCache.upsert({
             where: { symbol: sym },
             create: { symbol: sym, dataJson: data, fetchedAt: new Date() },
             update: { dataJson: data, fetchedAt: new Date() },

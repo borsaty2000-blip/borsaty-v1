@@ -33,8 +33,8 @@ export async function GET(
   // Fetch from global list
   const allRes = await fetch(new URL("/api/strategies", request.url).toString());
   if (allRes.ok) {
-    const allData = await allRes.json();
-    const found = allData.strategies?.find((s: any) => s.id === strategy.toLowerCase());
+    const allData = (await allRes.json()) as { strategies?: Array<{ id: string }> };
+    const found = allData.strategies?.find((s) => s.id === strategy.toLowerCase());
     if (found) {
       return NextResponse.json(found);
     }

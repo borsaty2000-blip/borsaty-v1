@@ -65,7 +65,9 @@ export default function ApplyStrategyModal({ isOpen, onClose, onSuccess }: Apply
           }
         }
       } catch (err) {
-        console.error('Failed to load strategies:', err);
+        if (process.env.NODE_ENV === "development") {
+          console.error('Failed to load strategies:', err);
+        }
       } finally {
         setLoadingStrategies(false);
       }
@@ -173,8 +175,10 @@ export default function ApplyStrategyModal({ isOpen, onClose, onSuccess }: Apply
               </div>
             </div>
             <button
+              type="button"
               onClick={onClose}
               disabled={applying}
+              aria-label={isAr ? "إغلاق" : "Close"}
               className="p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
             >
               <X className="w-5 h-5" />

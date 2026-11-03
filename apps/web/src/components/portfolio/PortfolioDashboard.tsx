@@ -629,8 +629,10 @@ export default function PortfolioDashboard() {
                       </td>
                       <td className="py-2.5 text-center">
                         <button
+                          type="button"
                           onClick={() => handleDeleteTransaction(t.id)}
                           disabled={deletingId === t.id}
+                          aria-label="Delete transaction"
                           className="p-1.5 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors cursor-pointer"
                           title="Delete transaction"
                         >

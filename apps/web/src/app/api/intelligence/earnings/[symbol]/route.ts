@@ -43,7 +43,7 @@ export async function GET(
   if (process.env.DATABASE_URL) {
     try {
       const client = getPrismaClient();
-      const cachedRecord = await (client as any).earningsCache?.findFirst({
+      const cachedRecord = await client.earningsCache.findFirst({
         where: { symbol: sym },
         orderBy: { fetchedAt: "desc" },
       });
@@ -81,7 +81,7 @@ export async function GET(
         try {
           const client = getPrismaClient();
           const quarter = data.quarter || "Q3 2026";
-          await (client as any).earningsCache?.upsert({
+          await client.earningsCache.upsert({
             where: { symbol_quarter: { symbol: sym, quarter } },
             create: { symbol: sym, quarter, dataJson: data, fetchedAt: new Date() },
             update: { dataJson: data, fetchedAt: new Date() },

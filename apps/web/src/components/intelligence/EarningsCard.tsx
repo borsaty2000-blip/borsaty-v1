@@ -107,7 +107,9 @@ export default function EarningsCard({ symbol }: EarningsCardProps) {
           if (isMounted) setData(json);
         }
       } catch (err) {
-        console.error('Failed to load earnings intelligence:', err);
+        if (process.env.NODE_ENV === "development") {
+          console.error("Failed to load earnings intelligence:", err);
+        }
       } finally {
         if (isMounted) setLoading(false);
       }

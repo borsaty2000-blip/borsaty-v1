@@ -135,7 +135,9 @@ export default function InsiderCard({ symbol }: InsiderCardProps) {
           }
         }
       } catch (err) {
-        console.error('Failed to load insider intelligence:', err);
+        if (process.env.NODE_ENV === "development") {
+          console.error("Failed to load insider intelligence:", err);
+        }
       } finally {
         if (isMounted) setLoading(false);
       }

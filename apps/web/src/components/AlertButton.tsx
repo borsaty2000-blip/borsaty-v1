@@ -142,7 +142,9 @@ export default function AlertButton({
                 </div>
               </div>
               <button
+                type="button"
                 onClick={() => setIsOpen(false)}
+                aria-label={isAr ? "إغلاق النافذة" : "Close modal"}
                 className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
               >
                 <X className="w-4 h-4" />

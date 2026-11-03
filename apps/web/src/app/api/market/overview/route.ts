@@ -27,14 +27,20 @@ export interface StockMover {
 }
 
 const CACHE_KEY = "market:overview:live";
-const CACHE_TTL_SEC = 300; // 5 minutes TTL
+const CACHE_TTL_SEC = 60; // 60 seconds TTL
+
+export const revalidate = 60;
 
 export async function GET() {
   // 1. Try Redis cache
   try {
     const cached = await redis.get(CACHE_KEY);
     if (cached) {
-      return NextResponse.json(JSON.parse(cached));
+      return NextResponse.json(JSON.parse(cached), {
+        headers: {
+          "Cache-Control": "public, s-maxage=60, stale-while-revalidate=30",
+        },
+      });
     }
   } catch {
     // Non-blocking if redis offline
@@ -227,5 +233,9 @@ export async function GET() {
     // Non-blocking
   }
 
-  return NextResponse.json(payload);
+  return NextResponse.json(payload, {
+    headers: {
+      "Cache-Control": "public, s-maxage=60, stale-while-revalidate=30",
+    },
+  });
 }

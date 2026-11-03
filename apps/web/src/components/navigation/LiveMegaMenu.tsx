@@ -87,6 +87,17 @@ export default function LiveMegaMenu({ language, onLinkClick }: LiveMegaMenuProp
     };
   }, []);
 
+  // Keyboard navigation: Escape key closes any active dropdown
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && activeMenu) {
+        setActiveMenu(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [activeMenu]);
+
   const handleMouseEnter = (menu: 'markets' | 'tools' | 'research') => {
     setActiveMenu(menu);
   };
@@ -104,7 +115,7 @@ export default function LiveMegaMenu({ language, onLinkClick }: LiveMegaMenuProp
       <div className="relative" onMouseEnter={() => handleMouseEnter('markets')}>
         <button
           onClick={() => setActiveMenu(activeMenu === 'markets' ? null : 'markets')}
-          className={`flex items-center gap-1.5 px-3 py-2 rounded-lg transition-colors cursor-pointer ${
+          className={`flex items-center gap-1.5 px-3 py-2 rounded-lg transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none ${
             activeMenu === 'markets'
               ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white'
               : 'hover:bg-slate-100/80 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white'
@@ -125,7 +136,7 @@ export default function LiveMegaMenu({ language, onLinkClick }: LiveMegaMenuProp
       <div className="relative" onMouseEnter={() => handleMouseEnter('tools')}>
         <button
           onClick={() => setActiveMenu(activeMenu === 'tools' ? null : 'tools')}
-          className={`flex items-center gap-1.5 px-3 py-2 rounded-lg transition-colors cursor-pointer ${
+          className={`flex items-center gap-1.5 px-3 py-2 rounded-lg transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none ${
             activeMenu === 'tools'
               ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white'
               : 'hover:bg-slate-100/80 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white'
@@ -146,7 +157,7 @@ export default function LiveMegaMenu({ language, onLinkClick }: LiveMegaMenuProp
       <div className="relative" onMouseEnter={() => handleMouseEnter('research')}>
         <button
           onClick={() => setActiveMenu(activeMenu === 'research' ? null : 'research')}
-          className={`flex items-center gap-1.5 px-3 py-2 rounded-lg transition-colors cursor-pointer ${
+          className={`flex items-center gap-1.5 px-3 py-2 rounded-lg transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none ${
             activeMenu === 'research'
               ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white'
               : 'hover:bg-slate-100/80 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white'

@@ -30,7 +30,7 @@ export default function AuthButton() {
 
   return (
     <SignInButton mode="modal">
-      <button className="flex items-center gap-1.5 h-9 px-3 rounded-lg bg-black hover:bg-slate-900 text-white text-xs font-bold transition-all shadow-sm border border-slate-800">
+      <button className="flex items-center gap-1.5 h-9 px-4 py-2 rounded-md bg-[#111827] hover:bg-[#1F2937] text-white text-xs font-semibold transition-all shadow-xs cursor-pointer border border-slate-800">
         <User className="w-3.5 h-3.5" />
         <span>{language === "ar" ? "تسجيل الدخول" : "Sign In"}</span>
       </button>

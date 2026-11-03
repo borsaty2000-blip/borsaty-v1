@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Menu,
   Search,
@@ -16,15 +16,27 @@ import MobileNavSheet from '@/components/navigation/MobileNavSheet';
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const { language, setLanguage, theme, toggleTheme, t } = useApp();
   const { setIsCommandPaletteOpen } = useBorsaty();
   const isAr = language === 'ar';
 
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
-    <header className="sticky top-0 z-50 bg-white/95 dark:bg-[#0B1120]/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors duration-200">
+    <header
+      className={`sticky top-0 z-50 bg-white/95 dark:bg-[#0f172a]/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-all duration-200 ${
+        isScrolled ? 'shadow-sm' : ''
+      }`}
+    >
       {/* Top Banner / Ticker bar: Thin (h-8), Clean, Data-First */}
       <div className="relative bg-slate-900 text-white dark:bg-slate-950 h-8 px-4 text-[11px] font-medium tracking-wide flex items-center overflow-hidden border-b border-slate-800">
-        {/* Subtle gradient fades on edges */}
         <div className="pointer-events-none absolute inset-y-0 start-0 w-10 bg-gradient-to-r rtl:bg-gradient-to-l from-slate-900 dark:from-slate-950 to-transparent z-10" />
         <div className="pointer-events-none absolute inset-y-0 end-0 w-10 bg-gradient-to-l rtl:bg-gradient-to-r from-slate-900 dark:from-slate-950 to-transparent z-10" />
 
@@ -58,17 +70,17 @@ export default function Header() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => setMobileMenuOpen(true)}
-            className="md:hidden p-2 -ms-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            className="md:hidden p-2 -ms-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
             aria-label="Open mobile navigation"
           >
             <Menu className="w-5 h-5" />
           </button>
 
           <Link href="/" className="flex items-center gap-2.5 whitespace-nowrap group">
-            <div className="relative w-8 h-8 rounded-lg bg-black text-white flex items-center justify-center font-black text-base shadow-sm group-hover:bg-slate-900 transition-colors border border-slate-800">
+            <div className="w-8 h-8 rounded-md bg-black text-white flex items-center justify-center font-bold text-lg shadow-xs group-hover:bg-slate-900 transition-colors border border-slate-800">
               <span>B</span>
             </div>
-            <span className="text-xl font-black tracking-tight text-slate-900 dark:text-white">
+            <span className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
               {isAr ? 'بورصتي' : 'Borsaty'}
             </span>
           </Link>
@@ -80,45 +92,45 @@ export default function Header() {
         </div>
 
         {/* Far Right: Search, Language, Theme, Clerk Auth */}
-        <div className="flex items-center gap-2">
-          {/* Prominent Search Trigger: Sleek Input-style button */}
+        <div className="flex items-center gap-2.5">
+          {/* Prominent Search Trigger: Compact, bg-slate-50, border border-slate-200 */}
           <button
             onClick={() => setIsCommandPaletteOpen(true)}
-            className="group flex items-center justify-between w-36 sm:w-48 md:w-56 h-9 px-3 bg-slate-100/90 dark:bg-slate-900/90 hover:bg-slate-200/80 dark:hover:bg-slate-800/90 border border-slate-200 dark:border-slate-800 hover:border-emerald-500/40 dark:hover:border-emerald-500/40 rounded-xl text-xs text-slate-500 dark:text-slate-400 transition-all shadow-sm cursor-pointer"
-            aria-label="Search markets and stocks (Ctrl+K)"
+            className="group flex items-center justify-between w-36 sm:w-48 md:w-56 h-9 px-3 bg-slate-50 dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800/80 border border-slate-200 dark:border-slate-800 rounded-md text-sm text-slate-500 dark:text-slate-400 transition-all shadow-xs cursor-pointer"
+            aria-label="Search markets (Ctrl+K)"
           >
             <div className="flex items-center gap-2 truncate">
-              <Search className="w-3.5 h-3.5 text-slate-400 group-hover:text-emerald-500 transition-colors shrink-0" />
-              <span className="truncate text-slate-500 dark:text-slate-400 font-medium">
+              <Search className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-200 transition-colors shrink-0" />
+              <span className="truncate text-sm text-slate-500 dark:text-slate-400 font-normal">
                 {isAr ? 'ابحث في الأسواق...' : 'Search markets...'}
               </span>
             </div>
-            <kbd className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-mono font-bold text-slate-400 bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 shadow-2xs shrink-0">
+            <kbd className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-mono font-medium text-slate-500 bg-slate-100 dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 shadow-2xs shrink-0">
               ⌘K
             </kbd>
           </button>
 
-          {/* Language Toggle: Clean text toggle (EN / AR) */}
+          {/* Language Toggle: Compact pill, bg-slate-100 */}
           <button
             onClick={() => setLanguage(language === 'ar' ? 'en' : 'ar')}
-            className="h-9 px-2.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 hover:border-emerald-500/40 transition-colors shadow-sm cursor-pointer"
+            className="h-8 px-2.5 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors cursor-pointer"
             aria-label="Toggle language"
             title={language === 'ar' ? 'Switch to English' : 'التحويل إلى العربية'}
           >
             {language === 'ar' ? 'EN' : 'عربي'}
           </button>
 
-          {/* Theme Toggle Button */}
+          {/* Theme Toggle Button: 32px circle */}
           <button
             onClick={toggleTheme}
-            className="w-9 h-9 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 flex items-center justify-center text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors shadow-sm cursor-pointer"
+            className="w-8 h-8 rounded-full border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 flex items-center justify-center text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors shadow-xs cursor-pointer shrink-0"
             aria-label="Toggle Theme"
             title={theme === 'light' ? t('common.themeDark') : t('common.themeLight')}
           >
             {theme === 'light' ? (
-              <Moon className="w-4 h-4 text-slate-600" />
+              <Moon className="w-3.5 h-3.5 text-slate-600" />
             ) : (
-              <Sun className="w-4 h-4 text-amber-400" />
+              <Sun className="w-3.5 h-3.5 text-amber-400" />
             )}
           </button>
 

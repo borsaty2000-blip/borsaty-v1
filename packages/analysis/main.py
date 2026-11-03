@@ -813,6 +813,44 @@ def history_endpoint(symbol: str, market: Optional[str] = "EGX", period: Optiona
     return {"symbol": symbol.upper(), "candles": candles, "count": len(candles)}
 
 
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Phase ك: Fundamental & Fair Value Endpoints
+# ─────────────────────────────────────────────────────────────────────────────
+
+from fundamental.fair_value import global_fair_value_engine
+
+class FairValueRequest(BaseModel):
+    symbol: str
+    current_price: Optional[float] = None
+    currency: Optional[str] = None
+    market: Optional[str] = None
+    eps: Optional[float] = None
+    bvps: Optional[float] = None
+    fcf_per_share: Optional[float] = None
+    sector_pe: Optional[float] = None
+    sector_pb: Optional[float] = None
+    growth_rate: Optional[float] = None
+    wacc: Optional[float] = None
+    terminal_growth: Optional[float] = None
+
+@app.post("/fundamental/fair-value")
+def compute_fair_value_endpoint(payload: FairValueRequest):
+    res = global_fair_value_engine.compute(payload.symbol, payload.model_dump())
+    return res.to_dict()
+
+@app.get("/fundamental/fair-value/{symbol}")
+def get_fair_value_endpoint(symbol: str, market: Optional[str] = "EGX"):
+    quote = global_real_data_fetcher.fetch_quote(symbol, market or "EGX")
+    data = {}
+    if quote and quote.get("price"):
+        data["current_price"] = quote["price"]
+        data["currency"] = quote.get("currency", "EGP")
+        data["market"] = quote.get("market", market)
+    res = global_fair_value_engine.compute(symbol, data)
+    return res.to_dict()
+
+
 if __name__ == "__main__":
     import uvicorn
     port = int(os.environ.get("PORT", 8000))

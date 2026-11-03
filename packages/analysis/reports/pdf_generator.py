@@ -646,6 +646,55 @@ class PdfReportGenerator:
 
         sr_tbl = Table([[s_tbl, r_tbl]], colWidths=[8.8 * cm, 8.8 * cm])
         story.append(sr_tbl)
+
+        # Fair Value Intrinsic Valuation Block
+        try:
+            from fundamental.fair_value import global_fair_value_engine
+            fv_res = global_fair_value_engine.compute(symbol, {"current_price": current_price, "currency": currency, "market": market})
+        except Exception:
+            fv_res = None
+
+        if fv_res:
+            story.append(Spacer(1, 10))
+            story.append(Paragraph(
+                f"<b>{shape_ar('التقييم الجوهري والقيمة العادلة (INTRINSIC FAIR VALUE)') if is_ar else 'INTRINSIC FAIR VALUE & VALUATION MODELS'}</b>",
+                ParagraphStyle("FVH", fontName=font_bold, fontSize=11, spaceAfter=6)
+            ))
+            
+            mos = fv_res.margin_of_safety_pct
+            mos_color = "#059669" if mos > 10 else "#DC2626" if mos < -10 else "#475569"
+            verdict_text = shape_ar(fv_res.verdict_ar) if is_ar else fv_res.verdict
+
+            fv_data = [
+                [
+                    shape_ar("القيمة العادلة (Mid)") if is_ar else "FAIR VALUE (MID)",
+                    shape_ar("النطاق المقدر") if is_ar else "FAIR RANGE",
+                    shape_ar("هامش الأمان") if is_ar else "MARGIN OF SAFETY",
+                    shape_ar("التقييم الجوهري") if is_ar else "VERDICT",
+                ],
+                [
+                    f"{fv_res.fair_value_range['mid']:.2f} {currency}",
+                    f"{fv_res.fair_value_range['low']:.2f} - {fv_res.fair_value_range['high']:.2f}",
+                    f"{'+' if mos > 0 else ''}{mos:.1f}%",
+                    verdict_text,
+                ]
+            ]
+            fv_tbl = Table(fv_data, colWidths=[4.4 * cm] * 4)
+            fv_tbl.setStyle(TableStyle([
+                ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#F8FAFC")),
+                ("TEXTCOLOR", (0, 0), (-1, 0), colors.HexColor("#475569")),
+                ("FONTNAME", (0, 0), (-1, -1), font_bold),
+                ("FONTSIZE", (0, 0), (-1, 0), 8),
+                ("FONTSIZE", (0, 1), (-1, 1), 9.5),
+                ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+                ("BOX", (0, 0), (-1, -1), 1, colors.HexColor("#E2E8F0")),
+                ("INNERGRID", (0, 0), (-1, -1), 0.5, colors.HexColor("#E2E8F0")),
+                ("TEXTCOLOR", (2, 1), (2, 1), colors.HexColor(mos_color)),
+                ("TOPPADDING", (0, 0), (-1, -1), 5),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
+            ]))
+            story.append(fv_tbl)
+
         story.append(PageBreak())
 
         # ═══════════════════════════════════════════════════════════════

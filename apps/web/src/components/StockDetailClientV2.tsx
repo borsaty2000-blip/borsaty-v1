@@ -24,6 +24,7 @@ import dynamic from 'next/dynamic';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import HeroDecisionSection from '@/components/HeroDecisionSection';
+import FairValueCard from '@/components/FairValueCard';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { safeParseAnalysis, ValidatedUnifiedAnalysis } from '@/lib/schemas';
 import { useApp } from '@/context/AppContext';
@@ -824,6 +825,14 @@ export default function StockDetailClientV2({
             {isAr ? whatsHappeningTextAr : whatsHappeningTextEn}
           </p>
         </div>
+
+        {/* 3. Fair Value Intrinsic Valuation Engine */}
+        <ErrorBoundary fallbackTitleEn="Fair Value Engine Error" fallbackTitleAr="تعذر عرض نموذج القيمة العادلة">
+          <FairValueCard
+            symbol={company.symbol}
+            currency={company.currency}
+          />
+        </ErrorBoundary>
       </section>
 
       {/* ═══════════════════════════════════════════════════════════════ */}

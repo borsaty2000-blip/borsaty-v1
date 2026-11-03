@@ -240,3 +240,35 @@ export function safeParseAnalysis(data: unknown, fallbackSymbol: string = "COMI"
     },
   };
 }
+
+// 7. Fair Value Intrinsic Valuation Schema
+export const FairValueModelSchema = z.object({
+  value: z.number(),
+  weight: z.number().optional(),
+  description: z.string().optional(),
+});
+
+export const FairValueSchema = z.object({
+  symbol: z.string(),
+  current_price: z.number(),
+  currency: z.string().default("EGP"),
+  market: z.string().default("EGX"),
+  dcf_value: z.number(),
+  relative_pe_value: z.number(),
+  relative_pb_value: z.number(),
+  graham_number: z.number(),
+  reverse_dcf_implied_growth: z.number(),
+  fair_value_range: z.object({
+    low: z.number(),
+    mid: z.number(),
+    high: z.number(),
+  }),
+  margin_of_safety_pct: z.number(),
+  verdict: z.enum(["UNDERVALUED", "FAIR", "OVERVALUED"]),
+  verdict_ar: z.string().default(""),
+  confidence: z.number().default(0.85),
+  model_breakdown: z.record(z.string(), FairValueModelSchema).optional(),
+  inputs_used: z.record(z.string(), z.any()).optional(),
+});
+
+export type ValidatedFairValue = z.infer<typeof FairValueSchema>;

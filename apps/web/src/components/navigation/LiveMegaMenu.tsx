@@ -21,11 +21,12 @@ import {
   Globe2,
   Sparkles,
 } from 'lucide-react';
+import { Language } from '@/context/AppContext';
 import MiniSparkline from './MiniSparkline';
 import { DEFAULT_MEGA_MENU_DATA, MegaMenuData } from './marketMenuData';
 
 interface LiveMegaMenuProps {
-  language: string;
+  language: Language;
   onLinkClick?: () => void;
 }
 
@@ -48,9 +49,17 @@ export default function LiveMegaMenu({ language, onLinkClick }: LiveMegaMenuProp
 
         // Merge live data with sparkline fallbacks
         if (data.topGainers && Array.isArray(data.topGainers) && data.topGainers.length > 0) {
+          interface ApiMoverItem {
+            symbol: string;
+            nameEn: string;
+            nameAr: string;
+            market: string;
+            price: number;
+            changePct: number;
+          }
           setMenuData((prev) => ({
             ...prev,
-            topGainers: data.topGainers.slice(0, 3).map((g: any) => ({
+            topGainers: data.topGainers.slice(0, 3).map((g: ApiMoverItem) => ({
               symbol: g.symbol,
               nameEn: g.nameEn,
               nameAr: g.nameAr,
@@ -58,7 +67,7 @@ export default function LiveMegaMenu({ language, onLinkClick }: LiveMegaMenuProp
               price: g.price,
               changePct: g.changePct,
             })),
-            topLosers: (data.topLosers || []).slice(0, 3).map((l: any) => ({
+            topLosers: (data.topLosers || []).slice(0, 3).map((l: ApiMoverItem) => ({
               symbol: l.symbol,
               nameEn: l.nameEn,
               nameAr: l.nameAr,

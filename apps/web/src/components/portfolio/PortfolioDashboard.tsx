@@ -196,14 +196,14 @@ export default function PortfolioDashboard() {
   return (
     <div className="w-full space-y-6 pb-16">
       {/* Top Banner & Action */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-2xl bg-white dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 shadow-sm transition-colors">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-lg bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white flex items-center justify-center">
+          <div className="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white flex items-center justify-center">
             <Briefcase className="w-5 h-5" />
           </div>
           <div>
-            <h1 className="text-xl md:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
-              {isAr ? 'محفظة الأوراق المالية (Portfolio Terminal)' : 'Institutional Portfolio Terminal'}
+            <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
+              {isAr ? 'محفظة الأوراق المالية' : 'Institutional Portfolio Terminal'}
             </h1>
             <p className="text-xs text-slate-500 dark:text-slate-400">
               {isAr
@@ -238,7 +238,7 @@ export default function PortfolioDashboard() {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="p-5 rounded-2xl bg-white dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 shadow-sm transition-colors"
+          className="p-6 rounded-lg bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow"
         >
           <div className="text-xs font-bold text-slate-500 mb-1">
             {isAr ? 'القيمة الإجمالية للمحفظة' : 'Total Portfolio Value'}
@@ -256,7 +256,7 @@ export default function PortfolioDashboard() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.05 }}
-          className="p-5 rounded-2xl bg-white dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 shadow-sm transition-colors"
+          className="p-6 rounded-lg bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow"
         >
           <div className="text-xs font-bold text-slate-500 mb-1">
             {isAr ? 'إجمالي الربح / الخسارة' : 'Total Unrealized P&L'}
@@ -282,7 +282,7 @@ export default function PortfolioDashboard() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="p-5 rounded-2xl bg-white dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 shadow-sm transition-colors"
+          className="p-6 rounded-lg bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow"
         >
           <div className="text-xs font-bold text-slate-500 mb-1">
             {isAr ? 'نسبة العائد الإجمالي' : 'Total Return'}
@@ -305,7 +305,7 @@ export default function PortfolioDashboard() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.15 }}
-          className="p-5 rounded-2xl bg-white dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 shadow-sm transition-colors"
+          className="p-6 rounded-lg bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow"
         >
           <div className="text-xs font-bold text-slate-500 mb-1">
             {isAr ? 'الأصول والصفقات' : 'Positions & Activity'}
@@ -326,7 +326,7 @@ export default function PortfolioDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Sector Allocation Pie Chart */}
         <ErrorBoundary fallbackTitleEn="Allocation Chart Error" fallbackTitleAr="تعذر عرض رسم التوزيع">
-          <div className="p-5 rounded-2xl bg-white dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 shadow-sm transition-colors flex flex-col justify-between">
+          <div className="p-6 rounded-lg bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
             <h3 className="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-2 mb-2">
               <PieIcon className="w-4 h-4 text-emerald-600" />
               <span>{isAr ? 'التوزيع القطاعي للمحفظة' : 'Sector Breakdown'}</span>
@@ -382,7 +382,7 @@ export default function PortfolioDashboard() {
 
         {/* Portfolio X-Ray: Diversification Spider / Radar Chart */}
         <ErrorBoundary fallbackTitleEn="Portfolio X-Ray Error" fallbackTitleAr="تعذر عرض الرادار الفني للمحفظة">
-          <div className="p-5 rounded-2xl bg-white dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 shadow-sm transition-colors flex flex-col justify-between">
+          <div className="p-6 rounded-lg bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-2">
                 <Compass className="w-4 h-4 text-slate-900 dark:text-white" />
@@ -429,7 +429,7 @@ export default function PortfolioDashboard() {
 
         {/* Asset Value vs Cost Bar Chart */}
         <ErrorBoundary fallbackTitleEn="Asset Chart Error" fallbackTitleAr="تعذر عرض رسم الأصول">
-          <div className="p-5 rounded-2xl bg-white dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 shadow-sm transition-colors flex flex-col justify-between">
+          <div className="p-6 rounded-lg bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
             <h3 className="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-2 mb-2">
               <BarChart2 className="w-4 h-4 text-cyan-600" />
               <span>{isAr ? 'القيمة مقابل التكلفة' : 'Value vs Cost Basis'}</span>
@@ -477,30 +477,30 @@ export default function PortfolioDashboard() {
       </div>
 
       {/* 3. Active Holdings Table */}
-      <div className="p-5 rounded-2xl bg-white dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 shadow-sm transition-colors space-y-4">
-        <h3 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider flex items-center justify-between">
-          <span className="flex items-center gap-2">
-            <Layers className="w-4 h-4 text-emerald-600" />
-            <span>{isAr ? 'الأصول والمراكز النشطة' : 'Active Portfolio Holdings'}</span>
-          </span>
-          <span className="text-xs font-bold text-slate-500">{holdings.length} {isAr ? 'مراكز' : 'Positions'}</span>
-        </h3>
+      <div className="p-6 rounded-lg bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow space-y-4">
+        <div className="flex items-center justify-between pb-2 border-b border-slate-200 dark:border-slate-800">
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-2">
+            <Layers className="w-4 h-4 text-slate-500" />
+            <span>{isAr ? 'الأصول والمراكز النشطة' : 'ACTIVE PORTFOLIO HOLDINGS'}</span>
+          </h3>
+          <span className="text-xs font-mono text-slate-500">{holdings.length} {isAr ? 'مراكز' : 'Positions'}</span>
+        </div>
 
         {holdings.length > 0 ? (
           <div className="overflow-x-auto no-scrollbar">
             <table className="w-full text-start text-xs">
-              <thead>
-                <tr className="border-b border-slate-100 dark:border-slate-800 text-slate-400 font-bold">
-                  <th className="py-2.5 text-start">{isAr ? 'الأصل' : 'Asset'}</th>
-                  <th className="py-2.5 text-end">{isAr ? 'الكمية' : 'Quantity'}</th>
-                  <th className="py-2.5 text-end">{isAr ? 'متوسط الشراء' : 'Avg Cost'}</th>
-                  <th className="py-2.5 text-end">{isAr ? 'السعر الحالي' : 'Live Price'}</th>
-                  <th className="py-2.5 text-end">{isAr ? 'القيمة السوقية' : 'Market Value'}</th>
-                  <th className="py-2.5 text-end">{isAr ? 'الربح / الخسارة' : 'Unrealized P&L'}</th>
-                  <th className="py-2.5 text-end">{isAr ? 'الوزن %' : 'Weight'}</th>
+              <thead className="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
+                <tr className="text-slate-600 dark:text-slate-400 font-semibold uppercase tracking-wider text-[11px]">
+                  <th className="py-3 px-3 text-start">{isAr ? 'الأصل' : 'Asset'}</th>
+                  <th className="py-3 px-3 text-end font-mono">{isAr ? 'الكمية' : 'Quantity'}</th>
+                  <th className="py-3 px-3 text-end font-mono">{isAr ? 'متوسط الشراء' : 'Avg Cost'}</th>
+                  <th className="py-3 px-3 text-end font-mono">{isAr ? 'السعر الحالي' : 'Live Price'}</th>
+                  <th className="py-3 px-3 text-end font-mono">{isAr ? 'القيمة السوقية' : 'Market Value'}</th>
+                  <th className="py-3 px-3 text-end font-mono">{isAr ? 'الربح / الخسارة' : 'Unrealized P&L'}</th>
+                  <th className="py-3 px-3 text-end font-mono">{isAr ? 'الوزن %' : 'Weight'}</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 font-semibold">
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80 font-medium">
                 {holdings.map((h) => {
                   const gain = h.profitLoss >= 0;
                   return (
@@ -563,30 +563,30 @@ export default function PortfolioDashboard() {
       </div>
 
       {/* 4. Transaction History Table */}
-      <div className="p-5 rounded-2xl bg-white dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 shadow-sm transition-colors space-y-4">
-        <h3 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider flex items-center justify-between">
-          <span className="flex items-center gap-2">
-            <Clock className="w-4 h-4 text-cyan-600" />
-            <span>{isAr ? 'سجل العمليات والصفقات' : 'Transaction History'}</span>
-          </span>
-          <span className="text-xs font-bold text-slate-500">{transactions.length} {isAr ? 'عمليات' : 'Records'}</span>
-        </h3>
+      <div className="p-6 rounded-lg bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow space-y-4">
+        <div className="flex items-center justify-between pb-2 border-b border-slate-200 dark:border-slate-800">
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-2">
+            <Clock className="w-4 h-4 text-slate-500" />
+            <span>{isAr ? 'سجل العمليات والصفقات' : 'TRANSACTION HISTORY'}</span>
+          </h3>
+          <span className="text-xs font-mono text-slate-500">{transactions.length} {isAr ? 'عمليات' : 'Records'}</span>
+        </div>
 
         {transactions.length > 0 ? (
           <div className="overflow-x-auto no-scrollbar">
             <table className="w-full text-start text-xs">
-              <thead>
-                <tr className="border-b border-slate-100 dark:border-slate-800 text-slate-400 font-bold">
-                  <th className="py-2.5 text-start">{isAr ? 'التاريخ' : 'Date'}</th>
-                  <th className="py-2.5 text-start">{isAr ? 'السهم' : 'Symbol'}</th>
-                  <th className="py-2.5 text-center">{isAr ? 'النوع' : 'Type'}</th>
-                  <th className="py-2.5 text-end">{isAr ? 'الكمية' : 'Quantity'}</th>
-                  <th className="py-2.5 text-end">{isAr ? 'السعر' : 'Price'}</th>
-                  <th className="py-2.5 text-end">{isAr ? 'الإجمالي' : 'Total'}</th>
-                  <th className="py-2.5 text-center">{isAr ? 'حذف' : 'Action'}</th>
+              <thead className="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
+                <tr className="text-slate-600 dark:text-slate-400 font-semibold uppercase tracking-wider text-[11px]">
+                  <th className="py-3 px-3 text-start">{isAr ? 'التاريخ' : 'Date'}</th>
+                  <th className="py-3 px-3 text-start">{isAr ? 'السهم' : 'Symbol'}</th>
+                  <th className="py-3 px-3 text-center">{isAr ? 'النوع' : 'Type'}</th>
+                  <th className="py-3 px-3 text-end font-mono">{isAr ? 'الكمية' : 'Quantity'}</th>
+                  <th className="py-3 px-3 text-end font-mono">{isAr ? 'السعر' : 'Price'}</th>
+                  <th className="py-3 px-3 text-end font-mono">{isAr ? 'الإجمالي' : 'Total'}</th>
+                  <th className="py-3 px-3 text-center">{isAr ? 'حذف' : 'Action'}</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 font-semibold">
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80 font-medium">
                 {transactions.map((t) => {
                   const isBuy = t.type === 'BUY';
                   return (

@@ -60,13 +60,13 @@ export default function BuySellPressureBar({
   const isDominantBuyers = buyerPct >= 50;
 
   return (
-    <div className="w-full rounded-2xl bg-white dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 shadow-sm p-4 transition-colors space-y-3">
+    <div className="w-full rounded-lg bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow p-6 space-y-4">
       {/* Title */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between pb-2 border-b border-slate-200 dark:border-slate-800">
         <div className="flex items-center gap-2">
-          <Scale className="w-4 h-4 text-emerald-500" />
-          <h4 className="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white">
-            {isAr ? 'ميزان قوى الشراء مقابل البيع' : 'Buy / Sell Pressure'}
+          <Scale className="w-4 h-4 text-slate-500" />
+          <h4 className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+            {isAr ? 'ميزان قوى الشراء مقابل البيع' : 'BUY / SELL PRESSURE'}
           </h4>
         </div>
         <span

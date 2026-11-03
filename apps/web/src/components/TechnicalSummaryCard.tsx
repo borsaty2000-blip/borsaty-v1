@@ -110,17 +110,17 @@ export default function TechnicalSummaryCard({
   ];
 
   return (
-    <div className="w-full rounded-2xl bg-white dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 shadow-sm p-4 md:p-5 transition-colors space-y-4">
+    <div className="w-full rounded-lg bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow p-6 space-y-4">
       {/* Title */}
-      <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800/80">
+      <div className="flex items-center justify-between pb-2 border-b border-slate-200 dark:border-slate-800">
         <div className="flex items-center gap-2">
-          <Layers className="w-4 h-4 text-emerald-500" />
-          <h3 className="text-xs md:text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider">
-            {isAr ? 'ملخص المحركات الفنية والمؤشرات الكمية' : 'Technical Analysis Summary Card'}
+          <Layers className="w-4 h-4 text-slate-500" />
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+            {isAr ? 'ملخص المحركات الفنية والمؤشرات الكمية' : 'TECHNICAL ANALYSIS SUMMARY'}
           </h3>
         </div>
-        <span className="text-[10px] text-slate-400 font-medium">
-          {isAr ? 'تحديث لحظي متعدد الأبعاد' : 'Multi-Dimensional Synthesis'}
+        <span className="text-xs text-slate-400 font-mono">
+          {isAr ? 'تحديث لحظي متعدد الأبعاد' : 'Multi-Engine Synthesis'}
         </span>
       </div>
 
@@ -131,7 +131,7 @@ export default function TechnicalSummaryCard({
           return (
             <div
               key={idx}
-              className="p-3.5 rounded-xl border border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/50 space-y-2 hover:border-slate-200 dark:hover:border-slate-700 transition-colors"
+              className="p-3.5 rounded-lg border border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/50 space-y-2 hover:border-slate-200 dark:hover:border-slate-700 transition-colors"
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">

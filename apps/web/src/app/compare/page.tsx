@@ -264,7 +264,7 @@ export default function ComparePage() {
         </div>
 
         {/* Stock Selector Controls */}
-        <div className="p-5 rounded-2xl bg-white dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 shadow-sm grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="p-6 rounded-lg bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Stock A Selector */}
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2">
@@ -311,7 +311,7 @@ export default function ComparePage() {
         </div>
 
         {/* Normalized Performance Chart Card */}
-        <div className="p-6 md:p-8 rounded-2xl bg-white dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
+        <div className="p-6 md:p-8 rounded-lg bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <h3 className="text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
@@ -416,7 +416,7 @@ export default function ComparePage() {
         </div>
 
         {/* Metric Comparison Table */}
-        <div className="p-6 md:p-8 rounded-2xl bg-white dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+        <div className="p-6 md:p-8 rounded-lg bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow space-y-4">
           <h3 className="text-base font-black text-slate-900 dark:text-white">
             {isAr ? "مصفوفة المقارنة الفنية والمالية المباشرة" : "Technical & Fundamental Comparison Matrix"}
           </h3>

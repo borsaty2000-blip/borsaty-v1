@@ -83,21 +83,17 @@ export default function NewsFeed({ symbol }: NewsFeedProps) {
   };
 
   return (
-    <div className="p-5 rounded-2xl bg-white dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 shadow-sm transition-colors space-y-4">
+    <div className="p-6 rounded-lg bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow space-y-4">
       {/* Header */}
-      <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 flex items-center justify-center">
-            <Newspaper className="w-4 h-4" />
-          </div>
-          <div>
-            <h3 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider">
-              {isAr ? `آخر الأخبار والتقارير المالية (${symbol})` : `Financial News Wire (${symbol})`}
-            </h3>
-            <p className="text-[11px] text-slate-400">
-              {isAr ? 'تغطية لحظية من رويترز، بلومبرغ، وإنتربرايز' : 'Live headlines from Bloomberg, Reuters & Enterprise'}
-            </p>
-          </div>
+      <div className="flex items-center justify-between pb-2 border-b border-slate-200 dark:border-slate-800">
+        <div>
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-2">
+            <Newspaper className="w-4 h-4 text-slate-500" />
+            <span>{isAr ? `آخر الأخبار والتقارير المالية (${symbol})` : `FINANCIAL NEWS WIRE (${symbol})`}</span>
+          </h3>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+            {isAr ? 'تغطية لحظية من رويترز، بلومبرغ، وإنتربرايز' : 'Live headlines from Bloomberg, Reuters & Enterprise'}
+          </p>
         </div>
 
         <button
@@ -128,7 +124,7 @@ export default function NewsFeed({ symbol }: NewsFeedProps) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.05 }}
               whileHover={{ x: isAr ? -3 : 3 }}
-              className="block p-3.5 rounded-xl border border-slate-100 dark:border-slate-800/80 bg-slate-50/50 dark:bg-slate-900/30 hover:border-emerald-500/40 hover:bg-emerald-50/20 dark:hover:bg-emerald-500/5 transition-all group"
+              className="block p-3.5 rounded-lg border border-slate-100 dark:border-slate-800/80 bg-slate-50/50 dark:bg-slate-900/30 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-white dark:hover:bg-slate-900 transition-all group"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="space-y-1.5 flex-1">

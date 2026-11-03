@@ -147,23 +147,19 @@ export default function SectorHeatmap() {
   };
 
   return (
-    <div className="p-5 md:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0B1120] shadow-sm space-y-4 transition-colors">
+    <div className="p-6 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0f172a] shadow-sm hover:shadow-md transition-shadow space-y-4">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800/80">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-black text-white flex items-center justify-center font-bold border border-slate-700">
-            <LayoutGrid className="w-4 h-4" />
-          </div>
-          <div>
-            <h3 className="text-sm md:text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
-              <span>{isAr ? "خريطة أداء القطاعات اللحظية (Finviz Sector Heatmap)" : "Cross-Market Sector Heatmap"}</span>
-            </h3>
-            <p className="text-[11px] text-slate-500 dark:text-slate-400">
-              {isAr
-                ? "حجم المربع يعكس القيمة السوقية للقطاع، ولونه يعكس متوسط تغير اليوم عبر الأسهم القيادية."
-                : "Block dimensions scale by market capitalization; hue indicates aggregate performance."}
-            </p>
-          </div>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-slate-200 dark:border-slate-800">
+        <div>
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-2">
+            <LayoutGrid className="w-4 h-4 text-slate-500" />
+            <span>{isAr ? "خريطة أداء القطاعات اللحظية" : "CROSS-MARKET SECTOR HEATMAP"}</span>
+          </h3>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+            {isAr
+              ? "حجم المربع يعكس القيمة السوقية للقطاع، ولونه يعكس متوسط تغير اليوم عبر الأسهم القيادية."
+              : "Block dimensions scale by market capitalization; color indicates aggregate performance."}
+          </p>
         </div>
 
         {/* Legend */}
@@ -199,7 +195,7 @@ export default function SectorHeatmap() {
             <div
               key={sector.id}
               onClick={() => setSelectedSector(isSelected ? null : sector)}
-              className={`relative rounded-xl p-3.5 cursor-pointer transition-all border flex flex-col justify-between shadow-xs select-none ${colSpanClass} ${colorClass} ${
+              className={`relative rounded-lg p-3.5 cursor-pointer transition-all border flex flex-col justify-between shadow-xs select-none ${colSpanClass} ${colorClass} ${
                 isSelected ? "ring-2 ring-white scale-[1.01] z-10" : ""
               }`}
             >
@@ -239,7 +235,7 @@ export default function SectorHeatmap() {
 
       {/* Expanded Sector Details (On click or default view) */}
       {selectedSector && (
-        <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 animate-in fade-in slide-in-from-top-1 duration-200 space-y-3">
+        <div className="p-4 rounded-lg bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 animate-in fade-in slide-in-from-top-1 duration-200 space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-slate-900 dark:bg-white" />

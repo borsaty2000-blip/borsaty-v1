@@ -50,13 +50,13 @@ export default function TechnicalStrengthMeter({
     : 'bg-slate-500/10 text-slate-400 border-slate-500/20';
 
   return (
-    <div className="w-full p-4 md:p-5 rounded-2xl bg-white dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 shadow-sm transition-colors space-y-4">
+    <div className="w-full p-6 rounded-lg bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow space-y-4">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between pb-2 border-b border-slate-200 dark:border-slate-800">
         <div className="flex items-center gap-2">
-          <Gauge className="w-4 h-4 text-emerald-500" />
-          <h3 className="text-xs md:text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider">
-            {isAr ? 'مقياس القوة الفنية الحتمية' : 'Technical Strength Meter'}
+          <Gauge className="w-4 h-4 text-slate-500" />
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+            {isAr ? 'مقياس القوة الفنية الكمية' : 'TECHNICAL STRENGTH METER'}
           </h3>
         </div>
         <div className={`px-2.5 py-1 rounded-full text-xs font-black border ${bgBadge} flex items-center gap-1.5`}>

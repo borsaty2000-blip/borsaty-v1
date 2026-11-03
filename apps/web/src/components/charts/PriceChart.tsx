@@ -699,7 +699,7 @@ export function PriceChart({
   }, [activeHighlight, direction]);
 
   return (
-    <div className="relative w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0b1120] p-3 md:p-4 shadow-sm transition-colors duration-200 space-y-3">
+    <div className="relative w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0f172a] p-6 shadow-sm hover:shadow-md transition-shadow space-y-4">
       {/* Top TradingView-Grade Indicator Toolbar */}
       <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-100 dark:border-slate-800/80 text-xs font-semibold">
         <div className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300">

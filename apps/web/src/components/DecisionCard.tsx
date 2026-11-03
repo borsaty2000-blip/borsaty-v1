@@ -142,24 +142,24 @@ export function DecisionCard({
         initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35, ease: 'easeOut' }}
-        className={`w-full rounded-2xl border p-5 md:p-6 transition-all duration-200 ${cardGradient}`}
+        className={`w-full rounded-lg border p-6 shadow-sm hover:shadow-md transition-all duration-200 ${cardGradient}`}
       >
         {/* Top Header: Decision Badge & Circular Confluence Gauge */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-white/15">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-white animate-ping" />
-              <span className="text-[11px] font-black uppercase tracking-wider text-white/80">
+              <span className="w-2 h-2 rounded-full bg-white animate-ping" />
+              <span className="text-xs font-semibold uppercase tracking-wider text-white/80">
                 {isAr ? 'قرار المحرك الكمي الموحد' : 'Quantitative Decision'}
               </span>
             </div>
-            <h2 className="text-3xl md:text-4xl font-black tracking-tight drop-shadow-sm">
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight drop-shadow-sm">
               {isAr ? decisionTextAr : decisionTextEn}
             </h2>
           </div>
 
           {/* Circular Confluence Gauge */}
-          <div className="flex items-center gap-3 bg-black/20 backdrop-blur-sm px-3.5 py-2 rounded-2xl border border-white/15">
+          <div className="flex items-center gap-3 bg-black/20 backdrop-blur-sm px-3.5 py-2 rounded-lg border border-white/15">
             <div className="relative w-14 h-14 flex items-center justify-center">
               <svg className="w-14 h-14 -rotate-90 transform" viewBox="0 0 64 64">
                 <circle
@@ -182,7 +182,7 @@ export function DecisionCard({
                   fill="transparent"
                 />
               </svg>
-              <span className="absolute font-mono font-black text-xs text-white">
+              <span className="absolute font-mono font-bold text-xs text-white">
                 {confluencePct}%
               </span>
             </div>
@@ -190,7 +190,7 @@ export function DecisionCard({
               <span className="text-[10px] text-white/70 block font-semibold uppercase">
                 {isAr ? 'درجة التوافق' : 'Confluence'}
               </span>
-              <span className="text-xs font-black text-white px-2 py-0.5 rounded bg-white/20 border border-white/30 inline-block uppercase mt-0.5">
+              <span className="text-xs font-bold text-white px-2 py-0.5 rounded bg-white/20 border border-white/30 inline-block uppercase mt-0.5">
                 {decisionData.confidence_level}
               </span>
             </div>
@@ -200,10 +200,10 @@ export function DecisionCard({
         {/* Trade Parameters 4-Box Grid or Maintenance Banner */}
         {isMaintenance ? (
           <div className="py-4 border-b border-white/15">
-            <div className="flex items-start gap-3 bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/15">
+            <div className="flex items-start gap-3 bg-white/10 backdrop-blur-md p-4 rounded-lg border border-white/15">
               <AlertTriangle className="w-5 h-5 text-amber-300 shrink-0 mt-0.5" />
               <div className="space-y-1 text-xs">
-                <span className="font-extrabold text-white block">
+                <span className="font-bold text-white block">
                   {isAr ? 'حماية دقة الأسعار مفعلة' : 'Institutional Price Accuracy Guard Active'}
                 </span>
                 <p className="text-white/80 leading-relaxed">
@@ -215,42 +215,42 @@ export function DecisionCard({
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 py-4 border-b border-white/15 text-xs font-semibold">
-            <div className="bg-white/10 backdrop-blur-md p-3 rounded-xl border border-white/15">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 py-4 border-b border-white/15 text-xs font-semibold">
+            <div className="bg-white/10 backdrop-blur-md p-3.5 rounded-lg border border-white/15">
               <span className="text-[10px] text-white/70 block mb-1">
                 {isAr ? 'نطاق الدخول' : 'Entry Zone'}
               </span>
-              <span className="text-sm md:text-base font-black tabular-nums text-white">
+              <span className="text-sm md:text-base font-bold font-mono tabular-nums text-white">
                 {decisionData.entry_zone[0]} - {decisionData.entry_zone[1]}
               </span>
               <span className="text-[10px] text-white/70 ms-1">{currency}</span>
             </div>
 
-            <div className="bg-white/10 backdrop-blur-md p-3 rounded-xl border border-white/15">
+            <div className="bg-white/10 backdrop-blur-md p-3.5 rounded-lg border border-white/15">
               <span className="text-[10px] text-rose-200 block mb-1">
                 {isAr ? 'وقف الخسارة' : 'Stop Loss'}
               </span>
-              <span className="text-sm md:text-base font-black tabular-nums text-white">
+              <span className="text-sm md:text-base font-bold font-mono tabular-nums text-white">
                 {decisionData.stop_loss}
               </span>
               <span className="text-[10px] text-white/70 ms-1">{currency}</span>
             </div>
 
-            <div className="bg-white/10 backdrop-blur-md p-3 rounded-xl border border-white/15">
+            <div className="bg-white/10 backdrop-blur-md p-3.5 rounded-lg border border-white/15">
               <span className="text-[10px] text-emerald-200 block mb-1">
                 {isAr ? 'الهدف الأول (T1)' : 'Target 1'}
               </span>
-              <span className="text-sm md:text-base font-black tabular-nums text-white">
+              <span className="text-sm md:text-base font-bold font-mono tabular-nums text-white">
                 {decisionData.targets[0] || '—'}
               </span>
               <span className="text-[10px] text-white/70 ms-1">{currency}</span>
             </div>
 
-            <div className="bg-white/10 backdrop-blur-md p-3 rounded-xl border border-white/15">
+            <div className="bg-white/10 backdrop-blur-md p-3.5 rounded-lg border border-white/15">
               <span className="text-[10px] text-emerald-200 block mb-1">
                 {isAr ? 'نسبة العائد:المخاطرة' : 'R:R Ratio'}
               </span>
-              <span className="text-sm md:text-base font-black tabular-nums text-white">
+              <span className="text-sm md:text-base font-bold font-mono tabular-nums text-white">
                 {decisionData.primary_rr}:1
               </span>
               <span className="text-[9px] text-white/70 block">
@@ -290,7 +290,7 @@ export function DecisionCard({
           <button
             onClick={handleDownloadPDF}
             disabled={downloading}
-            className="w-full sm:flex-1 h-11 px-4 rounded-xl bg-white text-slate-900 hover:bg-white/90 font-extrabold text-xs flex items-center justify-center gap-2 shadow-md transition-all cursor-pointer"
+            className="w-full sm:flex-1 h-11 px-4 rounded-lg bg-white text-slate-900 hover:bg-white/90 font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
           >
             {downloading ? (
               <Loader2 className="w-4 h-4 animate-spin" />
@@ -308,7 +308,7 @@ export function DecisionCard({
                 setPortfolioModalOpen(true);
               }
             }}
-            className="w-full sm:w-auto h-11 px-4 rounded-xl bg-black/30 hover:bg-black/40 text-white font-extrabold text-xs flex items-center justify-center gap-2 border border-white/20 transition-all cursor-pointer"
+            className="w-full sm:w-auto h-11 px-4 rounded-lg bg-black/30 hover:bg-black/40 text-white font-bold text-xs flex items-center justify-center gap-2 border border-white/20 transition-all cursor-pointer"
           >
             <Briefcase className="w-4 h-4" />
             <span>{isAr ? 'إضافة إلى المحفظة' : 'Add to Portfolio'}</span>

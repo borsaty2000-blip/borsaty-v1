@@ -95,19 +95,19 @@ export default function CalendarPage() {
     <ErrorBoundary fallbackTitleEn="Economic Calendar Unavailable" fallbackTitleAr="تعذر عرض المفكرة الاقتصادية">
       <div className="w-full space-y-6 pb-16">
         {/* Top Header Banner */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-2xl bg-white dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 shadow-sm transition-colors">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-lg bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white flex items-center justify-center">
               <CalendarIcon className="w-5 h-5" />
             </div>
             <div>
-              <h1 className="text-xl md:text-2xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
+              <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
                 <span>{isAr ? 'الأجندة الاقتصادية والمؤشرات الكلية' : 'Global Economic Calendar & Macro Pulse'}</span>
-                <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
+                <span className="px-2 py-0.5 rounded text-xs font-mono font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
                   Macro Terminal
                 </span>
               </h1>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                 {isAr
                   ? 'رصد اجتماعات البنوك المركزية (الفيدرالي، المركزي المصري)، معدلات التضخم، ومحاضر أوبك+.'
                   : 'Real-time monitoring of Central Bank rate decisions, CPI inflation, and global liquidity drivers.'}
@@ -224,29 +224,29 @@ export default function CalendarPage() {
         </div>
 
         {/* Events Table */}
-        <div className="p-5 rounded-2xl bg-white dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden space-y-3">
-          <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
-            <h3 className="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-2">
-              <Clock className="w-4 h-4 text-emerald-600" />
-              <span>{isAr ? 'جدول الأحداث الاقتصادية المرتقبة' : 'Scheduled Macroeconomic Releases'}</span>
+        <div className="p-6 rounded-lg bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow overflow-hidden space-y-4">
+          <div className="flex items-center justify-between pb-2 border-b border-slate-200 dark:border-slate-800">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-2">
+              <Clock className="w-4 h-4 text-slate-500" />
+              <span>{isAr ? 'جدول الأحداث الاقتصادية المرتقبة' : 'SCHEDULED MACROECONOMIC RELEASES'}</span>
             </h3>
-            <span className="text-xs font-bold text-slate-500">{filteredEvents.length} {isAr ? 'أحداث' : 'Events'}</span>
+            <span className="text-xs font-mono text-slate-500">{filteredEvents.length} {isAr ? 'أحداث' : 'Events'}</span>
           </div>
 
           <div className="overflow-x-auto no-scrollbar">
             <table className="w-full text-start text-xs">
-              <thead>
-                <tr className="border-b border-slate-100 dark:border-slate-800 text-slate-400 font-bold">
-                  <th className="py-2.5 text-start">{isAr ? 'التاريخ والوقت (UTC)' : 'Date & Time (UTC)'}</th>
-                  <th className="py-2.5 text-start">{isAr ? 'الدولة' : 'Country'}</th>
-                  <th className="py-2.5 text-start">{isAr ? 'الحدث الاقتصادي' : 'Event / Metric'}</th>
-                  <th className="py-2.5 text-center">{isAr ? 'الأهمية' : 'Impact'}</th>
-                  <th className="py-2.5 text-end">{isAr ? 'التوقع' : 'Forecast'}</th>
-                  <th className="py-2.5 text-end">{isAr ? 'السابق' : 'Previous'}</th>
-                  <th className="py-2.5 text-end">{isAr ? 'الفعلي' : 'Actual'}</th>
+              <thead className="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
+                <tr className="text-slate-600 dark:text-slate-400 font-semibold uppercase tracking-wider text-[11px]">
+                  <th className="py-3 px-3 text-start">{isAr ? 'التاريخ والوقت (UTC)' : 'Date & Time (UTC)'}</th>
+                  <th className="py-3 px-3 text-start">{isAr ? 'الدولة' : 'Country'}</th>
+                  <th className="py-3 px-3 text-start">{isAr ? 'الحدث الاقتصادي' : 'Event / Metric'}</th>
+                  <th className="py-3 px-3 text-center">{isAr ? 'الأهمية' : 'Impact'}</th>
+                  <th className="py-3 px-3 text-end font-mono">{isAr ? 'التوقع' : 'Forecast'}</th>
+                  <th className="py-3 px-3 text-end font-mono">{isAr ? 'السابق' : 'Previous'}</th>
+                  <th className="py-3 px-3 text-end font-mono">{isAr ? 'الفعلي' : 'Actual'}</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 font-semibold">
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80 font-medium">
                 {filteredEvents.map((ev) => (
                   <tr key={ev.id} className="hover:bg-slate-50 dark:hover:bg-slate-900/40 transition-colors">
                     <td className="py-3 text-start text-slate-500 font-mono text-[11px] whitespace-nowrap">

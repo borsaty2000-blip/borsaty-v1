@@ -161,19 +161,19 @@ export default function MultiTimeframeMatrix({
   }`;
 
   return (
-    <div className="w-full rounded-2xl bg-white dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 shadow-sm p-4 md:p-5 transition-colors space-y-3.5">
+    <div className="w-full rounded-lg bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow p-6 space-y-4">
       {/* Top Header: Matrix Title & Overall Alignment Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800/80">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-slate-200 dark:border-slate-800">
         <div className="flex items-center gap-2">
-          <Layers className="w-4 h-4 text-slate-900 dark:text-white" />
-          <h3 className="text-xs md:text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider">
-            {isAr ? 'مصفوفة تحليل الفترات الزمنية المتعددة' : 'Multi-Timeframe Analysis Matrix'}
+          <Layers className="w-4 h-4 text-slate-500" />
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+            {isAr ? 'مصفوفة تحليل الفترات الزمنية المتعددة' : 'MULTI-TIMEFRAME ANALYSIS MATRIX'}
           </h3>
         </div>
 
         {/* Alignment Badge */}
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-400 text-xs font-bold">
-          <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-xs font-semibold font-mono">
+          <CheckCircle2 className="w-3.5 h-3.5 shrink-0 text-emerald-500" />
           <span>{isAr ? alignmentTextAr : alignmentTextEn}</span>
         </div>
       </div>
@@ -181,17 +181,17 @@ export default function MultiTimeframeMatrix({
       {/* Matrix Table */}
       <div className="overflow-x-auto no-scrollbar">
         <table className="w-full text-start text-xs">
-          <thead>
-            <tr className="border-b border-slate-100 dark:border-slate-800 text-slate-400 font-bold text-[11px]">
-              <th className="py-2.5 px-2 text-start">{isAr ? 'الفترة' : 'Timeframe'}</th>
-              <th className="py-2.5 px-2 text-start">{isAr ? 'الاتجاه' : 'Trend'}</th>
-              <th className="py-2.5 px-2 text-start">{isAr ? 'الإشارة' : 'Signal'}</th>
-              <th className="py-2.5 px-2 text-center">{isAr ? 'التوافق' : 'Confluence'}</th>
-              <th className="py-2.5 px-2 text-start">{isAr ? 'النموذج الفني الأبرز' : 'Key Pattern'}</th>
-              <th className="py-2.5 px-2 text-end">{isAr ? 'الإجراء المقترح' : 'Action'}</th>
+          <thead className="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
+            <tr className="text-slate-600 dark:text-slate-400 font-semibold uppercase tracking-wider text-[11px]">
+              <th className="py-3 px-3 text-start">{isAr ? 'الفترة' : 'Timeframe'}</th>
+              <th className="py-3 px-3 text-start">{isAr ? 'الاتجاه' : 'Trend'}</th>
+              <th className="py-3 px-3 text-start">{isAr ? 'الإشارة' : 'Signal'}</th>
+              <th className="py-3 px-3 text-center">{isAr ? 'التوافق' : 'Confluence'}</th>
+              <th className="py-3 px-3 text-start">{isAr ? 'النموذج الفني الأبرز' : 'Key Pattern'}</th>
+              <th className="py-3 px-3 text-end">{isAr ? 'الإجراء المقترح' : 'Action'}</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 font-semibold">
+          <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80 font-medium">
             {loading ? (
               [1, 2, 3, 4, 5].map((i) => (
                 <tr key={i} className="animate-pulse">

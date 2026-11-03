@@ -123,7 +123,7 @@ export default function AddTransactionModal({
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 10 }}
           transition={{ duration: 0.2 }}
-          className="w-full max-w-lg bg-white dark:bg-[#0f172a] rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden text-slate-900 dark:text-white"
+          className="w-full max-w-lg bg-white dark:bg-[#0f172a] rounded-lg shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden text-slate-900 dark:text-white"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}

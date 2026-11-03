@@ -95,16 +95,16 @@ export default function ScreenerPage() {
   return (
     <div className="w-full space-y-8 pb-12">
       {/* 1. Screener Header Banner */}
-      <div className="p-8 md:p-10 rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0b0f19] shadow-sm">
+      <div className="p-6 md:p-8 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0f172a] shadow-sm hover:shadow-md transition-shadow">
         <div className="max-w-3xl space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-50 dark:bg-cyan-500/10 border border-cyan-200 dark:border-cyan-500/20 text-cyan-700 dark:text-cyan-400 text-xs font-bold">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-xs font-mono font-semibold">
             <SlidersHorizontal className="w-3.5 h-3.5" />
-            <span>NLU Natural Language Quantitative Screener</span>
+            <span>Quantitative Natural Language Screener</span>
           </div>
-          <h1 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
+          <h1 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white tracking-tight">
             {t("screener.title")}
           </h1>
-          <p className="text-sm md:text-base text-slate-600 dark:text-slate-300 font-medium">
+          <p className="text-sm md:text-base text-slate-600 dark:text-slate-400 font-medium">
             {t("screener.subtitle")}
           </p>
 
@@ -123,16 +123,16 @@ export default function ScreenerPage() {
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder={t("screener.inputPlaceholder")}
-                  className="w-full h-13 px-4 ps-11 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl text-sm md:text-base text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all shadow-inner font-medium"
+                  className="w-full h-12 px-4 ps-11 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg text-sm md:text-base text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-400 focus:border-transparent transition-all shadow-inner font-medium"
                 />
-                <Search className="w-5 h-5 text-slate-400 absolute start-3.5 top-4 pointer-events-none" />
+                <Search className="w-5 h-5 text-slate-400 absolute start-3.5 top-3.5 pointer-events-none" />
               </div>
               <button
                 type="submit"
                 disabled={loading}
-                className="h-13 px-6 rounded-xl bg-slate-900 text-white dark:bg-white dark:text-slate-900 font-bold text-sm shadow-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2 cursor-pointer shrink-0"
+                className="h-12 px-6 rounded-lg bg-slate-900 text-white dark:bg-white dark:text-slate-900 font-bold text-sm shadow-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2 cursor-pointer shrink-0"
               >
-                <Sparkles className="w-4 h-4 text-cyan-400" />
+                <SlidersHorizontal className="w-4 h-4" />
                 <span>{loading ? t("common.loading") : t("screener.searchBtn")}</span>
               </button>
             </div>
@@ -151,7 +151,7 @@ export default function ScreenerPage() {
                     setQuery(chip);
                     handleSearch(chip);
                   }}
-                  className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-cyan-50 hover:text-cyan-700 dark:hover:bg-cyan-500/10 dark:hover:text-cyan-400 border border-slate-200 dark:border-slate-700 transition-colors cursor-pointer"
+                  className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 transition-colors cursor-pointer"
                 >
                   {chip}
                 </button>
@@ -206,10 +206,10 @@ export default function ScreenerPage() {
             )}
 
             {/* Results Table */}
-            <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0b0f19] overflow-hidden shadow-sm">
+            <div className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0f172a] overflow-hidden shadow-sm hover:shadow-md transition-shadow">
               <div className="overflow-x-auto">
                 <table className="w-full text-xs text-start">
-                  <thead className="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 font-bold text-slate-600 dark:text-slate-400">
+                  <thead className="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 font-semibold uppercase tracking-wider text-[11px]">
                     <tr>
                       <th className="py-3 px-4 text-start">{t("screener.symbol")}</th>
                       <th className="py-3 px-4 text-start">{t("screener.company")}</th>

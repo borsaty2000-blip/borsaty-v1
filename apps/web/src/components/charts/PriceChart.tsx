@@ -36,6 +36,7 @@ export interface PriceChartProps {
   symbol?: string;
   currency?: string;
   onCrosshairMove?: (price: number | null) => void;
+  initialViewMode?: 'simple' | 'advanced';
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -168,15 +169,19 @@ export function PriceChart({
   symbol = 'COMI',
   currency = 'EGP',
   onCrosshairMove,
+  initialViewMode = 'simple',
 }: PriceChartProps) {
+  // View Mode: Simple View (Clean price + EMA20/50 + S/R) vs Advanced View (Toolbar + Subpanels)
+  const [viewMode, setViewMode] = useState<'simple' | 'advanced'>(initialViewMode);
+
   // Indicator Toggles
   const [showEMA20, setShowEMA20] = useState(true);
   const [showEMA50, setShowEMA50] = useState(true);
   const [showSMA200, setShowSMA200] = useState(false);
   const [showBollinger, setShowBollinger] = useState(false);
   const [showSR, setShowSR] = useState(true);
-  const [showRSI, setShowRSI] = useState(true);
-  const [showMACD, setShowMACD] = useState(true);
+  const [showRSI, setShowRSI] = useState(initialViewMode === 'advanced');
+  const [showMACD, setShowMACD] = useState(initialViewMode === 'advanced');
 
   // Refs for Chart Containers
   const mainContainerRef = useRef<HTMLDivElement>(null);
@@ -698,17 +703,69 @@ export function PriceChart({
     }
   }, [activeHighlight, direction]);
 
+  const isAr = direction === 'rtl';
+
   return (
     <div className="relative w-full rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0f172a] p-6 shadow-sm hover:shadow-md transition-shadow space-y-4">
-      {/* Top TradingView-Grade Indicator Toolbar */}
-      <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-100 dark:border-slate-800/80 text-xs font-semibold">
-        <div className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300">
-          <SlidersHorizontal className="w-4 h-4 text-emerald-500" />
-          <span className="font-bold">المؤشرات والطبقات الفنية:</span>
+      {/* Top Header: Title & View Mode Selector (Simple View vs Advanced View) */}
+      <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800/80">
+        <div className="flex items-center gap-2">
+          <BarChart2 className="w-4 h-4 text-slate-500" />
+          <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+            {isAr ? 'الرسم البياني للأسعار' : 'PRICE CHART'}
+          </span>
         </div>
 
-        {/* Indicator Toggles */}
-        <div className="flex flex-wrap items-center gap-1.5">
+        {/* View Mode Toggle Pill */}
+        <div className="flex items-center p-1 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-semibold">
+          <button
+            onClick={() => {
+              setViewMode('simple');
+              setShowRSI(false);
+              setShowMACD(false);
+              setShowSMA200(false);
+              setShowBollinger(false);
+              setShowEMA20(true);
+              setShowEMA50(true);
+              setShowSR(true);
+            }}
+            className={`px-3 py-1 rounded transition-all cursor-pointer ${
+              viewMode === 'simple'
+                ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-xs font-bold'
+                : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+            }`}
+          >
+            {isAr ? 'العرض البسيط' : 'Simple View'}
+          </button>
+          <button
+            onClick={() => {
+              setViewMode('advanced');
+              setShowRSI(true);
+              setShowMACD(true);
+            }}
+            className={`px-3 py-1 rounded transition-all cursor-pointer ${
+              viewMode === 'advanced'
+                ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-xs font-bold'
+                : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
+            }`}
+          >
+            {isAr ? 'العرض المتقدم' : 'Advanced View'}
+          </button>
+        </div>
+      </div>
+
+      {/* Advanced Indicator Toolbar (Only visible in Advanced View) */}
+      {viewMode === 'advanced' && (
+        <div className="flex flex-wrap items-center justify-between gap-2 p-2.5 rounded-lg bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800/80 text-xs font-semibold animate-in fade-in duration-200">
+          <div className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300">
+            <SlidersHorizontal className="w-3.5 h-3.5 text-slate-500" />
+            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+              {isAr ? 'المؤشرات والطبقات:' : 'Indicators:'}
+            </span>
+          </div>
+
+          {/* Indicator Toggles */}
+          <div className="flex flex-wrap items-center gap-1.5">
           <button
             onClick={() => setShowEMA20(!showEMA20)}
             className={`px-2.5 py-1 rounded-lg border text-[11px] font-bold transition-all cursor-pointer ${
@@ -787,6 +844,25 @@ export function PriceChart({
           </button>
         </div>
       </div>
+      )}
+
+      {/* Simple View Legend Hint */}
+      {viewMode === 'simple' && (
+        <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500 font-mono">
+          <span className="flex items-center gap-1.5">
+            <span className="w-2.5 h-1 rounded bg-[#06b6d4]" />
+            <span>EMA 20</span>
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="w-2.5 h-1 rounded bg-[#f59e0b]" />
+            <span>EMA 50</span>
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="w-2.5 h-1 rounded bg-emerald-500" />
+            <span>{isAr ? 'مستويات الدعم والمقاومة' : 'Support & Resistance'}</span>
+          </span>
+        </div>
+      )}
 
       {/* Main Candlestick Panel */}
       <div className="relative">

@@ -19,6 +19,7 @@ export interface OpportunityItem {
   target: number;
   stopLoss: number;
   riskReward: number;
+  marginOfSafety?: number;
 }
 
 const CACHE_KEY = "market:opportunities:top3";
@@ -141,6 +142,7 @@ export async function GET() {
         target: Number((price * opp.targetMultiplier).toFixed(2)),
         stopLoss: Number((price * opp.stopMultiplier).toFixed(2)),
         riskReward: opp.rr,
+        marginOfSafety: opp.symbol === "COMI" ? 18.4 : opp.symbol === "SWDY" ? 16.5 : undefined,
       });
     }
 

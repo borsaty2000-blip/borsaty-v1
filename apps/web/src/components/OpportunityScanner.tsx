@@ -24,6 +24,7 @@ const FALLBACK_OPPORTUNITIES: OpportunityItem[] = [
     target: 122.50,
     stopLoss: 103.50,
     riskReward: 2.8,
+    marginOfSafety: 16.5,
   },
   {
     symbol: 'COMI',
@@ -42,6 +43,7 @@ const FALLBACK_OPPORTUNITIES: OpportunityItem[] = [
     target: 135.00,
     stopLoss: 118.00,
     riskReward: 2.5,
+    marginOfSafety: 18.4,
   },
   {
     symbol: 'NVDA',
@@ -202,8 +204,15 @@ export default function OpportunityScanner() {
                   </span>
                 </div>
 
-                <div className="text-xs text-slate-500 truncate mt-1">
-                  {isAr ? opp.nameAr : opp.nameEn}
+                <div className="flex items-center justify-between gap-2 mt-1">
+                  <div className="text-xs text-slate-500 truncate">
+                    {isAr ? opp.nameAr : opp.nameEn}
+                  </div>
+                  {opp.marginOfSafety && opp.marginOfSafety > 15 && (
+                    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 shrink-0">
+                      💎 {isAr ? `مقوم بأقل من قيمته ${opp.marginOfSafety}%` : `Undervalued ${opp.marginOfSafety}%`}
+                    </span>
+                  )}
                 </div>
               </div>
 

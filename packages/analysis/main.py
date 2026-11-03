@@ -850,6 +850,21 @@ def get_fair_value_endpoint(symbol: str, market: Optional[str] = "EGX"):
     res = global_fair_value_engine.compute(symbol, data)
     return res.to_dict()
 
+@app.get("/fundamental/fair-value/{symbol}/history")
+def get_fair_value_history_endpoint(symbol: str, market: Optional[str] = "EGX", days: int = 90):
+    quote = global_real_data_fetcher.fetch_quote(symbol, market or "EGX")
+    data = {}
+    if quote and quote.get("price"):
+        data["current_price"] = quote["price"]
+        data["currency"] = quote.get("currency", "EGP")
+        data["market"] = quote.get("market", market)
+    res = global_fair_value_engine.compute(symbol, data)
+    return {
+        "symbol": symbol.upper(),
+        "history": res.historical_90d[-days:] if res.historical_90d else [],
+        "count": len(res.historical_90d[-days:] if res.historical_90d else []),
+    }
+
 
 
 # ─────────────────────────────────────────────────────────────────────────────

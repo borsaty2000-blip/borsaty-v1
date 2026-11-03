@@ -1,9 +1,10 @@
 """
-test_fair_value.py — Tests for Borsaty Fair Value Engine
-Verifies DCF, Relative Multiples (P/E, P/B), Graham Number, Reverse DCF,
-Margin of Safety, and Verdict determination across MENA and US tickers.
+test_fair_value.py — Tests for Borsaty 9-Model Institutional Fair Value Engine
+Verifies 9 valuation models, sensitivity matrix, peer comparison, historical 90d tracking,
+market maturity weighting, and edge cases.
 """
 
+from unittest.mock import patch
 import pytest
 from fundamental.fair_value import FairValueEngine, FairValueResult, global_fair_value_engine
 
@@ -30,6 +31,31 @@ def test_fair_value_comi(engine):
     assert isinstance(res.margin_of_safety_pct, float)
     assert res.confidence >= 0.70
 
+    # 9-model engine specific assertions for COMI:
+    # 1. Models used should be >= 7
+    active_models = [k for k, m in res.models.items() if m.get("value") is not None and m.get("weight", 0) > 0]
+    assert len(active_models) >= 7, f"Expected >= 7 active models for COMI, got {len(active_models)}"
+    assert res.data_quality["models_used"] >= 7
+    assert res.confidence_level == "HIGH"
+    assert res.verdict == "UNDERVALUED"
+
+    # 2. Check sensitivity matrix 3x3 (9 numbers)
+    matrix = res.sensitivity["dcf_matrix"]
+    assert len(matrix) == 3
+    assert all(len(row) == 3 for row in matrix)
+    assert len(res.sensitivity["row_labels"]) == 3
+    assert len(res.sensitivity["col_labels"]) == 3
+
+    # 3. Check peer comparison has >= 3 peers
+    assert len(res.peer_comparison["peers"]) >= 3
+    assert res.peer_comparison["sector_median_pe"] > 0
+
+    # 4. Check historical tracking has 90 points
+    assert len(res.historical_90d) == 90
+    assert "date" in res.historical_90d[0]
+    assert "fair_value" in res.historical_90d[0]
+    assert "price" in res.historical_90d[0]
+
 
 def test_fair_value_swdy(engine):
     res = engine.compute("SWDY")
@@ -46,6 +72,12 @@ def test_fair_value_2222_tasi(engine):
     assert res.market == "TASI"
     assert 15.0 < res.fair_value_range["mid"] < 50.0
 
+    # 2222 pays dividend yield > 2%, so DDM must be active with weight > 0
+    ddm_model = res.models["ddm"]
+    assert ddm_model["value"] is not None
+    assert ddm_model["weight"] > 0
+    assert "dividend yield" in ddm_model["reason"]
+
 
 def test_fair_value_aapl_us(engine):
     res = engine.compute("AAPL")
@@ -53,6 +85,15 @@ def test_fair_value_aapl_us(engine):
     assert res.currency == "USD"
     assert res.market == "US"
     assert res.fair_value_range["mid"] > 100.0
+
+    # For US market, DCF weight receives 1.5x boost and must be > 30% of normalized weight
+    dcf_model = res.models["dcf"]
+    assert dcf_model["weight"] > 0.30, f"Expected AAPL DCF weight > 0.30, got {dcf_model['weight']}"
+
+    # AAPL dividend yield is < 2%, so DDM weight must be 0
+    ddm_model = res.models["ddm"]
+    assert ddm_model["weight"] == 0
+    assert ddm_model["value"] is None
 
 
 def test_custom_data_payload(engine):
@@ -66,6 +107,7 @@ def test_custom_data_payload(engine):
         "wacc": 0.11,
         "growth_rate": 0.10,
         "terminal_growth": 0.03,
+        "sector": "Financials",
     }
     res = engine.compute("CUSTOM", custom_data)
     assert res.symbol == "CUSTOM"
@@ -89,27 +131,73 @@ def test_overvalued_verdict(engine):
         "fcf_per_share": 1.5,
         "sector_pe": 10.0,
         "sector_pb": 1.5,
+        "wacc": 0.18,
+        "growth_rate": 0.05,
     }
     res = engine.compute("OVERVAL", data)
     assert res.verdict == "OVERVALUED"
     assert res.margin_of_safety_pct < -10.0
 
 
+def test_edge_cases(engine):
+    # Edge case 1: Negative EPS and non-dividend
+    neg_eps_data = {
+        "current_price": 40.0,
+        "eps": -2.5,
+        "bvps": 15.0,
+        "fcf_per_share": -1.0,
+        "dividend_yield": 0.0,
+        "sector": "Technology",
+    }
+    res_neg = engine.compute("NEG_EPS", neg_eps_data)
+    assert res_neg.models["pe_relative"]["value"] is None
+    assert res_neg.models["graham"]["value"] is None
+    assert res_neg.models["peg"]["value"] is None
+    assert res_neg.models["ddm"]["value"] is None
+
+    # Edge case 2: Non-financial sector has pb_relative = None
+    tech_data = {
+        "current_price": 100.0,
+        "eps": 5.0,
+        "bvps": 20.0,
+        "sector": "Technology",
+    }
+    res_tech = engine.compute("TECH_CO", tech_data)
+    assert res_tech.models["pb_relative"]["value"] is None
+    assert res_tech.models["pb_relative"]["weight"] == 0
+
+    # Edge case 3: Less than 5 peers disables pe_relative
+    with patch.dict("fundamental.fair_value.SECTOR_PEERS", {"RareSector": [{"symbol": "X", "pe": 10, "pb": 1}]}):
+        res_rare = engine.compute("RARE", {"sector": "RareSector", "eps": 4.0})
+        assert res_rare.models["pe_relative"]["value"] is None
+        assert res_rare.models["pe_relative"]["weight"] == 0
+
+
 def test_fastapi_endpoints():
-    from unittest.mock import patch
     from fastapi.testclient import TestClient
     from main import app
 
     client = TestClient(app)
     with patch("main.global_real_data_fetcher.fetch_quote") as mock_fetch:
-        mock_fetch.return_value = {"price": 123.50, "currency": "EGP", "market": "EGX"}
-        # Test GET
+        mock_fetch.return_value = {"price": 123.48, "currency": "EGP", "market": "EGX"}
+        # Test GET fair-value
         response = client.get("/fundamental/fair-value/COMI")
         assert response.status_code == 200
         data = response.json()
         assert data["symbol"] == "COMI"
         assert "fair_value_range" in data
         assert "margin_of_safety_pct" in data
+        assert "models" in data
+        assert "sensitivity" in data
+        assert "peer_comparison" in data
+        assert "historical_90d" in data
+
+        # Test GET history
+        response_hist = client.get("/fundamental/fair-value/COMI/history?days=90")
+        assert response_hist.status_code == 200
+        hist_data = response_hist.json()
+        assert hist_data["symbol"] == "COMI"
+        assert len(hist_data["history"]) == 90
 
     # Test POST
     payload = {

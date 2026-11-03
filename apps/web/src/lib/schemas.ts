@@ -243,9 +243,29 @@ export function safeParseAnalysis(data: unknown, fallbackSymbol: string = "COMI"
 
 // 7. Fair Value Intrinsic Valuation Schema
 export const FairValueModelSchema = z.object({
-  value: z.number(),
+  value: z.number().nullable().optional(),
   weight: z.number().optional(),
   description: z.string().optional(),
+});
+
+export const ValuationModelItemSchema = z.object({
+  value: z.number().nullable(),
+  weight: z.number(),
+  confidence: z.string(),
+  reason: z.string(),
+});
+
+export const PeerItemSchema = z.object({
+  symbol: z.string(),
+  pe: z.number().nullable().optional(),
+  pb: z.number().nullable().optional(),
+  market_cap: z.string().optional(),
+});
+
+export const HistoricalPointSchema = z.object({
+  date: z.string(),
+  fair_value: z.number(),
+  price: z.number(),
 });
 
 export const FairValueSchema = z.object({
@@ -253,11 +273,22 @@ export const FairValueSchema = z.object({
   current_price: z.number(),
   currency: z.string().default("EGP"),
   market: z.string().default("EGX"),
-  dcf_value: z.number(),
-  relative_pe_value: z.number(),
-  relative_pb_value: z.number(),
-  graham_number: z.number(),
-  reverse_dcf_implied_growth: z.number(),
+  dcf_value: z.number().optional().default(0),
+  relative_pe_value: z.number().optional().default(0),
+  relative_pb_value: z.number().optional().default(0),
+  graham_number: z.number().optional().default(0),
+  reverse_dcf_implied_growth: z.number().optional().default(0),
+  fair_value: z
+    .object({
+      low: z.number(),
+      mid: z.number(),
+      high: z.number(),
+      margin_of_safety_pct: z.number(),
+      verdict: z.enum(["UNDERVALUED", "FAIR", "OVERVALUED"]),
+      verdict_ar: z.string().optional().default(""),
+      confidence: z.string().optional().default("HIGH"),
+    })
+    .optional(),
   fair_value_range: z.object({
     low: z.number(),
     mid: z.number(),
@@ -267,7 +298,35 @@ export const FairValueSchema = z.object({
   verdict: z.enum(["UNDERVALUED", "FAIR", "OVERVALUED"]),
   verdict_ar: z.string().default(""),
   confidence: z.number().default(0.85),
-  model_breakdown: z.record(z.string(), FairValueModelSchema).optional(),
+  confidence_level: z.string().optional().default("HIGH"),
+  models: z.record(z.string(), ValuationModelItemSchema).optional(),
+  sensitivity: z
+    .object({
+      dcf_matrix: z.array(z.array(z.number())),
+      row_labels: z.array(z.string()),
+      col_labels: z.array(z.string()),
+    })
+    .optional(),
+  peer_comparison: z
+    .object({
+      sector: z.string(),
+      peers: z.array(PeerItemSchema),
+      sector_median_pe: z.number(),
+      sector_median_pb: z.number(),
+      current_pe: z.number(),
+      current_pb: z.number().optional(),
+      discount_to_sector: z.number(),
+    })
+    .optional(),
+  historical_90d: z.array(HistoricalPointSchema).optional(),
+  data_quality: z
+    .object({
+      models_used: z.number(),
+      models_missing: z.number(),
+      last_updated: z.string(),
+    })
+    .optional(),
+  model_breakdown: z.record(z.string(), z.any()).optional(),
   inputs_used: z.record(z.string(), z.any()).optional(),
 });
 

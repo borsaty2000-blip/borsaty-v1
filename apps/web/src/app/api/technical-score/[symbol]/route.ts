@@ -29,6 +29,10 @@ export async function GET(
         return NextResponse.json({
           ...parsed,
           cache: "hit",
+        }, {
+          headers: {
+            "Cache-Control": "public, s-maxage=180, stale-while-revalidate=60",
+          },
         });
       }
     } catch {
@@ -121,6 +125,10 @@ export async function GET(
     return NextResponse.json({
       ...scoreData,
       cache: "miss",
+    }, {
+      headers: {
+        "Cache-Control": "public, s-maxage=180, stale-while-revalidate=60",
+      },
     });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Failed to compute technical score";

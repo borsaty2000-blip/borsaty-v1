@@ -205,6 +205,10 @@ export async function GET(
       symbol: sym,
       count: news.length,
       news,
+    }, {
+      headers: {
+        "Cache-Control": "public, s-maxage=300, stale-while-revalidate=60",
+      },
     });
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : 'Failed to fetch financial news';

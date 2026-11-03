@@ -157,10 +157,16 @@ const ECONOMIC_CALENDAR_EVENTS: EconomicEvent[] = [
   },
 ];
 
+export const revalidate = 300;
+
 export async function GET() {
   return NextResponse.json({
     success: true,
     total: ECONOMIC_CALENDAR_EVENTS.length,
     events: ECONOMIC_CALENDAR_EVENTS,
+  }, {
+    headers: {
+      "Cache-Control": "public, s-maxage=300, stale-while-revalidate=60",
+    },
   });
 }

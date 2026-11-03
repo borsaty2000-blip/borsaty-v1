@@ -870,6 +870,28 @@ def get_strategy_picks_endpoint(strategy_name: str):
     return strat.to_summary_dict()
 
 
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Earnings Call Intelligence Endpoints
+# ─────────────────────────────────────────────────────────────────────────────
+
+from intelligence.earnings_analyzer import global_earnings_analyzer
+
+class EarningsAnalysisRequest(BaseModel):
+    transcript_text: Optional[str] = None
+    force_refresh: Optional[bool] = False
+
+@app.post("/intelligence/earnings/{symbol}")
+def post_earnings_intelligence_endpoint(symbol: str, payload: Optional[EarningsAnalysisRequest] = None):
+    text = payload.transcript_text if payload else None
+    refresh = payload.force_refresh if payload else False
+    return global_earnings_analyzer.analyze(symbol, transcript_text=text, force_refresh=refresh)
+
+@app.get("/intelligence/earnings/{symbol}")
+def get_earnings_intelligence_endpoint(symbol: str, force_refresh: bool = False):
+    return global_earnings_analyzer.analyze(symbol, force_refresh=force_refresh)
+
+
 if __name__ == "__main__":
     import uvicorn
     port = int(os.environ.get("PORT", 8000))

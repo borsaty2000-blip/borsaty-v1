@@ -1,0 +1,20 @@
+{
+  "quarter": "Q3 2026",
+  "summary_ar": "سجل البنك التجاري الدولي نمواً قوياً في صافي دخل الفائدة بنسبة 31% مع اتساع هامش الفائدة الصافي إلى 8.2% ونسبة كفاية رأس مال استثنائية عند 31.4%، ما يعكس صلابة المركز المالي.",
+  "summary_en": "CIB Egypt delivered robust 31% YoY growth in net interest income with NIM expansion to 8.2% and a resilient 31.4% capital adequacy ratio reflecting balance sheet strength.",
+  "tone": "OPTIMISTIC",
+  "tone_ar": "متفائل بقوة",
+  "red_flags": [
+    "احتمال تباطؤ نمو رسوم وعمولات الاعتمادات المستندية في الربع الرابع",
+    "ارتفاع المصروفات التشغيلية بنسبة 18% بسبب الضغوط التضخمية العامة"
+  ],
+  "key_quotes": [
+    "نواصل تحقيق هوامش فائدة قياسية مع تغطية مخصصات للديون غير المنتظمة تتجاوز 220%.",
+    "Our capital adequacy ratio at 31.4% provides massive buffer for credit portfolio growth."
+  ],
+  "forward_guidance": "تستهدف الإدارة عائداً سنوياً على متوسط حقوق الملكية (RoAE) بين 38% و40% بنهاية العام المالي.",
+  "confidence": 0.94,
+  "symbol": "COMI",
+  "company_name": "Commercial International Bank (CIB Egypt)",
+  "source": "institutional-disclosure-engine"
+}

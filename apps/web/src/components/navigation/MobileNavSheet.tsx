@@ -12,7 +12,6 @@ import {
   Calendar,
   GitCompare,
   History,
-  Activity,
   FileCode,
   Info,
   ChevronDown,
@@ -22,7 +21,9 @@ import {
   Sun,
   Moon,
   ArrowRight,
-  Flame,
+  FileDown,
+  Settings,
+  ShieldCheck,
 } from 'lucide-react';
 import AuthButton from '@/components/AuthButton';
 import Logo from '@/components/branding/Logo';
@@ -39,6 +40,8 @@ interface MobileNavSheetProps {
   onOpenSearch: () => void;
 }
 
+type SectionKey = 'markets' | 'tools' | 'reports' | 'settings' | 'about';
+
 export default function MobileNavSheet({
   isOpen,
   onClose,
@@ -48,10 +51,10 @@ export default function MobileNavSheet({
   toggleTheme,
   onOpenSearch,
 }: MobileNavSheetProps) {
-  const [expandedSection, setExpandedSection] = useState<'markets' | 'tools' | 'research' | null>('markets');
+  const [expandedSection, setExpandedSection] = useState<SectionKey | null>('markets');
   const isAr = language === 'ar';
 
-  const toggleSection = (section: 'markets' | 'tools' | 'research') => {
+  const toggleSection = (section: SectionKey) => {
     setExpandedSection(expandedSection === section ? null : section);
   };
 
@@ -64,11 +67,6 @@ export default function MobileNavSheet({
       x: 0,
       transition: { type: 'spring' as const, damping: 28, stiffness: 240, staggerChildren: 0.05, delayChildren: 0.1 },
     },
-  };
-
-  const itemVariants = {
-    closed: { opacity: 0, y: 10 },
-    open: { opacity: 1, y: 0 },
   };
 
   return (
@@ -84,7 +82,7 @@ export default function MobileNavSheet({
             className="fixed inset-0 bg-slate-950/70 backdrop-blur-md"
           />
 
-          {/* Full Screen Drawer */}
+          {/* Full Screen Slide-in Sheet */}
           <motion.div
             variants={menuVariants}
             initial="closed"
@@ -93,14 +91,14 @@ export default function MobileNavSheet({
             className="relative w-full max-w-sm sm:max-w-md h-full bg-white dark:bg-[#0B1120] text-slate-900 dark:text-white border-e border-slate-200 dark:border-slate-800 shadow-2xl flex flex-col z-10 overflow-hidden"
           >
             {/* 1. Header Bar */}
-            <div className="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-800">
+            <div className="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-800 min-h-[64px]">
               <Link href="/" onClick={onClose} className="flex items-center gap-2">
                 <Logo variant="primary" size={28} showText={true} className="dark:hidden" />
                 <Logo variant="white" size={28} showText={true} className="hidden dark:block" />
               </Link>
               <button
                 onClick={onClose}
-                className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-500 hover:text-slate-900 dark:hover:text-white bg-slate-100 dark:bg-slate-800/80 transition-colors"
+                className="min-w-[48px] min-h-[48px] rounded-xl flex items-center justify-center text-slate-500 hover:text-slate-900 dark:hover:text-white bg-slate-100 dark:bg-slate-800/80 transition-colors"
                 aria-label="Close navigation"
               >
                 <X className="w-5 h-5" />
@@ -114,35 +112,35 @@ export default function MobileNavSheet({
                   onClose();
                   onOpenSearch();
                 }}
-                className="w-full flex items-center justify-between h-11 px-3.5 bg-slate-100/90 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-500 dark:text-slate-400 hover:border-emerald-500/40 transition-all cursor-pointer shadow-sm"
+                className="w-full flex items-center justify-between min-h-[48px] px-3.5 bg-slate-100/90 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-600 dark:text-slate-300 hover:border-blue-500/40 transition-all cursor-pointer shadow-xs"
               >
                 <div className="flex items-center gap-2.5">
-                  <Search className="w-4 h-4 text-emerald-500" />
+                  <Search className="w-4 h-4 text-blue-600 shrink-0" />
                   <span className="font-medium">
                     {isAr ? 'ابحث عن سهم، أداة، أو مؤشر...' : 'Search stocks, tools, indicators...'}
                   </span>
                 </div>
-                <kbd className="px-1.5 py-0.5 text-[10px] font-mono font-bold text-slate-400 bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700">
+                <kbd className="px-2 py-0.5 text-[10px] font-mono font-bold text-slate-400 bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700">
                   ⌘K
                 </kbd>
               </button>
             </div>
 
-            {/* 3. Scrollable Accordion Content */}
+            {/* 3. Scrollable Grouped Accordion Sections */}
             <div className="flex-1 overflow-y-auto p-4 space-y-3 no-scrollbar">
-              {/* Accordion 1: Markets */}
+              {/* Group 1: Markets */}
               <div className="border border-slate-200 dark:border-slate-800/80 rounded-2xl overflow-hidden bg-slate-50/50 dark:bg-slate-900/40">
                 <button
                   onClick={() => toggleSection('markets')}
-                  className="w-full flex items-center justify-between p-3.5 text-start font-bold text-sm text-slate-900 dark:text-white hover:bg-slate-100/60 dark:hover:bg-slate-800/50 transition-colors"
+                  className="w-full flex items-center justify-between min-h-[48px] p-3.5 text-start font-bold text-sm text-slate-900 dark:text-white hover:bg-slate-100/60 dark:hover:bg-slate-800/50 transition-colors"
                 >
                   <div className="flex items-center gap-2.5">
-                    <TrendingUp className="w-4 h-4 text-emerald-500" />
-                    <span>{isAr ? 'الأسواق والمؤشرات العالمية' : 'Markets & Live Indices'}</span>
+                    <TrendingUp className="w-4 h-4 text-blue-600" />
+                    <span>{isAr ? 'الأسواق والمؤشرات' : 'Markets & Indices'}</span>
                   </div>
                   <ChevronDown
                     className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${
-                      expandedSection === 'markets' ? 'rotate-180 text-emerald-500' : ''
+                      expandedSection === 'markets' ? 'rotate-180 text-blue-600' : ''
                     }`}
                   />
                 </button>
@@ -154,7 +152,7 @@ export default function MobileNavSheet({
                       animate={{ height: 'auto', opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.2 }}
-                      className="px-3 pb-3 space-y-1.5 overflow-hidden"
+                      className="px-3 pb-3 space-y-2 overflow-hidden"
                     >
                       {DEFAULT_MEGA_MENU_DATA.indices.map((idx) => {
                         const isPos = idx.changePct >= 0;
@@ -163,7 +161,7 @@ export default function MobileNavSheet({
                             key={idx.symbol}
                             href={`/stock/${idx.symbol === 'EGX30' ? 'COMI' : idx.symbol === 'TASI' ? '2222' : 'AAPL'}`}
                             onClick={onClose}
-                            className="flex items-center justify-between p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/60 text-xs"
+                            className="flex items-center justify-between min-h-[48px] px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/60 text-xs"
                           >
                             <span className="font-bold">{isAr ? idx.nameAr : idx.nameEn}</span>
                             <div className="flex items-center gap-2 font-mono tabular-nums">
@@ -171,7 +169,7 @@ export default function MobileNavSheet({
                                 {idx.price.toLocaleString(undefined, { minimumFractionDigits: 1 })}
                               </span>
                               <span
-                                className={`font-bold ${isPos ? 'text-emerald-500' : 'text-rose-500'}`}
+                                className={`font-bold ${isPos ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}
                               >
                                 {isPos ? '+' : ''}
                                 {idx.changePct.toFixed(2)}%
@@ -181,25 +179,12 @@ export default function MobileNavSheet({
                         );
                       })}
 
-                      {/* Commodities quick bar */}
-                      <div className="pt-2 flex items-center justify-between text-xs px-1 text-slate-500">
-                        <span className="flex items-center gap-1">
-                          <Flame className="w-3.5 h-3.5 text-amber-500" />
-                          {isAr ? 'الذهب:' : 'Gold:'}{' '}
-                          <span className="font-mono font-bold text-slate-900 dark:text-white">$2,735</span>
-                        </span>
-                        <span>
-                          {isAr ? 'النفط:' : 'Brent:'}{' '}
-                          <span className="font-mono font-bold text-slate-900 dark:text-white">$74.20</span>
-                        </span>
-                      </div>
-
                       <Link
                         href="/"
                         onClick={onClose}
-                        className="mt-2 w-full py-2 flex items-center justify-center gap-1.5 text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 rounded-xl hover:bg-emerald-500/20 transition-colors"
+                        className="mt-1 w-full min-h-[48px] flex items-center justify-center gap-1.5 text-xs font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 rounded-xl hover:bg-blue-100 transition-colors"
                       >
-                        <span>{isAr ? 'عرض خريطة السوق التفاعلية' : 'Open Market Heatmap'}</span>
+                        <span>{isAr ? 'عرض خريطة السوق' : 'Open Market Heatmap'}</span>
                         <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
                       </Link>
                     </motion.div>
@@ -207,19 +192,19 @@ export default function MobileNavSheet({
                 </AnimatePresence>
               </div>
 
-              {/* Accordion 2: Tools */}
+              {/* Group 2: Tools */}
               <div className="border border-slate-200 dark:border-slate-800/80 rounded-2xl overflow-hidden bg-slate-50/50 dark:bg-slate-900/40">
                 <button
                   onClick={() => toggleSection('tools')}
-                  className="w-full flex items-center justify-between p-3.5 text-start font-bold text-sm text-slate-900 dark:text-white hover:bg-slate-100/60 dark:hover:bg-slate-800/50 transition-colors"
+                  className="w-full flex items-center justify-between min-h-[48px] p-3.5 text-start font-bold text-sm text-slate-900 dark:text-white hover:bg-slate-100/60 dark:hover:bg-slate-800/50 transition-colors"
                 >
                   <div className="flex items-center gap-2.5">
-                    <SlidersHorizontal className="w-4 h-4 text-cyan-500" />
-                    <span>{isAr ? 'الأدوات والمحافظ الذكية' : 'Tools & Terminal'}</span>
+                    <SlidersHorizontal className="w-4 h-4 text-cyan-600" />
+                    <span>{isAr ? 'الأدوات والتحليل' : 'Tools & Terminal'}</span>
                   </div>
                   <ChevronDown
                     className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${
-                      expandedSection === 'tools' ? 'rotate-180 text-cyan-500' : ''
+                      expandedSection === 'tools' ? 'rotate-180 text-cyan-600' : ''
                     }`}
                   />
                 </button>
@@ -231,18 +216,18 @@ export default function MobileNavSheet({
                       animate={{ height: 'auto', opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.2 }}
-                      className="px-3 pb-3 space-y-1.5 overflow-hidden"
+                      className="px-3 pb-3 space-y-2 overflow-hidden"
                     >
                       <Link
                         href="/screener"
                         onClick={onClose}
-                        className="flex items-center gap-3 p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/60 text-xs font-semibold hover:border-cyan-500/50 transition-colors"
+                        className="flex items-center gap-3 min-h-[48px] px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/60 text-xs font-semibold hover:border-blue-400 transition-colors"
                       >
-                        <SlidersHorizontal className="w-4 h-4 text-cyan-500 shrink-0" />
+                        <SlidersHorizontal className="w-4 h-4 text-cyan-600 shrink-0" />
                         <div>
                           <div className="font-bold">{isAr ? 'مصفّي الأسهم' : 'Stock Screener'}</div>
                           <div className="text-[11px] text-slate-400 font-normal">
-                            {isAr ? 'تصفية كمية متقدمة للأسهم' : 'Advanced quantitative market screener'}
+                            {isAr ? 'تصفية كمية وفنية متقدمة' : 'Advanced quantitative market screener'}
                           </div>
                         </div>
                       </Link>
@@ -250,27 +235,13 @@ export default function MobileNavSheet({
                       <Link
                         href="/portfolio"
                         onClick={onClose}
-                        className="flex items-center gap-3 p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/60 text-xs font-semibold hover:border-slate-400 dark:hover:border-slate-600 transition-colors"
+                        className="flex items-center gap-3 min-h-[48px] px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/60 text-xs font-semibold hover:border-blue-400 transition-colors"
                       >
-                        <Briefcase className="w-4 h-4 text-slate-700 dark:text-slate-300 shrink-0" />
+                        <Briefcase className="w-4 h-4 text-slate-600 dark:text-slate-400 shrink-0" />
                         <div>
                           <div className="font-bold">{isAr ? 'محفظة الأوراق المالية' : 'Portfolio Terminal'}</div>
                           <div className="text-[11px] text-slate-400 font-normal">
-                            {isAr ? 'تتبع الصفقات وأشعة X-Ray للمخاطر' : 'Live P&L and risk exposure radar'}
-                          </div>
-                        </div>
-                      </Link>
-
-                      <Link
-                        href="/calendar"
-                        onClick={onClose}
-                        className="flex items-center gap-3 p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/60 text-xs font-semibold hover:border-slate-400 dark:hover:border-slate-600 transition-colors"
-                      >
-                        <Calendar className="w-4 h-4 text-slate-700 dark:text-slate-300 shrink-0" />
-                        <div>
-                          <div className="font-bold">{isAr ? 'الأجندة الاقتصادية' : 'Economic Calendar'}</div>
-                          <div className="text-[11px] text-slate-400 font-normal">
-                            {isAr ? 'مؤشرات التضخم وقرارات الفائدة' : 'CPI inflation & central bank catalysts'}
+                            {isAr ? 'تتبع الصفقات والمخاطر' : 'Live P&L and risk exposure radar'}
                           </div>
                         </div>
                       </Link>
@@ -278,13 +249,27 @@ export default function MobileNavSheet({
                       <Link
                         href="/compare"
                         onClick={onClose}
-                        className="flex items-center gap-3 p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/60 text-xs font-semibold hover:border-slate-400 dark:hover:border-slate-600 transition-colors"
+                        className="flex items-center gap-3 min-h-[48px] px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/60 text-xs font-semibold hover:border-blue-400 transition-colors"
                       >
-                        <GitCompare className="w-4 h-4 text-slate-700 dark:text-slate-300 shrink-0" />
+                        <GitCompare className="w-4 h-4 text-indigo-600 shrink-0" />
                         <div>
                           <div className="font-bold">{isAr ? 'مقارنة الأصول والأسهم' : 'Side-by-Side Compare'}</div>
                           <div className="text-[11px] text-slate-400 font-normal">
-                            {isAr ? 'رسم بياني معياري نسبي' : 'Normalized performance overlay'}
+                            {isAr ? 'مقارنة حركة الأسهم معاً' : 'Normalized relative performance'}
+                          </div>
+                        </div>
+                      </Link>
+
+                      <Link
+                        href="/calendar"
+                        onClick={onClose}
+                        className="flex items-center gap-3 min-h-[48px] px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/60 text-xs font-semibold hover:border-blue-400 transition-colors"
+                      >
+                        <Calendar className="w-4 h-4 text-rose-500 shrink-0" />
+                        <div>
+                          <div className="font-bold">{isAr ? 'الأجندة الاقتصادية' : 'Economic Calendar'}</div>
+                          <div className="text-[11px] text-slate-400 font-normal">
+                            {isAr ? 'أحداث الاقتصاد الكلي' : 'Macro indicators & announcements'}
                           </div>
                         </div>
                       </Link>
@@ -293,79 +278,204 @@ export default function MobileNavSheet({
                 </AnimatePresence>
               </div>
 
-              {/* Accordion 3: Research & Institutional */}
+              {/* Group 3: Reports */}
               <div className="border border-slate-200 dark:border-slate-800/80 rounded-2xl overflow-hidden bg-slate-50/50 dark:bg-slate-900/40">
                 <button
-                  onClick={() => toggleSection('research')}
-                  className="w-full flex items-center justify-between p-3.5 text-start font-bold text-sm text-slate-900 dark:text-white hover:bg-slate-100/60 dark:hover:bg-slate-800/50 transition-colors"
+                  onClick={() => toggleSection('reports')}
+                  className="w-full flex items-center justify-between min-h-[48px] p-3.5 text-start font-bold text-sm text-slate-900 dark:text-white hover:bg-slate-100/60 dark:hover:bg-slate-800/50 transition-colors"
                 >
                   <div className="flex items-center gap-2.5">
-                    <Activity className="w-4 h-4 text-emerald-500" />
-                    <span>{isAr ? 'التوثيق والأبحاث المؤسسية' : 'Research & Institutional'}</span>
+                    <FileDown className="w-4 h-4 text-emerald-600" />
+                    <span>{isAr ? 'التقارير المؤسسية' : 'Institutional Reports'}</span>
                   </div>
                   <ChevronDown
                     className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${
-                      expandedSection === 'research' ? 'rotate-180 text-emerald-500' : ''
+                      expandedSection === 'reports' ? 'rotate-180 text-emerald-600' : ''
                     }`}
                   />
                 </button>
 
                 <AnimatePresence>
-                  {expandedSection === 'research' && (
+                  {expandedSection === 'reports' && (
                     <motion.div
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: 'auto', opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.2 }}
-                      className="px-3 pb-3 space-y-1.5 overflow-hidden"
+                      className="px-3 pb-3 space-y-2 overflow-hidden"
                     >
                       <Link
                         href="/signals"
                         onClick={onClose}
-                        className="flex items-center gap-2.5 p-2 rounded-xl text-xs font-semibold hover:bg-white dark:hover:bg-slate-900 transition-colors"
+                        className="flex items-center gap-3 min-h-[48px] px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/60 text-xs font-semibold hover:border-emerald-400 transition-colors"
                       >
-                        <BarChart3 className="w-4 h-4 text-emerald-500" />
-                        <span>{isAr ? 'الإشارات والفرص الفنية' : 'Trading Signals'}</span>
+                        <BarChart3 className="w-4 h-4 text-emerald-600" />
+                        <div>
+                          <div className="font-bold">{isAr ? 'إشارات وتوصيات السوق' : 'Market Signals & Opportunities'}</div>
+                          <div className="text-[11px] text-slate-400 font-normal">
+                            {isAr ? 'فرص فنية قائمة على 8 محركات' : 'Opportunities based on 8 technical engines'}
+                          </div>
+                        </div>
                       </Link>
+
                       <Link
                         href="/watchlist"
                         onClick={onClose}
-                        className="flex items-center gap-2.5 p-2 rounded-xl text-xs font-semibold hover:bg-white dark:hover:bg-slate-900 transition-colors"
+                        className="flex items-center gap-3 min-h-[48px] px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/60 text-xs font-semibold hover:border-amber-400 transition-colors"
                       >
                         <Star className="w-4 h-4 text-amber-500 fill-amber-500/20" />
-                        <span>{isAr ? 'قائمة المتابعة' : 'Watchlist'}</span>
+                        <div>
+                          <div className="font-bold">{isAr ? 'قائمة المتابعة الخاصة' : 'Personal Watchlist'}</div>
+                          <div className="text-[11px] text-slate-400 font-normal">
+                            {isAr ? 'متابعة الأسهم المفضلة لديك' : 'Track your starred assets in real-time'}
+                          </div>
+                        </div>
                       </Link>
-                      <Link
-                        href="/changelog"
-                        onClick={onClose}
-                        className="flex items-center gap-2.5 p-2 rounded-xl text-xs font-semibold hover:bg-white dark:hover:bg-slate-900 transition-colors"
-                      >
-                        <History className="w-4 h-4 text-amber-500" />
-                        <span>{isAr ? 'سجل التحديثات (Changelog)' : 'Release Notes'}</span>
-                      </Link>
+
                       <Link
                         href="/docs"
                         onClick={onClose}
-                        className="flex items-center gap-2.5 p-2 rounded-xl text-xs font-semibold hover:bg-white dark:hover:bg-slate-900 transition-colors"
+                        className="flex items-center gap-3 min-h-[48px] px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/60 text-xs font-semibold hover:border-sky-400 transition-colors"
                       >
                         <FileCode className="w-4 h-4 text-sky-500" />
-                        <span>{isAr ? 'دليل الـ API البرمجي' : 'Developer API Docs'}</span>
+                        <div>
+                          <div className="font-bold">{isAr ? 'دليل الـ API المؤسسي' : 'Institutional API Docs'}</div>
+                          <div className="text-[11px] text-slate-400 font-normal">
+                            {isAr ? 'الربط البرمجي للبيانات والتحليلات' : 'Developer REST APIs and endpoints'}
+                          </div>
+                        </div>
                       </Link>
-                      <Link
-                        href="/status"
-                        onClick={onClose}
-                        className="flex items-center gap-2.5 p-2 rounded-xl text-xs font-semibold hover:bg-white dark:hover:bg-slate-900 transition-colors"
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* Group 4: Settings */}
+              <div className="border border-slate-200 dark:border-slate-800/80 rounded-2xl overflow-hidden bg-slate-50/50 dark:bg-slate-900/40">
+                <button
+                  onClick={() => toggleSection('settings')}
+                  className="w-full flex items-center justify-between min-h-[48px] p-3.5 text-start font-bold text-sm text-slate-900 dark:text-white hover:bg-slate-100/60 dark:hover:bg-slate-800/50 transition-colors"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <Settings className="w-4 h-4 text-slate-600 dark:text-slate-400" />
+                    <span>{isAr ? 'الإعدادات والمظهر' : 'Settings & Preferences'}</span>
+                  </div>
+                  <ChevronDown
+                    className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${
+                      expandedSection === 'settings' ? 'rotate-180 text-slate-600' : ''
+                    }`}
+                  />
+                </button>
+
+                <AnimatePresence>
+                  {expandedSection === 'settings' && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="px-3 pb-3 space-y-2 overflow-hidden"
+                    >
+                      <button
+                        onClick={() => setLanguage(language === 'ar' ? 'en' : 'ar')}
+                        className="w-full flex items-center justify-between min-h-[48px] px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/60 text-xs font-semibold"
                       >
-                        <Activity className="w-4 h-4 text-emerald-500" />
-                        <span>{isAr ? 'حالة النظام (System Status)' : 'System Telemetry'}</span>
-                      </Link>
+                        <span className="flex items-center gap-2">
+                          <Globe className="w-4 h-4 text-blue-600" />
+                          {isAr ? 'لغة الواجهة' : 'Interface Language'}
+                        </span>
+                        <span className="font-mono text-slate-500 font-bold">
+                          {language === 'ar' ? 'العربية' : 'English'}
+                        </span>
+                      </button>
+
+                      <button
+                        onClick={toggleTheme}
+                        className="w-full flex items-center justify-between min-h-[48px] px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/60 text-xs font-semibold"
+                      >
+                        <span className="flex items-center gap-2">
+                          {theme === 'light' ? (
+                            <Moon className="w-4 h-4 text-slate-600" />
+                          ) : (
+                            <Sun className="w-4 h-4 text-amber-400" />
+                          )}
+                          {isAr ? 'المظهر' : 'Theme'}
+                        </span>
+                        <span className="text-slate-500 font-bold">
+                          {theme === 'light' ? (isAr ? 'فاتح' : 'Light') : (isAr ? 'داكن' : 'Dark')}
+                        </span>
+                      </button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* Group 5: About */}
+              <div className="border border-slate-200 dark:border-slate-800/80 rounded-2xl overflow-hidden bg-slate-50/50 dark:bg-slate-900/40">
+                <button
+                  onClick={() => toggleSection('about')}
+                  className="w-full flex items-center justify-between min-h-[48px] p-3.5 text-start font-bold text-sm text-slate-900 dark:text-white hover:bg-slate-100/60 dark:hover:bg-slate-800/50 transition-colors"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <Info className="w-4 h-4 text-blue-500" />
+                    <span>{isAr ? 'عن المنصة' : 'About Borsaty'}</span>
+                  </div>
+                  <ChevronDown
+                    className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${
+                      expandedSection === 'about' ? 'rotate-180 text-blue-500' : ''
+                    }`}
+                  />
+                </button>
+
+                <AnimatePresence>
+                  {expandedSection === 'about' && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="px-3 pb-3 space-y-2 overflow-hidden"
+                    >
                       <Link
                         href="/about"
                         onClick={onClose}
-                        className="flex items-center gap-2.5 p-2 rounded-xl text-xs font-semibold hover:bg-white dark:hover:bg-slate-900 transition-colors"
+                        className="flex items-center gap-3 min-h-[48px] px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/60 text-xs font-semibold"
                       >
                         <Info className="w-4 h-4 text-blue-500" />
-                        <span>{isAr ? 'عن بورصتي والرؤية الكمية' : 'About Platform'}</span>
+                        <div>
+                          <div className="font-bold">{isAr ? 'رؤيتنا ومنهجيتنا' : 'Our Mission & Approach'}</div>
+                          <div className="text-[11px] text-slate-400 font-normal">
+                            {isAr ? 'نبذة عن المنصة والتقنيات الكمية' : 'About the institutional financial platform'}
+                          </div>
+                        </div>
+                      </Link>
+
+                      <Link
+                        href="/changelog"
+                        onClick={onClose}
+                        className="flex items-center gap-3 min-h-[48px] px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/60 text-xs font-semibold"
+                      >
+                        <History className="w-4 h-4 text-amber-500" />
+                        <div>
+                          <div className="font-bold">{isAr ? 'سجل التحديثات' : 'Changelog'}</div>
+                          <div className="text-[11px] text-slate-400 font-normal">
+                            {isAr ? 'الإصدارات والتطويرات المستمرة' : 'Version history and release notes'}
+                          </div>
+                        </div>
+                      </Link>
+
+                      <Link
+                        href="/status"
+                        onClick={onClose}
+                        className="flex items-center gap-3 min-h-[48px] px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/60 text-xs font-semibold"
+                      >
+                        <ShieldCheck className="w-4 h-4 text-emerald-500" />
+                        <div>
+                          <div className="font-bold">{isAr ? 'حالة النظام المباشرة' : 'System Telemetry'}</div>
+                          <div className="text-[11px] text-slate-400 font-normal">
+                            {isAr ? 'كفاءة وسرعة الخوادم والبيانات' : 'Infrastructure and data uptime'}
+                          </div>
+                        </div>
                       </Link>
                     </motion.div>
                   )}
@@ -373,36 +483,9 @@ export default function MobileNavSheet({
               </div>
             </div>
 
-            {/* 4. Bottom Controls & Account Drawer Footer */}
-            <div className="p-4 border-t border-slate-200 dark:border-slate-800 space-y-3 bg-slate-50 dark:bg-slate-900/60">
-              <div className="grid grid-cols-2 gap-2">
-                {/* Language Switch */}
-                <button
-                  onClick={() => setLanguage(language === 'ar' ? 'en' : 'ar')}
-                  className="flex items-center justify-center gap-2 h-10 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 hover:border-emerald-500/40 transition-colors"
-                >
-                  <Globe className="w-3.5 h-3.5 text-emerald-500" />
-                  <span>{language === 'ar' ? 'English (LTR)' : 'العربية (RTL)'}</span>
-                </button>
-
-                {/* Theme Switch */}
-                <button
-                  onClick={toggleTheme}
-                  className="flex items-center justify-center gap-2 h-10 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 hover:border-emerald-500/40 transition-colors"
-                >
-                  {theme === 'light' ? (
-                    <Moon className="w-3.5 h-3.5 text-slate-600" />
-                  ) : (
-                    <Sun className="w-3.5 h-3.5 text-amber-400" />
-                  )}
-                  <span>{theme === 'light' ? (isAr ? 'داكن' : 'Dark Mode') : (isAr ? 'فاتح' : 'Light Mode')}</span>
-                </button>
-              </div>
-
-              {/* Clerk Sign In / User Profile */}
-              <div className="pt-1 flex items-center justify-center">
-                <AuthButton />
-              </div>
+            {/* 4. Bottom User Auth Drawer Footer */}
+            <div className="p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60 min-h-[72px] flex items-center justify-center">
+              <AuthButton />
             </div>
           </motion.div>
         </div>

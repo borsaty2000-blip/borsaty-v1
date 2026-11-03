@@ -16,10 +16,9 @@ import LiveMegaMenu from '@/components/navigation/LiveMegaMenu';
 import MobileNavSheet from '@/components/navigation/MobileNavSheet';
 
 export default function Header() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const { language, setLanguage, theme, toggleTheme, t } = useApp();
-  const { setIsCommandPaletteOpen } = useBorsaty();
+  const { setIsCommandPaletteOpen, isMobileMenuOpen, setIsMobileMenuOpen } = useBorsaty();
   const isAr = language === 'ar';
 
   useEffect(() => {
@@ -70,8 +69,8 @@ export default function Header() {
         {/* Far Left: Mobile Menu Trigger + Logo */}
         <div className="flex items-center gap-3">
           <button
-            onClick={() => setMobileMenuOpen(true)}
-            className="md:hidden p-2 -ms-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            onClick={() => setIsMobileMenuOpen(true)}
+            className="md:hidden min-w-[44px] min-h-[44px] flex items-center justify-center -ms-2 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
             aria-label="Open mobile navigation"
           >
             <Menu className="w-5 h-5" />
@@ -145,8 +144,8 @@ export default function Header() {
 
       {/* Mobile Slide-Over Sheet (< 768px) */}
       <MobileNavSheet
-        isOpen={mobileMenuOpen}
-        onClose={() => setMobileMenuOpen(false)}
+        isOpen={isMobileMenuOpen}
+        onClose={() => setIsMobileMenuOpen(false)}
         language={language}
         setLanguage={setLanguage}
         theme={theme}

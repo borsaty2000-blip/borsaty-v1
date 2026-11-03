@@ -9,15 +9,15 @@ import {
   TrendingUp,
   SlidersHorizontal,
   Briefcase,
-  User,
+  Menu,
 } from 'lucide-react';
-import { useAuth, UserButton, SignInButton } from '@clerk/nextjs';
 import { useApp } from '@/context/AppContext';
+import { useBorsaty } from '@/context/BorsatyContext';
 
 export default function MobileBottomNav() {
   const pathname = usePathname();
   const { language } = useApp();
-  const { isSignedIn, isLoaded } = useAuth();
+  const { isMobileMenuOpen, setIsMobileMenuOpen } = useBorsaty();
 
   const isAr = language === 'ar';
 
@@ -32,7 +32,7 @@ export default function MobileBottomNav() {
       label: isAr ? 'الأسواق' : 'Markets',
       href: '/signals',
       icon: TrendingUp,
-      isActive: pathname.startsWith('/signals'),
+      isActive: pathname.startsWith('/signals') || pathname.startsWith('/stock/'),
     },
     {
       label: isAr ? 'المصفي' : 'Screener',
@@ -51,7 +51,8 @@ export default function MobileBottomNav() {
   return (
     <nav
       aria-label="Mobile Bottom Navigation"
-      className="fixed bottom-0 inset-x-0 z-40 md:hidden bg-white/95 dark:bg-[#0B1120]/95 backdrop-blur-lg border-t border-slate-200 dark:border-slate-800 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] px-3 py-1 pb-safe transition-colors h-14"
+      className="fixed bottom-0 inset-x-0 z-40 md:hidden bg-white/90 dark:bg-[#0B1120]/90 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] px-2 py-1 pb-safe transition-colors h-16"
+      style={{ backdropFilter: 'blur(12px)' }}
     >
       <div className="flex items-center justify-between h-full max-w-md mx-auto">
         {navItems.map((item) => {
@@ -62,22 +63,22 @@ export default function MobileBottomNav() {
             <Link
               key={item.href}
               href={item.href}
-              className="flex-1 min-w-[44px] min-h-[44px] flex flex-col items-center justify-center relative focus:outline-none"
+              className="flex-1 min-w-[44px] min-h-[44px] flex flex-col items-center justify-center relative focus:outline-none touch-manipulation"
             >
               <motion.div
-                whileTap={{ scale: 0.9 }}
+                whileTap={{ scale: 0.95 }}
                 className={`flex flex-col items-center gap-0.5 transition-colors ${
                   active
-                    ? 'text-black dark:text-white font-extrabold'
+                    ? 'text-[#1E40AF] dark:text-blue-400 font-bold'
                     : 'text-slate-500 dark:text-slate-400 font-medium hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 <div className="relative">
-                  <Icon className={`w-5 h-5 ${active ? 'stroke-[2.4px]' : 'stroke-[1.8px]'}`} />
+                  <Icon className={`w-6 h-6 ${active ? 'stroke-[2.2px]' : 'stroke-[1.8px]'}`} />
                   {active && (
                     <motion.span
                       layoutId="nav-pill"
-                      className="absolute -bottom-1 inset-x-0 h-0.5 bg-black dark:bg-white rounded-full"
+                      className="absolute -bottom-1 inset-x-0 h-0.5 bg-[#1E40AF] dark:bg-blue-400 rounded-full"
                       transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                     />
                   )}
@@ -90,37 +91,36 @@ export default function MobileBottomNav() {
           );
         })}
 
-        {/* 5th Item: Profile / Sign In */}
-        <div className="flex-1 min-w-[44px] min-h-[44px] flex flex-col items-center justify-center">
-          {!isLoaded ? (
-            <div className="w-5 h-5 rounded-full bg-slate-200 dark:bg-slate-700 animate-pulse" />
-          ) : isSignedIn ? (
-            <div className="flex flex-col items-center gap-0.5">
-              <UserButton
-                appearance={{
-                  elements: {
-                    avatarBox: 'w-5 h-5 rounded-full ring-1 ring-emerald-500/40',
-                  },
-                }}
-              />
-              <span className="text-[10px] tracking-tight text-slate-500 dark:text-slate-400 font-medium">
-                {isAr ? 'حسابي' : 'Profile'}
-              </span>
+        {/* 5th Item: More (Triggers Clean Full-Screen Slide-In Sheet) */}
+        <button
+          type="button"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className="flex-1 min-w-[44px] min-h-[44px] flex flex-col items-center justify-center relative focus:outline-none touch-manipulation"
+          aria-label="Open More Menu"
+        >
+          <motion.div
+            whileTap={{ scale: 0.95 }}
+            className={`flex flex-col items-center gap-0.5 transition-colors ${
+              isMobileMenuOpen
+                ? 'text-[#1E40AF] dark:text-blue-400 font-bold'
+                : 'text-slate-500 dark:text-slate-400 font-medium hover:text-slate-900 dark:hover:text-white'
+            }`}
+          >
+            <div className="relative">
+              <Menu className={`w-6 h-6 ${isMobileMenuOpen ? 'stroke-[2.2px]' : 'stroke-[1.8px]'}`} />
+              {isMobileMenuOpen && (
+                <motion.span
+                  layoutId="nav-pill"
+                  className="absolute -bottom-1 inset-x-0 h-0.5 bg-[#1E40AF] dark:bg-blue-400 rounded-full"
+                  transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                />
+              )}
             </div>
-          ) : (
-            <SignInButton mode="modal">
-              <button
-                className="flex flex-col items-center gap-0.5 text-slate-500 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors focus:outline-none"
-                aria-label="Sign in"
-              >
-                <User className="w-5 h-5 stroke-[1.8px]" />
-                <span className="text-[10px] tracking-tight">
-                  {isAr ? 'دخول' : 'Sign In'}
-                </span>
-              </button>
-            </SignInButton>
-          )}
-        </div>
+            <span className="text-[10px] tracking-tight truncate max-w-[56px]">
+              {isAr ? 'المزيد' : 'More'}
+            </span>
+          </motion.div>
+        </button>
       </div>
     </nav>
   );

@@ -34,6 +34,8 @@ interface BorsatyContextType {
   isCommandPaletteOpen: boolean;
   setIsCommandPaletteOpen: (open: boolean) => void;
   toggleCommandPalette: () => void;
+  isMobileMenuOpen: boolean;
+  setIsMobileMenuOpen: (open: boolean) => void;
 }
 
 const BorsatyContext = createContext<BorsatyContextType | undefined>(undefined);
@@ -43,6 +45,7 @@ export function BorsatyProvider({ children }: { children: ReactNode }) {
   const [activeAnalysis, setActiveAnalysis] = useState<ValidatedUnifiedAnalysis | null>(null);
   const [activeHighlight, setActiveHighlight] = useState<ChartHighlight | null>(null);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const clearHighlight = useCallback(() => {
     setActiveHighlight(null);
@@ -65,6 +68,8 @@ export function BorsatyProvider({ children }: { children: ReactNode }) {
         isCommandPaletteOpen,
         setIsCommandPaletteOpen,
         toggleCommandPalette,
+        isMobileMenuOpen,
+        setIsMobileMenuOpen,
       }}
     >
       {children}

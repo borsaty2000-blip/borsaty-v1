@@ -454,8 +454,66 @@ export default function HomeClient() {
           </Link>
         </div>
 
-        {/* Data Table */}
-        <div className="overflow-x-auto no-scrollbar">
+        {/* Mobile View: Responsive Card List (< 640px) */}
+        <div className="sm:hidden divide-y divide-slate-100 dark:divide-slate-800">
+          {paginatedStocks.map((stock) => {
+            const isGain = stock.change >= 0;
+            const spark = stock.sparkline || [
+              stock.price * (isGain ? 0.97 : 1.03),
+              stock.price * (isGain ? 0.985 : 1.015),
+              stock.price * (isGain ? 0.99 : 1.01),
+              stock.price,
+            ];
+            return (
+              <Link
+                key={stock.symbol}
+                href={`/stock/${stock.symbol}`}
+                className="block p-4 hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors"
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono font-bold text-base text-slate-900 dark:text-white">
+                        {stock.symbol}
+                      </span>
+                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 font-mono">
+                        {stock.currency}
+                      </span>
+                    </div>
+                    <div className="text-xs text-slate-500 truncate mt-0.5 max-w-[150px]">
+                      {isAr ? stock.nameAr : stock.nameEn}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <Sparkline points={spark} isPositive={isGain} />
+                    <div className="text-end shrink-0">
+                      <div className="font-mono font-bold text-sm text-slate-900 dark:text-white tabular-nums">
+                        {stock.price.toFixed(2)}
+                      </div>
+                      <span
+                        className={`inline-block mt-1 px-2.5 py-0.5 rounded-full text-xs font-mono font-bold tabular-nums text-white ${
+                          isGain ? 'bg-[#059669]' : 'bg-[#DC2626]'
+                        }`}
+                      >
+                        {isGain ? '+' : ''}
+                        {stock.changePct.toFixed(2)}%
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-2 pt-2 border-t border-slate-100 dark:border-slate-800/60 flex items-center justify-between text-[11px] text-slate-500 font-mono">
+                  <span>{isAr ? 'حجم التداول:' : 'Vol:'} {(stock.volume || 0).toLocaleString()}</span>
+                  <span>RSI: {stock.rsi || 52}</span>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+
+        {/* Desktop View: Data Table (>= 640px) */}
+        <div className="hidden sm:block overflow-x-auto no-scrollbar">
           <table className="w-full text-start text-xs">
             <thead className="bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800">
               <tr className="text-slate-600 dark:text-slate-400 font-semibold uppercase tracking-wider text-[11px]">

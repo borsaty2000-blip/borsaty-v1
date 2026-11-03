@@ -129,6 +129,19 @@ export default function StockDetailClientV2({
   const [techScoreLoading, setTechScoreLoading] = useState(false);
 
   const chartSectionRef = useRef<HTMLDivElement>(null);
+  const heroSectionRef = useRef<HTMLElement>(null);
+  const [isPastHero, setIsPastHero] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (heroSectionRef.current) {
+        const rect = heroSectionRef.current.getBoundingClientRect();
+        setIsPastHero(rect.bottom < 80);
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Sync active symbol with global context
   useEffect(() => {
@@ -697,12 +710,77 @@ export default function StockDetailClientV2({
     }
   };
 
+  const stickyActionWord = isBuy ? (isAr ? 'شراء' : 'BUY') : isSell ? (isAr ? 'بيع' : 'SELL') : (isAr ? 'انتظار' : 'WAIT');
+
   return (
     <div className="w-full space-y-12 pb-20">
+      {/* Sticky Stock Sub-Header (Visible when scrolled past Hero) */}
+      <AnimatePresence>
+        {isPastHero && (
+          <motion.div
+            initial={{ y: -60, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: -60, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed top-14 sm:top-16 inset-x-0 z-30 bg-white/95 dark:bg-[#0B1120]/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-sm"
+          >
+            <div className="max-w-7xl mx-auto px-4 h-12 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3 min-w-0">
+                <span className="font-mono font-extrabold text-sm text-slate-900 dark:text-white shrink-0">
+                  {company.symbol}
+                </span>
+                <span className="text-xs text-slate-500 hidden sm:inline truncate max-w-[160px]">
+                  {isAr ? company.nameAr : company.nameEn}
+                </span>
+                <div className="flex items-center gap-2 font-mono tabular-nums">
+                  <span className="font-bold text-sm text-slate-900 dark:text-white">
+                    {quote.price.toFixed(2)}
+                  </span>
+                  <span
+                    className={`px-1.5 py-0.5 rounded text-[11px] font-bold ${
+                      quote.change >= 0
+                        ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300'
+                        : 'bg-rose-100 text-rose-800 dark:bg-rose-950/60 dark:text-rose-300'
+                    }`}
+                  >
+                    {quote.change >= 0 ? '+' : ''}
+                    {quote.changePct.toFixed(2)}%
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0">
+                <span
+                  className={`px-2.5 py-1 rounded text-xs font-black uppercase text-white ${
+                    isBuy
+                      ? 'bg-[#059669]'
+                      : isSell
+                      ? 'bg-[#DC2626]'
+                      : 'bg-[#F59E0B]'
+                  }`}
+                >
+                  {stickyActionWord}
+                </span>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    window.open(`/api/reports/${company.symbol}/download?lang=${language}`, '_blank');
+                  }}
+                  className="px-2.5 py-1 rounded text-xs font-semibold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-colors"
+                >
+                  {isAr ? 'تقرير PDF' : 'PDF'}
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* ═══════════════════════════════════════════════════════════════ */}
       {/* PART 1: THE HERO DECISION SECTION (Above the Fold — 3 Seconds) */}
       {/* ═══════════════════════════════════════════════════════════════ */}
-      <section className="min-h-[calc(100vh-140px)] flex flex-col justify-center">
+      <section ref={heroSectionRef} className="min-h-[calc(100vh-140px)] flex flex-col justify-center">
         <HeroDecisionSection
           company={company}
           quote={quote}

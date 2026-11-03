@@ -145,7 +145,7 @@ export function buildInstrumentUniverse(): SeedInstrument[] {
         primary: m.market === "TASI" ? "sahmk" : m.market === "EGX" ? "younit" : "eodhd",
         fallback: "eodhd"
       },
-      currentPrice: m.symbol === "COMI" ? 86.40 : m.symbol === "2222" ? 27.65 : 45.0
+      currentPrice: m.symbol === "COMI" ? 123.50 : m.symbol === "2222" ? 27.65 : 45.0
     });
   }
 

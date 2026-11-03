@@ -152,13 +152,23 @@ export default function InsiderCard({ symbol }: InsiderCardProps) {
 
   if (loading) {
     return (
-      <div className="p-8 rounded-2xl bg-white dark:bg-[#0b0f19] border border-slate-200 dark:border-slate-800 flex items-center justify-center min-h-[300px]">
-        <div className="flex flex-col items-center gap-3 text-slate-500">
-          <Loader2 className="w-6 h-6 animate-spin text-slate-900 dark:text-white" />
-          <span className="text-xs font-semibold">
-            {isAr ? 'جاري فحص إفصاحات هيئة الأوراق المالية (SEC Form 4 & 13F)...' : 'Scanning SEC EDGAR insider filings...'}
-          </span>
+      <div className="p-6 md:p-8 rounded-2xl bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 shadow-sm space-y-6 animate-pulse">
+        <div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-slate-200 dark:bg-slate-800" />
+            <div className="space-y-2">
+              <div className="w-48 h-5 bg-slate-200 dark:bg-slate-800 rounded" />
+              <div className="w-24 h-3 bg-slate-200 dark:bg-slate-800 rounded" />
+            </div>
+          </div>
+          <div className="w-28 h-8 bg-slate-200 dark:bg-slate-800 rounded-lg" />
         </div>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="h-24 bg-slate-100 dark:bg-slate-800/60 rounded-xl" />
+          ))}
+        </div>
+        <div className="h-52 bg-slate-100 dark:bg-slate-800/60 rounded-xl" />
       </div>
     );
   }

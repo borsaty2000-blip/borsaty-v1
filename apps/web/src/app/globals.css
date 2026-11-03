@@ -76,12 +76,12 @@
 
 .row-hover:hover {
   background-color: #FAFAFA;
-  border-inline-start-color: #1E40AF;
+  border-inline-start-color: #0f172a;
 }
 
 .dark .row-hover:hover {
   background-color: rgba(30, 41, 59, 0.5);
-  border-inline-start-color: #3B82F6;
+  border-inline-start-color: #f1f5f9;
 }
 
 /* Custom scrollbars */

@@ -70,7 +70,7 @@ export default function TechnicalSummaryCard({
       score: 'ATR 1.45',
       detail: isAr ? 'نطاقات بولينجر تتسع إيجابياً' : 'Bollinger Bandwidth 4.2%',
       isBull: true,
-      badgeColor: 'text-indigo-500 bg-indigo-500/10',
+      badgeColor: 'text-slate-700 bg-slate-100 dark:text-slate-300 dark:bg-slate-800',
       tooltipEn: 'Bollinger Bandwidth & Average True Range measuring price expansion.',
       tooltipAr: 'عرض نطاقات بولينجر ومؤشر ATR لقياس مدى تمدد السعر أو ضيقه.',
     },

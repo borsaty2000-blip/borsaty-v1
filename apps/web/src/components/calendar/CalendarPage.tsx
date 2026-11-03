@@ -123,7 +123,7 @@ export default function CalendarPage() {
             animate={{ opacity: 1, y: 0 }}
             className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0B1120] flex items-start gap-3 shadow-sm"
           >
-            <div className="w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-500 flex items-center justify-center shrink-0">
+            <div className="w-8 h-8 rounded-lg bg-slate-100 text-slate-900 dark:bg-slate-800 dark:text-white flex items-center justify-center shrink-0">
               <Landmark className="w-4 h-4" />
             </div>
             <div>

@@ -218,7 +218,7 @@ export default function WatchlistPage() {
               <Link
                 key={sym}
                 href={`/stock/${sym}`}
-                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 hover:border-[#00D9FF] dark:hover:border-[#00D9FF] transition-colors shadow-sm"
+                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 hover:border-slate-900 dark:hover:border-slate-500 transition-colors shadow-sm"
               >
                 <span>{sym}</span>
                 <ExternalLink className="w-3 h-3 text-slate-400" />
@@ -247,7 +247,7 @@ export default function WatchlistPage() {
                       <div className="flex items-center gap-2">
                         <Link
                           href={`/stock/${item.symbol}`}
-                          className="text-xl font-black text-slate-900 dark:text-white hover:text-[#00D9FF] dark:hover:text-[#00D9FF] transition-colors"
+                          className="text-xl font-black text-slate-900 dark:text-white hover:text-navy-800 dark:hover:text-blue-400 transition-colors"
                         >
                           {item.symbol}
                         </Link>

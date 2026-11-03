@@ -385,7 +385,7 @@ export default function PortfolioDashboard() {
           <div className="p-5 rounded-2xl bg-white dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 shadow-sm transition-colors flex flex-col justify-between">
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-xs font-black uppercase tracking-wider text-slate-900 dark:text-white flex items-center gap-2">
-                <Compass className="w-4 h-4 text-[#00D9FF]" />
+                <Compass className="w-4 h-4 text-slate-900 dark:text-white" />
                 <span>{isAr ? 'أشعة إكس وتنويع المحفظة' : 'Portfolio X-Ray (Spider)'}</span>
               </h3>
 
@@ -402,7 +402,7 @@ export default function PortfolioDashboard() {
                     <PolarGrid stroke="#334155" opacity={0.3} />
                     <PolarAngleAxis dataKey="sector" tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 'bold' }} />
                     <PolarRadiusAxis angle={30} domain={[0, 100]} stroke="#475569" fontSize={9} />
-                    <Radar name={isAr ? 'التعرض الحالي %' : 'Actual Weight %'} dataKey="exposure" stroke="#00D9FF" fill="#00D9FF" fillOpacity={0.4} />
+                    <Radar name={isAr ? 'التعرض الحالي %' : 'Actual Weight %'} dataKey="exposure" stroke="#1e40af" fill="#1e40af" fillOpacity={0.4} />
                     <Radar name={isAr ? 'الوزن المثالي %' : 'Benchmark %'} dataKey="target" stroke="#64748b" fill="#64748b" fillOpacity={0.15} />
                     <Tooltip
                       contentStyle={{

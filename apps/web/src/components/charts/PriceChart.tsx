@@ -735,7 +735,7 @@ export function PriceChart({
             onClick={() => setShowSMA200(!showSMA200)}
             className={`px-2.5 py-1 rounded-lg border text-[11px] font-bold transition-all cursor-pointer ${
               showSMA200
-                ? 'bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/30'
+                ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 border-slate-900 dark:border-white shadow-xs'
                 : 'bg-slate-50 dark:bg-slate-800 text-slate-400 border-slate-200 dark:border-slate-700'
             }`}
           >
@@ -746,7 +746,7 @@ export function PriceChart({
             onClick={() => setShowBollinger(!showBollinger)}
             className={`px-2.5 py-1 rounded-lg border text-[11px] font-bold transition-all cursor-pointer ${
               showBollinger
-                ? 'bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/30'
+                ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 border-slate-900 dark:border-white shadow-xs'
                 : 'bg-slate-50 dark:bg-slate-800 text-slate-400 border-slate-200 dark:border-slate-700'
             }`}
           >
@@ -757,7 +757,7 @@ export function PriceChart({
             onClick={() => setShowSR(!showSR)}
             className={`px-2.5 py-1 rounded-lg border text-[11px] font-bold transition-all cursor-pointer ${
               showSR
-                ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30'
+                ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 border-slate-900 dark:border-white shadow-xs'
                 : 'bg-slate-50 dark:bg-slate-800 text-slate-400 border-slate-200 dark:border-slate-700'
             }`}
           >
@@ -768,7 +768,7 @@ export function PriceChart({
             onClick={() => setShowRSI(!showRSI)}
             className={`px-2.5 py-1 rounded-lg border text-[11px] font-bold transition-all cursor-pointer ${
               showRSI
-                ? 'bg-violet-50 dark:bg-violet-500/10 text-violet-600 dark:text-violet-400 border-violet-500/30'
+                ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 border-slate-900 dark:border-white shadow-xs'
                 : 'bg-slate-50 dark:bg-slate-800 text-slate-400 border-slate-200 dark:border-slate-700'
             }`}
           >
@@ -779,7 +779,7 @@ export function PriceChart({
             onClick={() => setShowMACD(!showMACD)}
             className={`px-2.5 py-1 rounded-lg border text-[11px] font-bold transition-all cursor-pointer ${
               showMACD
-                ? 'bg-teal-50 dark:bg-teal-500/10 text-teal-600 dark:text-teal-400 border-teal-500/30'
+                ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 border-slate-900 dark:border-white shadow-xs'
                 : 'bg-slate-50 dark:bg-slate-800 text-slate-400 border-slate-200 dark:border-slate-700'
             }`}
           >
@@ -797,7 +797,7 @@ export function PriceChart({
       {showRSI && (
         <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80 space-y-1">
           <div className="flex items-center justify-between text-[11px] font-bold px-1 text-slate-500">
-            <span className="flex items-center gap-1.5 text-violet-600 dark:text-violet-400">
+            <span className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300">
               <Activity className="w-3.5 h-3.5" />
               <span>Relative Strength Index (RSI 14)</span>
             </span>

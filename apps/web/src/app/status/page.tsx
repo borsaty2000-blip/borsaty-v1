@@ -90,7 +90,7 @@ export default function StatusPage() {
               disabled={isRefreshing}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors shadow-sm self-start sm:self-auto cursor-pointer"
             >
-              <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? "animate-spin text-[#00D9FF]" : ""}`} />
+              <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? "animate-spin text-slate-900 dark:text-white" : ""}`} />
               <span>{isAr ? "تحديث الفحص" : "Refresh Telemetry"}</span>
             </button>
           </div>
@@ -113,7 +113,7 @@ export default function StatusPage() {
               <div className="text-xs font-bold text-slate-400">{isAr ? "متوسط زمن الاستجابة" : "Avg API Latency"}</div>
               <div className="text-2xl font-black text-slate-900 dark:text-white font-mono mt-0.5">38 ms</div>
             </div>
-            <div className="w-10 h-10 rounded-xl bg-sky-500/10 text-[#00D9FF] flex items-center justify-center font-bold">
+            <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white flex items-center justify-center font-bold">
               <Zap className="w-5 h-5" />
             </div>
           </div>

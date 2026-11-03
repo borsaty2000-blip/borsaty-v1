@@ -64,7 +64,7 @@ export default function InfoTooltip({
       onBlur={() => setIsVisible(false)}
     >
       {children || (
-        <HelpCircle className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#00D9FF] transition-colors" />
+        <HelpCircle className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white transition-colors" />
       )}
 
       {isVisible && (

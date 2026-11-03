@@ -165,7 +165,7 @@ export default function MultiTimeframeMatrix({
       {/* Top Header: Matrix Title & Overall Alignment Banner */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800/80">
         <div className="flex items-center gap-2">
-          <Layers className="w-4 h-4 text-indigo-500" />
+          <Layers className="w-4 h-4 text-slate-900 dark:text-white" />
           <h3 className="text-xs md:text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider">
             {isAr ? 'مصفوفة تحليل الفترات الزمنية المتعددة' : 'Multi-Timeframe Analysis Matrix'}
           </h3>

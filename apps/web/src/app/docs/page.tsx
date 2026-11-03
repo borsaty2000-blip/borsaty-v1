@@ -200,7 +200,7 @@ export default function DocsPage() {
         {/* Header */}
         <div className="space-y-3 pt-4">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-slate-200">
-            <Terminal className="w-3.5 h-3.5 text-[#00D9FF]" />
+            <Terminal className="w-3.5 h-3.5 text-slate-900 dark:text-white" />
             <span>{isAr ? "بوابة المطورين والواجهات البرمجية" : "Developer Portal & OpenAPI Specs"}</span>
           </div>
 
@@ -218,7 +218,7 @@ export default function DocsPage() {
         {/* Global Architecture Info Pill */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="p-4 rounded-xl bg-white dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-black text-[#00D9FF] flex items-center justify-center shrink-0 border border-slate-700">
+            <div className="w-9 h-9 rounded-lg bg-black text-white flex items-center justify-center shrink-0 border border-slate-700">
               <Server className="w-4 h-4" />
             </div>
             <div>
@@ -228,7 +228,7 @@ export default function DocsPage() {
           </div>
 
           <div className="p-4 rounded-xl bg-white dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-black text-[#00D9FF] flex items-center justify-center shrink-0 border border-slate-700">
+            <div className="w-9 h-9 rounded-lg bg-black text-white flex items-center justify-center shrink-0 border border-slate-700">
               <Key className="w-4 h-4" />
             </div>
             <div>
@@ -238,7 +238,7 @@ export default function DocsPage() {
           </div>
 
           <div className="p-4 rounded-xl bg-white dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 shadow-sm flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-black text-[#00D9FF] flex items-center justify-center shrink-0 border border-slate-700">
+            <div className="w-9 h-9 rounded-lg bg-black text-white flex items-center justify-center shrink-0 border border-slate-700">
               <Shield className="w-4 h-4" />
             </div>
             <div>
@@ -273,7 +273,7 @@ export default function DocsPage() {
                       className={`text-[10px] font-mono font-black px-1.5 py-0.5 rounded ${
                         ep.method === "GET"
                           ? active
-                            ? "bg-[#00D9FF] text-black"
+                            ? "bg-white text-black dark:bg-black dark:text-white"
                             : "bg-sky-500/10 text-sky-600 dark:text-sky-400"
                           : active
                           ? "bg-emerald-400 text-black"

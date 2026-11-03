@@ -248,7 +248,7 @@ export default function ComparePage() {
         {/* Header */}
         <div className="space-y-3">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-slate-200">
-            <ArrowLeftRight className="w-3.5 h-3.5 text-[#00D9FF]" />
+            <ArrowLeftRight className="w-3.5 h-3.5 text-slate-900 dark:text-white" />
             <span>{isAr ? "محطة المقارنة المؤسسية المزدوجة" : "Cross-Asset Comparison Terminal"}</span>
           </div>
 
@@ -268,14 +268,14 @@ export default function ComparePage() {
           {/* Stock A Selector */}
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#00D9FF]" />
+              <span className="w-2.5 h-2.5 rounded-full bg-slate-900 dark:bg-white" />
               <span>{isAr ? "السهم الأول (الأصل أ):" : "First Asset (Asset A):"}</span>
             </label>
             <div className="relative">
               <select
                 value={symbolA}
                 onChange={(e) => setSymbolA(e.target.value)}
-                className="w-full h-11 px-3 ps-3 pe-8 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs md:text-sm font-bold text-slate-900 dark:text-white focus:outline-none focus:border-[#00D9FF] cursor-pointer appearance-none"
+                className="w-full h-11 px-3 ps-3 pe-8 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs md:text-sm font-bold text-slate-900 dark:text-white focus:outline-none focus:border-slate-900 dark:focus:border-white cursor-pointer appearance-none"
               >
                 {COMPARABLE_STOCKS.map((s) => (
                   <option key={s.symbol} value={s.symbol} disabled={s.symbol === symbolB}>
@@ -315,7 +315,7 @@ export default function ComparePage() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <h3 className="text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
-                <BarChart3 className="w-4 h-4 text-[#00D9FF]" />
+                <BarChart3 className="w-4 h-4 text-slate-900 dark:text-white" />
                 <span>{isAr ? "العائد التراكمي المقارن (%)" : "Normalized Cumulative Return (%)"}</span>
               </h3>
               <p className="text-xs text-slate-500 dark:text-slate-400">
@@ -382,7 +382,7 @@ export default function ComparePage() {
                 <Line
                   type="monotone"
                   dataKey={stockA.symbol}
-                  stroke="#00D9FF"
+                  stroke="#1e40af"
                   strokeWidth={2.5}
                   dot={false}
                   activeDot={{ r: 5 }}
@@ -390,7 +390,7 @@ export default function ComparePage() {
                 <Line
                   type="monotone"
                   dataKey={stockB.symbol}
-                  stroke="#10b981"
+                  stroke="#475569"
                   strokeWidth={2.5}
                   dot={false}
                   activeDot={{ r: 5 }}
@@ -426,10 +426,10 @@ export default function ComparePage() {
               <thead>
                 <tr className="bg-slate-50 dark:bg-slate-900/60 border-b border-slate-200 dark:border-slate-800 text-slate-400 font-bold">
                   <th className="py-3 px-4 text-start">{isAr ? "المؤشر الفني / المالي" : "Metric"}</th>
-                  <th className="py-3 px-4 text-center font-bold text-[#00D9FF]">
+                  <th className="py-3 px-4 text-center font-bold text-navy-800 dark:text-blue-400">
                     {stockA.symbol} ({stockA.market})
                   </th>
-                  <th className="py-3 px-4 text-center font-bold text-emerald-500">
+                  <th className="py-3 px-4 text-center font-bold text-slate-700 dark:text-slate-300">
                     {stockB.symbol} ({stockB.market})
                   </th>
                   <th className="py-3 px-4 text-center">{isAr ? "التقييم المؤسسي" : "Advantage"}</th>
@@ -454,7 +454,7 @@ export default function ComparePage() {
                     {stockB.confluenceScore}/100
                   </td>
                   <td className="py-3 px-4 text-center">
-                    <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#00D9FF]/10 text-cyan-600 dark:text-[#00D9FF]">
+                    <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700">
                       {stockA.confluenceScore > stockB.confluenceScore ? stockA.symbol : stockB.symbol} (+{Math.abs(stockA.confluenceScore - stockB.confluenceScore)})
                     </span>
                   </td>
@@ -512,7 +512,7 @@ export default function ComparePage() {
                   <td className="py-3 px-4 text-center">
                     <Link
                       href={`/stock/${stockA.symbol}`}
-                      className="inline-flex items-center gap-1 text-[11px] font-bold text-[#00D9FF] hover:underline"
+                      className="inline-flex items-center gap-1 text-[11px] font-bold text-navy-700 dark:text-blue-400 hover:underline"
                     >
                       <span>{stockA.symbol} Analysis</span>
                       <ExternalLink className="w-3 h-3" />

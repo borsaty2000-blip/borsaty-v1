@@ -470,18 +470,18 @@ export default function StockDetailClientV2({
                 whileHover={{ scale: 1.02, y: -2 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={highlightElliottWave}
-                className="flex items-center justify-between p-3 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-purple-500/50 hover:bg-purple-50/30 dark:hover:bg-purple-500/10 transition-all text-start group cursor-pointer"
+                className="flex items-center justify-between p-3 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-slate-400 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-all text-start group cursor-pointer"
               >
                 <div>
                   <div className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-purple-500"></span>
+                    <span className="w-2 h-2 rounded-full bg-slate-700 dark:bg-slate-300"></span>
                     <span>Elliott (1-2-3-4-5)</span>
                   </div>
                   <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">
                     {isAr ? 'عرض الموجة الدافعة' : 'Impulse wave cycle'}
                   </div>
                 </div>
-                <Maximize2 className="w-3.5 h-3.5 text-slate-400 group-hover:text-purple-600 transition-colors" />
+                <Maximize2 className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white transition-colors" />
               </motion.button>
 
               <motion.button
@@ -702,7 +702,7 @@ export default function StockDetailClientV2({
                 onClick={() => window.open(`/api/reports/${company.symbol}/download?lang=${language}`, '_blank')}
                 className="px-4 py-2 rounded-xl bg-slate-900 hover:bg-black dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-900 text-xs font-bold flex items-center gap-2 shadow-sm transition-colors cursor-pointer border border-slate-800"
               >
-                <FileDown className="w-4 h-4 text-[#00D9FF] dark:text-slate-900" />
+                <FileDown className="w-4 h-4 text-white dark:text-slate-900" />
                 <span>{isAr ? 'تحميل التقرير الكامل PDF' : 'Download Institutional PDF'}</span>
               </button>
             </div>

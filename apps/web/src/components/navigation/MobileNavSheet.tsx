@@ -258,9 +258,9 @@ export default function MobileNavSheet({
                       <Link
                         href="/portfolio"
                         onClick={onClose}
-                        className="flex items-center gap-3 p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/60 text-xs font-semibold hover:border-indigo-500/50 transition-colors"
+                        className="flex items-center gap-3 p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/60 text-xs font-semibold hover:border-slate-400 dark:hover:border-slate-600 transition-colors"
                       >
-                        <Briefcase className="w-4 h-4 text-indigo-500 shrink-0" />
+                        <Briefcase className="w-4 h-4 text-slate-700 dark:text-slate-300 shrink-0" />
                         <div>
                           <div className="font-bold">{isAr ? 'محفظة الأوراق المالية' : 'Portfolio Terminal'}</div>
                           <div className="text-[11px] text-slate-400 font-normal">
@@ -272,9 +272,9 @@ export default function MobileNavSheet({
                       <Link
                         href="/calendar"
                         onClick={onClose}
-                        className="flex items-center gap-3 p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/60 text-xs font-semibold hover:border-rose-500/50 transition-colors"
+                        className="flex items-center gap-3 p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/60 text-xs font-semibold hover:border-slate-400 dark:hover:border-slate-600 transition-colors"
                       >
-                        <Calendar className="w-4 h-4 text-rose-500 shrink-0" />
+                        <Calendar className="w-4 h-4 text-slate-700 dark:text-slate-300 shrink-0" />
                         <div>
                           <div className="font-bold">{isAr ? 'الأجندة الاقتصادية' : 'Economic Calendar'}</div>
                           <div className="text-[11px] text-slate-400 font-normal">
@@ -286,9 +286,9 @@ export default function MobileNavSheet({
                       <Link
                         href="/compare"
                         onClick={onClose}
-                        className="flex items-center gap-3 p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/60 text-xs font-semibold hover:border-violet-500/50 transition-colors"
+                        className="flex items-center gap-3 p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/60 text-xs font-semibold hover:border-slate-400 dark:hover:border-slate-600 transition-colors"
                       >
-                        <GitCompare className="w-4 h-4 text-violet-500 shrink-0" />
+                        <GitCompare className="w-4 h-4 text-slate-700 dark:text-slate-300 shrink-0" />
                         <div>
                           <div className="font-bold">{isAr ? 'مقارنة الأصول والأسهم' : 'Side-by-Side Compare'}</div>
                           <div className="text-[11px] text-slate-400 font-normal">

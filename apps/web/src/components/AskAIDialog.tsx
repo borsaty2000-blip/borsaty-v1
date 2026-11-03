@@ -134,7 +134,7 @@ export default function AskAIDialog({
                     className={`w-8 h-8 rounded-lg shrink-0 flex items-center justify-center text-xs font-bold ${
                       msg.sender === "user"
                         ? "bg-black text-white border border-slate-700"
-                        : "bg-[#1c263c] text-[#00D9FF] border border-[#283552]"
+                        : "bg-slate-800 text-white border border-slate-700"
                     }`}
                   >
                     {msg.sender === "user" ? "أنت" : "بورصتي"}
@@ -151,7 +151,7 @@ export default function AskAIDialog({
                 </div>
               ))}
               {loading && (
-                <div className="flex items-center gap-2 text-xs text-[#00D9FF] p-2">
+                <div className="flex items-center gap-2 text-xs text-slate-300 p-2">
                   <RefreshCw className="w-4 h-4 animate-spin" />
                   <span>المساعد يراجع مخرجات محركات Elliott و Gann والقيمة العادلة...</span>
                 </div>
@@ -184,7 +184,7 @@ export default function AskAIDialog({
                 value={question}
                 onChange={(e) => setQuestion(e.target.value)}
                 placeholder="اكتب استفسارك هنا (مثلاً: ما هي أدلة الشراء أو البيع؟)..."
-                className="flex-1 bg-[#0b0f19] border border-[#232e48] rounded-xl px-4 py-2.5 text-sm text-gray-100 placeholder-gray-500 focus:outline-none focus:border-[#00D9FF]"
+                className="flex-1 bg-[#0b0f19] border border-[#232e48] rounded-xl px-4 py-2.5 text-sm text-gray-100 placeholder-gray-500 focus:outline-none focus:border-slate-500"
               />
               <button
                 type="submit"

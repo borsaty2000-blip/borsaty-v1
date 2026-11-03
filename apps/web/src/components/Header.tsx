@@ -67,7 +67,6 @@ export default function Header() {
           <Link href="/" className="flex items-center gap-2.5 whitespace-nowrap group">
             <div className="relative w-8 h-8 rounded-lg bg-black text-white flex items-center justify-center font-black text-base shadow-sm group-hover:bg-slate-900 transition-colors border border-slate-800">
               <span>B</span>
-              <span className="absolute top-1 end-1 w-1.5 h-1.5 rounded-full bg-[#00D9FF]" />
             </div>
             <span className="text-xl font-black tracking-tight text-slate-900 dark:text-white">
               {isAr ? 'بورصتي' : 'Borsaty'}

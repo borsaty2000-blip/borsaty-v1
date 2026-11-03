@@ -73,14 +73,14 @@ const CHANGELOG_DATA: ChangelogEntry[] = [
       "تحول بصري كامل للهوية المؤسسية السوداء، وتقسيم كود الشارتات لتحقيق تحميل فوري تحت ثانية واحدة، وترويس الأمان الصارمة واختصارات لوحة المفاتيح.",
     badge: "hardening",
     highlightsEn: [
-      "Pure Black (#0A0A0A) aesthetic with Electric Cyan (#00D9FF) interactive accents",
+      "Pure Institutional aesthetic with grayscale and subtle navy accents",
       "Sub-second Largest Contentful Paint (LCP) with next/dynamic chart splitting",
       "Strict security headers (CSP, HSTS, X-Frame-Options, Permissions-Policy)",
       "Global keyboard shortcuts (Ctrl+K, G+H, G+P, G+W, G+S)",
       "Smart empty states and celebratory confetti on portfolio executions",
     ],
     highlightsAr: [
-      "تصميم أسود مؤسسي نقي (#0A0A0A) مع لمسات سيان كهربائي (#00D9FF) تفاعلية",
+      "تصميم مؤسسي نقي بدرجات الرمادي ولمسات كحلية رصينة",
       "تحميل فوري LCP تحت ثانية واحدة عبر التقسيم الديناميكي للمكتبات الثقيلة",
       "ترويسات أمان قياسية صارمة (HSTS, X-Frame-Options, Content-Type, Permissions)",
       "اختصارات سريعة للوحة المفاتيح (Ctrl+K, G+H, G+P, G+W, G+S)",
@@ -203,7 +203,7 @@ export default function ChangelogPage() {
                 <div
                   className={`absolute -start-[31px] md:-start-[47px] top-1.5 w-5 h-5 rounded-full border-4 border-white dark:border-[#0B1120] transition-colors ${
                     isLatest
-                      ? "bg-[#00D9FF] shadow-sm shadow-[#00D9FF]/50"
+                      ? "bg-slate-900 dark:bg-white shadow-sm"
                       : "bg-slate-400 dark:bg-slate-600 group-hover:bg-slate-900 dark:group-hover:bg-white"
                   }`}
                 />
@@ -221,7 +221,7 @@ export default function ChangelogPage() {
                           entry.badge === "major"
                             ? "bg-black text-white dark:bg-white dark:text-slate-900"
                             : entry.badge === "hardening"
-                            ? "bg-[#00D9FF]/10 text-cyan-700 dark:text-[#00D9FF] border border-[#00D9FF]/30"
+                            ? "bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700"
                             : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300"
                         }`}
                       >

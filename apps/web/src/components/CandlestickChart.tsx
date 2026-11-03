@@ -249,8 +249,8 @@ export default function CandlestickChart({
             <span className="w-2.5 h-0.5 bg-amber-400 rounded"></span>
             EMA 20
           </span>
-          <span className="inline-flex items-center gap-1.5 text-purple-400">
-            <span className="w-2.5 h-0.5 bg-purple-400 rounded"></span>
+          <span className="inline-flex items-center gap-1.5 text-slate-400">
+            <span className="w-2.5 h-0.5 bg-slate-400 rounded"></span>
             Bollinger (20,2)
           </span>
           <span className="inline-flex items-center gap-1.5 text-emerald-400">

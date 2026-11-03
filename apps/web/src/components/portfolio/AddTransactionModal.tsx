@@ -93,7 +93,7 @@ export default function AddTransactionModal({
           particleCount: 70,
           spread: 60,
           origin: { y: 0.7 },
-          colors: ['#00D9FF', '#10B981', '#0A0A0A', '#6366F1'],
+          colors: ['#111827', '#059669', '#1e40af', '#6b7280'],
         });
       } catch {
         // Confetti fallback

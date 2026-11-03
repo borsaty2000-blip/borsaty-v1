@@ -366,7 +366,7 @@ export default function CommandPalette() {
                 className="flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors aria-selected:bg-emerald-50 dark:aria-selected:bg-emerald-500/10"
               >
                 <div className="flex items-center gap-3">
-                  <Briefcase className="w-4 h-4 text-indigo-500" />
+                  <Briefcase className="w-4 h-4 text-slate-600 dark:text-slate-400" />
                   <span>{isAr ? 'محفظة الأوراق المالية (Portfolio)' : 'Portfolio Terminal'}</span>
                 </div>
                 <kbd className="text-[10px] text-slate-400 font-mono">G + P</kbd>
@@ -378,7 +378,7 @@ export default function CommandPalette() {
                 className="flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors aria-selected:bg-emerald-50 dark:aria-selected:bg-emerald-500/10"
               >
                 <div className="flex items-center gap-3">
-                  <GitCompare className="w-4 h-4 text-violet-500" />
+                  <GitCompare className="w-4 h-4 text-slate-600 dark:text-slate-400" />
                   <span>{isAr ? 'مقارنة الأسهم والمؤشرات (Compare)' : 'Compare Assets Terminal'}</span>
                 </div>
               </Command.Item>

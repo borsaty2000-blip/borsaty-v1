@@ -151,7 +151,7 @@ export default function SectorHeatmap() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100 dark:border-slate-800/80">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-black text-[#00D9FF] flex items-center justify-center font-bold border border-slate-700">
+          <div className="w-8 h-8 rounded-lg bg-black text-white flex items-center justify-center font-bold border border-slate-700">
             <LayoutGrid className="w-4 h-4" />
           </div>
           <div>
@@ -242,7 +242,7 @@ export default function SectorHeatmap() {
         <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 animate-in fade-in slide-in-from-top-1 duration-200 space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#00D9FF]" />
+              <span className="w-2.5 h-2.5 rounded-full bg-slate-900 dark:bg-white" />
               <h4 className="text-xs md:text-sm font-black text-slate-900 dark:text-white">
                 {isAr
                   ? `الأسهم القيادية في قطاع ${selectedSector.nameAr}`
@@ -268,7 +268,7 @@ export default function SectorHeatmap() {
                 >
                   <div>
                     <div className="flex items-center gap-1.5">
-                      <span className="font-extrabold text-xs text-slate-900 dark:text-white group-hover:text-[#00D9FF] transition-colors">
+                      <span className="font-extrabold text-xs text-slate-900 dark:text-white group-hover:text-navy-700 dark:group-hover:text-blue-400 transition-colors">
                         {stock.symbol}
                       </span>
                       <span className="text-[10px] font-mono px-1 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-500">

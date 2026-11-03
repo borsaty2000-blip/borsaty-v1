@@ -28,8 +28,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     fonts-dejavu-core \
     fonts-noto-core \
     fonts-freefont-ttf \
+    fontconfig \
     curl \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && fc-cache -fv
 
 # Install Python dependencies
 COPY requirements.txt .
@@ -38,6 +40,11 @@ RUN pip install --no-cache-dir --upgrade pip && \
 
 # Copy analysis engine source code
 COPY . /app
+
+# Install custom fonts into system font store
+RUN mkdir -p /usr/share/fonts/truetype/custom && \
+    cp -r /app/assets/fonts/*.ttf /usr/share/fonts/truetype/custom/ 2>/dev/null || true && \
+    fc-cache -fv
 
 # Ensure reports package is in python path
 ENV PYTHONPATH="/app:/app/reports:${PYTHONPATH}"

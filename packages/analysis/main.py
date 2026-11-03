@@ -723,10 +723,11 @@ class PDFReportRequest(BaseModel):
     currency: Optional[str] = "EGP"
     market: Optional[str] = "EGX"
     decision_data: Optional[Dict[str, Any]] = None
+    lang: Optional[str] = "ar"
 
 @app.post("/report/{symbol}/pdf")
 @app.get("/report/{symbol}/pdf")
-def generate_pdf_report_endpoint(symbol: str, payload: Optional[PDFReportRequest] = None):
+def generate_pdf_report_endpoint(symbol: str, lang: str = "ar", payload: Optional[PDFReportRequest] = None):
     try:
         from reports.pdf_generator import global_pdf_generator
     except ImportError:
@@ -760,6 +761,7 @@ def generate_pdf_report_endpoint(symbol: str, payload: Optional[PDFReportRequest
         dec_obj = global_decision_engine.decide(sym, fake_analysis)
         dec_dict = dataclasses.asdict(dec_obj)
 
+    effective_lang = (payload.lang if payload and payload.lang else None) or lang or "ar"
     pdf_bytes = global_pdf_generator.generate(
         symbol=sym,
         company_name=comp_name,
@@ -767,6 +769,7 @@ def generate_pdf_report_endpoint(symbol: str, payload: Optional[PDFReportRequest
         currency=curr,
         decision_data=dec_dict,
         market=mkt,
+        lang=effective_lang,
     )
 
     date_str = datetime.now(timezone.utc).strftime("%Y%m%d")

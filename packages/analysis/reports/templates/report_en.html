@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <title>Institutional Equity Research Report — {{ symbol }}</title>
+  <style>
+    {{ styles }}
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- PAGE 1: COVER + HERO DECISION CARD                              -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <div class="page">
+    <div>
+      <!-- Header with Logo -->
+      <div class="header-bar">
+        <img class="header-logo" src="data:image/png;base64,{{ logo_base64 }}" alt="Borsaty Logo" />
+        <span class="report-badge">INSTITUTIONAL EQUITY RESEARCH</span>
+      </div>
+
+      <!-- Company Row -->
+      <div class="company-title-row">
+        <div>
+          <span class="company-symbol">{{ symbol }}</span>
+          <span class="company-market">{{ market }}</span>
+          <div class="company-name">{{ company_name_en }}</div>
+        </div>
+        <div style="font-size: 9pt; color: #64748b; font-weight: 700;">
+          Date: {{ date_str }}
+        </div>
+      </div>
+
+      <!-- Price Block -->
+      <div class="price-box">
+        <div style="display: flex; align-items: baseline; gap: 8px;">
+          <span class="price-massive">{{ "%.2f"|format(current_price) }}</span>
+          <span class="price-currency">{{ currency }}</span>
+        </div>
+        <div class="change-pill {{ 'change-pos' if change_pct >= 0 else 'change-neg' }}">
+          {{ '+' if change_pct >= 0 else '' }}{{ "%.2f"|format(change_pct) }}%
+        </div>
+      </div>
+
+      <!-- Massive Decision Card -->
+      <div class="decision-card decision-bg-{{ decision_class }}">
+        <div class="decision-word">{{ decision_word_en }}</div>
+        <div class="decision-subtitle">{{ decision_subtitle_en }}</div>
+
+        <!-- 4 Key Numbers -->
+        <div class="decision-grid-4">
+          <div class="decision-mini-box">
+            <div class="decision-mini-label">Entry Zone</div>
+            <div class="decision-mini-val">{{ "%.2f"|format(entry_zone[0]) }}</div>
+          </div>
+          <div class="decision-mini-box">
+            <div class="decision-mini-label">Stop Loss</div>
+            <div class="decision-mini-val">{{ "%.2f"|format(stop_loss) }}</div>
+          </div>
+          <div class="decision-mini-box">
+            <div class="decision-mini-label">Target 1 (T1)</div>
+            <div class="decision-mini-val">{{ "%.2f"|format(target_1) }}</div>
+          </div>
+          <div class="decision-mini-box">
+            <div class="decision-mini-label">Target 2 (T2)</div>
+            <div class="decision-mini-val">{{ "%.2f"|format(target_2) }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Page 1 Footer -->
+    <div class="footer-bar">
+      <div class="footer-brand">
+        <img src="data:image/png;base64,{{ logo_base64 }}" style="height: 14px; width: auto;" alt="Borsaty" />
+        <span>Borsaty Financial Research Terminal</span>
+      </div>
+      <div>Published on {{ date_str }} · Page 1 of 4</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- PAGE 2: TRADE PLAN & POSITION SIZING                            -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <div class="page">
+    <div>
+      <div class="header-bar">
+        <img class="header-logo" src="data:image/png;base64,{{ logo_base64 }}" alt="Borsaty Logo" />
+        <span class="report-badge">{{ symbol }} · INSTITUTIONAL TRADE PLAN</span>
+      </div>
+
+      <div class="section-header">TRADE PLAN & RISK FRAMEWORK</div>
+
+      <!-- 4-Box Grid -->
+      <div class="trade-boxes-grid">
+        <div class="trade-box">
+          <div class="trade-box-label">Suggested Entry Zone</div>
+          <div class="trade-box-val">{{ "%.2f"|format(entry_zone[0]) }} - {{ "%.2f"|format(entry_zone[1]) }} {{ currency }}</div>
+        </div>
+        <div class="trade-box trade-box-stop">
+          <div class="trade-box-label" style="color: #991b1b;">Strict Stop Loss (SL)</div>
+          <div class="trade-box-val" style="color: #b91c1c;">{{ "%.2f"|format(stop_loss) }} {{ currency }}</div>
+        </div>
+        <div class="trade-box trade-box-target">
+          <div class="trade-box-label" style="color: #166534;">Primary Target (T1)</div>
+          <div class="trade-box-val" style="color: #15803d;">{{ "%.2f"|format(target_1) }} {{ currency }}</div>
+        </div>
+        <div class="trade-box trade-box-target">
+          <div class="trade-box-label" style="color: #166534;">Extended Target (T2)</div>
+          <div class="trade-box-val" style="color: #15803d;">{{ "%.2f"|format(target_2) }} {{ currency }}</div>
+        </div>
+      </div>
+
+      <!-- Position Sizing Table -->
+      <div style="font-size: 11pt; font-weight: 800; color: #0f172a; margin-bottom: 2mm;">
+        Institutional Position Sizing (Benchmark 100,000 {{ currency }} Portfolio)
+      </div>
+      <table class="sizing-table">
+        <thead>
+          <tr>
+            <th>Portfolio Capital</th>
+            <th>Max Risk (2.0%)</th>
+            <th>Per Share Risk</th>
+            <th>Suggested Shares</th>
+            <th>Total Capital Allocation</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="font-weight: 700;">100,000 {{ currency }}</td>
+            <td style="color: #b91c1c; font-weight: 700;">2,000 {{ currency }}</td>
+            <td>{{ "%.2f"|format(per_share_risk) }} {{ currency }}</td>
+            <td style="font-weight: 800; font-size: 11pt;">{{ suggested_shares }} shares</td>
+            <td style="font-weight: 700;">{{ "%.2f"|format(suggested_shares * current_price) }} {{ currency }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Risk/Reward Box -->
+      <div class="rr-visual-box">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-weight: 700; font-size: 10pt;">Risk / Reward Ratio (R:R):</span>
+          <span style="font-size: 14pt; font-weight: 900; color: #059669;">{{ "%.2f"|format(risk_reward) }} : 1</span>
+        </div>
+        <p style="font-size: 8.5pt; color: #64748b; margin-top: 1mm;">
+          * Each unit of capital risked offers {{ "%.2f"|format(risk_reward) }} units of potential return to primary target T1, exceeding institutional threshold requirements.
+        </p>
+      </div>
+    </div>
+
+    <!-- Page 2 Footer -->
+    <div class="footer-bar">
+      <div class="footer-brand">
+        <img src="data:image/png;base64,{{ logo_base64 }}" style="height: 14px; width: auto;" alt="Borsaty" />
+        <span>Borsaty Financial Research Terminal</span>
+      </div>
+      <div>Trade Plan · Page 2 of 4</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- PAGE 3: TECHNICAL EVIDENCE & S/R LEVELS                         -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <div class="page">
+    <div>
+      <div class="header-bar">
+        <img class="header-logo" src="data:image/png;base64,{{ logo_base64 }}" alt="Borsaty Logo" />
+        <span class="report-badge">{{ symbol }} · TECHNICAL EVIDENCE</span>
+      </div>
+
+      <div class="section-header">TECHNICAL EVIDENCE & CONFLUENCE METRICS</div>
+
+      <!-- 6-Card Grid -->
+      <div class="tech-cards-grid">
+        <div class="tech-card">
+          <div class="tech-card-label">Primary Trend</div>
+          <div class="tech-card-verdict" style="color: #059669;">{{ tech_trend_en }}</div>
+          <div style="font-size: 8pt; color: #64748b; margin-top: 1mm;">Trading above 50-day EMA</div>
+        </div>
+        <div class="tech-card">
+          <div class="tech-card-label">Momentum Velocity</div>
+          <div class="tech-card-verdict" style="color: #059669;">{{ tech_momentum_en }}</div>
+          <div style="font-size: 8pt; color: #64748b; margin-top: 1mm;">RSI-14 at 58.4 neutral-bullish</div>
+        </div>
+        <div class="tech-card">
+          <div class="tech-card-label">Volatility Range</div>
+          <div class="tech-card-verdict" style="color: #475569;">Moderate (ATR)</div>
+          <div style="font-size: 8pt; color: #64748b; margin-top: 1mm;">Stable volatility profile</div>
+        </div>
+        <div class="tech-card">
+          <div class="tech-card-label">Volume Liquidity</div>
+          <div class="tech-card-verdict" style="color: #059669;">Elevated (+18%)</div>
+          <div style="font-size: 8pt; color: #64748b; margin-top: 1mm;">Exceeding 20-day moving avg</div>
+        </div>
+        <div class="tech-card">
+          <div class="tech-card-label">Market Structure</div>
+          <div class="tech-card-verdict" style="color: #059669;">Higher Highs / Lows</div>
+          <div style="font-size: 8pt; color: #64748b; margin-top: 1mm;">Institutional accumulation</div>
+        </div>
+        <div class="tech-card">
+          <div class="tech-card-label">Validated Patterns</div>
+          <div class="tech-card-verdict" style="color: #059669;">2 Validated</div>
+          <div style="font-size: 8pt; color: #64748b; margin-top: 1mm;">Elliott Wave 3 + Gartley PRZ</div>
+        </div>
+      </div>
+
+      <!-- S/R Levels Grid -->
+      <div class="sr-tables-row">
+        <div>
+          <div style="font-size: 10pt; font-weight: 800; color: #059669; margin-bottom: 1.5mm;">
+            Key Support Levels
+          </div>
+          <table class="sr-table">
+            <thead>
+              <tr>
+                <th>Level</th>
+                <th>Price ({{ currency }})</th>
+                <th>Type</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for s in supports %}
+              <tr>
+                <td>Support {{ loop.index }}</td>
+                <td style="font-weight: 700;">{{ "%.2f"|format(s.price) }}</td>
+                <td>{{ s.type }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <div>
+          <div style="font-size: 10pt; font-weight: 800; color: #dc2626; margin-bottom: 1.5mm;">
+            Key Resistance Levels
+          </div>
+          <table class="sr-table">
+            <thead>
+              <tr>
+                <th>Level</th>
+                <th>Price ({{ currency }})</th>
+                <th>Type</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for r in resistances %}
+              <tr>
+                <td>Resistance {{ loop.index }}</td>
+                <td style="font-weight: 700;">{{ "%.2f"|format(r.price) }}</td>
+                <td>{{ r.type }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Page 3 Footer -->
+    <div class="footer-bar">
+      <div class="footer-brand">
+        <img src="data:image/png;base64,{{ logo_base64 }}" style="height: 14px; width: auto;" alt="Borsaty" />
+        <span>Borsaty Financial Research Terminal</span>
+      </div>
+      <div>Technical Evidence · Page 3 of 4</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- PAGE 4: NARRATIVE + KEY RISKS + DISCLAIMER                      -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <div class="page">
+    <div>
+      <div class="header-bar">
+        <img class="header-logo" src="data:image/png;base64,{{ logo_base64 }}" alt="Borsaty Logo" />
+        <span class="report-badge">{{ symbol }} · NARRATIVE & RISKS</span>
+      </div>
+
+      <div class="section-header">EXECUTIVE ANALYSIS SUMMARY</div>
+
+      <!-- 3 Paragraphs from Narrator Engine -->
+      {% for p in narrative_paragraphs_en %}
+      <p class="narrative-p">{{ p }}</p>
+      {% endfor %}
+
+      <!-- Key Risks Red Box -->
+      <div class="risks-box">
+        <div class="risks-header">KEY STRUCTURAL RISKS</div>
+        <ul class="risks-list">
+          {% for risk in key_risks_en %}
+          <li>{{ risk }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <!-- Large Disclaimer Block -->
+      <div class="disclaimer-block">
+        <div style="font-weight: 800; margin-bottom: 1mm; color: #334155;">Institutional Legal Disclaimer:</div>
+        This research document is an automated product of deterministic quantitative algorithms, pattern-recognition engines, and historical market data feeds. It does not constitute investment, financial, or trading advice. Trading in equities, derivatives, and financial instruments involves substantial risk of capital loss. Past statistical performance is not indicative of future market outcomes.
+      </div>
+    </div>
+
+    <!-- Page 4 Footer -->
+    <div class="footer-bar">
+      <div>borsatyai.com · support@borsatyai.com</div>
+      <div>Page 4 of 4</div>
+    </div>
+  </div>
+
+</body>
+</html>

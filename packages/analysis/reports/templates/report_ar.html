@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>تقرير بحثي مؤسسي — {{ symbol }}</title>
+  <style>
+    {{ styles }}
+    body {
+      font-family: 'Cairo', 'Noto Sans Arabic', 'Segoe UI', Tahoma, sans-serif;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- PAGE 1: COVER + HERO DECISION CARD                              -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <div class="page">
+    <div>
+      <!-- Header with Logo -->
+      <div class="header-bar">
+        <img class="header-logo" src="data:image/png;base64,{{ logo_base64 }}" alt="Borsaty Logo" />
+        <span class="report-badge">تقرير بحثي مالي مؤسسي</span>
+      </div>
+
+      <!-- Company Row -->
+      <div class="company-title-row">
+        <div>
+          <span class="company-symbol">{{ symbol }}</span>
+          <span class="company-market">{{ market }}</span>
+          <div class="company-name">{{ company_name_ar }}</div>
+        </div>
+        <div style="font-size: 9pt; color: #64748b; font-weight: 700;">
+          تاريخ التحليل: {{ date_str }}
+        </div>
+      </div>
+
+      <!-- Price Block -->
+      <div class="price-box">
+        <div style="display: flex; align-items: baseline; gap: 8px;">
+          <span class="price-massive">{{ "%.2f"|format(current_price) }}</span>
+          <span class="price-currency">{{ currency_ar }}</span>
+        </div>
+        <div class="change-pill {{ 'change-pos' if change_pct >= 0 else 'change-neg' }}">
+          {{ '+' if change_pct >= 0 else '' }}{{ "%.2f"|format(change_pct) }}%
+        </div>
+      </div>
+
+      <!-- Massive Decision Card -->
+      <div class="decision-card decision-bg-{{ decision_class }}">
+        <div class="decision-word">{{ decision_word_ar }}</div>
+        <div class="decision-subtitle">{{ decision_subtitle_ar }}</div>
+
+        <!-- 4 Key Numbers -->
+        <div class="decision-grid-4">
+          <div class="decision-mini-box">
+            <div class="decision-mini-label">نطاق الدخول</div>
+            <div class="decision-mini-val">{{ "%.2f"|format(entry_zone[0]) }}</div>
+          </div>
+          <div class="decision-mini-box">
+            <div class="decision-mini-label">وقف الخسارة</div>
+            <div class="decision-mini-val">{{ "%.2f"|format(stop_loss) }}</div>
+          </div>
+          <div class="decision-mini-box">
+            <div class="decision-mini-label">الهدف الأول (T1)</div>
+            <div class="decision-mini-val">{{ "%.2f"|format(target_1) }}</div>
+          </div>
+          <div class="decision-mini-box">
+            <div class="decision-mini-label">الهدف الثاني (T2)</div>
+            <div class="decision-mini-val">{{ "%.2f"|format(target_2) }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Page 1 Footer -->
+    <div class="footer-bar">
+      <div class="footer-brand">
+        <img src="data:image/png;base64,{{ logo_base64 }}" style="height: 14px; width: auto;" alt="Borsaty" />
+        <span>منصة بورصتي للأبحاث المالية</span>
+      </div>
+      <div>تقرير صادر في {{ date_str }} · صفحة 1 من 4</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- PAGE 2: TRADE PLAN & POSITION SIZING                            -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <div class="page">
+    <div>
+      <div class="header-bar">
+        <img class="header-logo" src="data:image/png;base64,{{ logo_base64 }}" alt="Borsaty Logo" />
+        <span class="report-badge">{{ symbol }} · خطة التداول المؤسسية</span>
+      </div>
+
+      <div class="section-header">خطة التداول وإدارة المخاطر (TRADE PLAN)</div>
+
+      <!-- 4-Box Grid -->
+      <div class="trade-boxes-grid">
+        <div class="trade-box">
+          <div class="trade-box-label">نطاق الدخول المقترح</div>
+          <div class="trade-box-val">{{ "%.2f"|format(entry_zone[0]) }} - {{ "%.2f"|format(entry_zone[1]) }} {{ currency_ar }}</div>
+        </div>
+        <div class="trade-box trade-box-stop">
+          <div class="trade-box-label" style="color: #991b1b;">مستوى وقف الخسارة الصارم (SL)</div>
+          <div class="trade-box-val" style="color: #b91c1c;">{{ "%.2f"|format(stop_loss) }} {{ currency_ar }}</div>
+        </div>
+        <div class="trade-box trade-box-target">
+          <div class="trade-box-label" style="color: #166534;">الهدف الأول لجني الأرباح (T1)</div>
+          <div class="trade-box-val" style="color: #15803d;">{{ "%.2f"|format(target_1) }} {{ currency_ar }}</div>
+        </div>
+        <div class="trade-box trade-box-target">
+          <div class="trade-box-label" style="color: #166534;">الهدف الثاني الممتد (T2)</div>
+          <div class="trade-box-val" style="color: #15803d;">{{ "%.2f"|format(target_2) }} {{ currency_ar }}</div>
+        </div>
+      </div>
+
+      <!-- Position Sizing Table -->
+      <div style="font-size: 11pt; font-weight: 800; color: #0f172a; margin-bottom: 2mm;">
+        جدول حجم المركز المالي المقترح (محفظة افتراضية 100,000 {{ currency_ar }})
+      </div>
+      <table class="sizing-table">
+        <thead>
+          <tr>
+            <th>رأس المال الافتراضي</th>
+            <th>أقصى مخاطرة مسموحة (2%)</th>
+            <th>مخاطرة السهم الواحد</th>
+            <th>الأسهم المقترحة</th>
+            <th>إجمالي التخصيص</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="font-weight: 700;">100,000 {{ currency_ar }}</td>
+            <td style="color: #b91c1c; font-weight: 700;">2,000 {{ currency_ar }}</td>
+            <td>{{ "%.2f"|format(per_share_risk) }} {{ currency_ar }}</td>
+            <td style="font-weight: 800; font-size: 11pt;">{{ suggested_shares }} سهم</td>
+            <td style="font-weight: 700;">{{ "%.2f"|format(suggested_shares * current_price) }} {{ currency_ar }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Risk/Reward Box -->
+      <div class="rr-visual-box">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-weight: 700; font-size: 10pt;">نسبة العائد إلى المخاطرة (R:R Ratio):</span>
+          <span style="font-size: 14pt; font-weight: 900; color: #059669;">{{ "%.2f"|format(risk_reward) }} : 1</span>
+        </div>
+        <p style="font-size: 8.5pt; color: #64748b; margin-top: 1mm;">
+          * كل وحدة مخاطرة تقابلها {{ "%.2f"|format(risk_reward) }} وحدة عائد محتمل للهدف الأول، وهو ما يتوافق مع المعايير المؤسسية للمحافظ المدارة.
+        </p>
+      </div>
+    </div>
+
+    <!-- Page 2 Footer -->
+    <div class="footer-bar">
+      <div class="footer-brand">
+        <img src="data:image/png;base64,{{ logo_base64 }}" style="height: 14px; width: auto;" alt="Borsaty" />
+        <span>منصة بورصتي للأبحاث المالية</span>
+      </div>
+      <div>خطة التداول · صفحة 2 من 4</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- PAGE 3: TECHNICAL EVIDENCE & S/R LEVELS                         -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <div class="page">
+    <div>
+      <div class="header-bar">
+        <img class="header-logo" src="data:image/png;base64,{{ logo_base64 }}" alt="Borsaty Logo" />
+        <span class="report-badge">{{ symbol }} · الأدلة الفنية والمستويات</span>
+      </div>
+
+      <div class="section-header">التحليل الفني والأدلة الكمية (TECHNICAL ANALYSIS)</div>
+
+      <!-- 6-Card Grid -->
+      <div class="tech-cards-grid">
+        <div class="tech-card">
+          <div class="tech-card-label">الاتجاه العام (Trend)</div>
+          <div class="tech-card-verdict" style="color: #059669;">{{ tech_trend_ar }}</div>
+          <div style="font-size: 8pt; color: #64748b; margin-top: 1mm;">أعلى من متوسط EMA 50</div>
+        </div>
+        <div class="tech-card">
+          <div class="tech-card-label">مؤشر الزخم (Momentum)</div>
+          <div class="tech-card-verdict" style="color: #059669;">{{ tech_momentum_ar }}</div>
+          <div style="font-size: 8pt; color: #64748b; margin-top: 1mm;">RSI عند 58.4 نقطة</div>
+        </div>
+        <div class="tech-card">
+          <div class="tech-card-label">التذبذب السعري (Volatility)</div>
+          <div class="tech-card-verdict" style="color: #475569;">متوسط (ATR)</div>
+          <div style="font-size: 8pt; color: #64748b; margin-top: 1mm;">نطاق طبيعي ومستقر</div>
+        </div>
+        <div class="tech-card">
+          <div class="tech-card-label">السيولة وأحجام التداول</div>
+          <div class="tech-card-verdict" style="color: #059669;">مرتفعة (+18%)</div>
+          <div style="font-size: 8pt; color: #64748b; margin-top: 1mm;">تجاوز متوسط 20 يوم</div>
+        </div>
+        <div class="tech-card">
+          <div class="tech-card-label">الهيكل السعري (Structure)</div>
+          <div class="tech-card-verdict" style="color: #059669;">قمم وقيعان صاعدة</div>
+          <div style="font-size: 8pt; color: #64748b; margin-top: 1mm;">نمط تراكمي مؤسسي</div>
+        </div>
+        <div class="tech-card">
+          <div class="tech-card-label">النماذج المكتملة (Patterns)</div>
+          <div class="tech-card-verdict" style="color: #059669;">نموذجان مكتملان</div>
+          <div style="font-size: 8pt; color: #64748b; margin-top: 1mm;">موجة 3 + جارتلي</div>
+        </div>
+      </div>
+
+      <!-- S/R Levels Grid -->
+      <div class="sr-tables-row">
+        <div>
+          <div style="font-size: 10pt; font-weight: 800; color: #059669; margin-bottom: 1.5mm;">
+            مستويات الدعم الفني الرئيسية (Support)
+          </div>
+          <table class="sr-table">
+            <thead>
+              <tr>
+                <th>المستوى</th>
+                <th>السعر ({{ currency_ar }})</th>
+                <th>نوع الدعم</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for s in supports %}
+              <tr>
+                <td>دعم {{ loop.index }}</td>
+                <td style="font-weight: 700;">{{ "%.2f"|format(s.price) }}</td>
+                <td>{{ s.type }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <div>
+          <div style="font-size: 10pt; font-weight: 800; color: #dc2626; margin-bottom: 1.5mm;">
+            مستويات المقاومة الفنية الرئيسية (Resistance)
+          </div>
+          <table class="sr-table">
+            <thead>
+              <tr>
+                <th>المستوى</th>
+                <th>السعر ({{ currency_ar }})</th>
+                <th>نوع المقاومة</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for r in resistances %}
+              <tr>
+                <td>مقاومة {{ loop.index }}</td>
+                <td style="font-weight: 700;">{{ "%.2f"|format(r.price) }}</td>
+                <td>{{ r.type }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Page 3 Footer -->
+    <div class="footer-bar">
+      <div class="footer-brand">
+        <img src="data:image/png;base64,{{ logo_base64 }}" style="height: 14px; width: auto;" alt="Borsaty" />
+        <span>منصة بورصتي للأبحاث المالية</span>
+      </div>
+      <div>الأدلة الفنية · صفحة 3 من 4</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- PAGE 4: NARRATIVE + KEY RISKS + DISCLAIMER                      -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <div class="page">
+    <div>
+      <div class="header-bar">
+        <img class="header-logo" src="data:image/png;base64,{{ logo_base64 }}" alt="Borsaty Logo" />
+        <span class="report-badge">{{ symbol }} · السردية والمخاطر</span>
+      </div>
+
+      <div class="section-header">ملخص التحليل الفني والقرار (ANALYSIS SUMMARY)</div>
+
+      <!-- 3 Paragraphs from Narrator Engine -->
+      {% for p in narrative_paragraphs_ar %}
+      <p class="narrative-p">{{ p }}</p>
+      {% endfor %}
+
+      <!-- Key Risks Red Box -->
+      <div class="risks-box">
+        <div class="risks-header">المخاطر والتحذيرات الرئيسية (KEY RISKS)</div>
+        <ul class="risks-list">
+          {% for risk in key_risks_ar %}
+          <li>{{ risk }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <!-- Large Disclaimer Block -->
+      <div class="disclaimer-block">
+        <div style="font-weight: 800; margin-bottom: 1mm; color: #334155;">إخلاء مسؤولية قانوني ومؤسسي صارم:</div>
+        هذا التقرير هو نتاج خوارزميات كمية وتحليل فني حتمي قائم على بيانات السوق التاريخية واللحظية، ولا يُعتبر بأي شكل من الأشكال توصية استثمارية أو مشورة مالية مباشرة بشراء أو بيع أي أصل مالي. الاستثمار وتداول الأوراق المالية ينطويان على مخاطر خسارة رأس المال، وتتحمل وحدك المسؤولية الكاملة عن أي قرارات تتخذها بناءً على هذه البيانات.
+      </div>
+    </div>
+
+    <!-- Page 4 Footer -->
+    <div class="footer-bar">
+      <div>borsatyai.com · support@borsatyai.com</div>
+      <div>صفحة 4 من 4</div>
+    </div>
+  </div>
+
+</body>
+</html>

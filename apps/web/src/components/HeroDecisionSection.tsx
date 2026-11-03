@@ -19,6 +19,7 @@ import AnimatedNumber from '@/components/ui/AnimatedNumber';
 import Logo from '@/components/branding/Logo';
 import { useApp } from '@/context/AppContext';
 import { toast } from 'sonner';
+import { getStrategyBadges } from '@/lib/strategies-data';
 
 export interface HeroDecisionData {
   decision: string;
@@ -217,6 +218,17 @@ export default function HeroDecisionSection({
             nameEn={company.nameEn}
             nameAr={company.nameAr}
           />
+          {getStrategyBadges(company.symbol).length > 0 && (
+            <>
+              <span className="text-slate-300 dark:text-slate-700">|</span>
+              <Link
+                href="/strategies"
+                className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-900 text-white dark:bg-white dark:text-black hover:opacity-85 transition-opacity"
+              >
+                <span>{isAr ? `استراتيجية: ${getStrategyBadges(company.symbol)[0].nameAr}` : `Strategy: ${getStrategyBadges(company.symbol)[0].nameEn}`}</span>
+              </Link>
+            </>
+          )}
         </div>
 
         {/* Right: Live badge "إغلاق اليوم" (gray pill) */}

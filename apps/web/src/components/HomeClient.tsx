@@ -19,6 +19,7 @@ import dynamic from 'next/dynamic';
 import { useApp } from '@/context/AppContext';
 import { DataWrapper } from '@/components/ui/DataWrapper';
 import OpportunityScanner from '@/components/OpportunityScanner';
+import ProPicksHomeSection from '@/components/ProPicksHomeSection';
 import ConvictionIndex from '@/components/ConvictionIndex';
 
 const SectorHeatmap = dynamic(() => import('@/components/SectorHeatmap'), {
@@ -301,6 +302,9 @@ export default function HomeClient() {
       {/* KILLER FEATURES: OPPORTUNITY SCANNER & CONVICTION INDEX        */}
       {/* ═══════════════════════════════════════════════════════════════ */}
       <OpportunityScanner />
+
+      {/* ProPicks Systematic Quantitative Strategies */}
+      <ProPicksHomeSection />
 
       <ConvictionIndex />
 

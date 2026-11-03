@@ -246,3 +246,13 @@ model EarningsCache {
   @@unique([symbol, quarter])
   @@index([symbol, fetchedAt])
 }
+
+model InsiderCache {
+  id        String   @id @default(cuid())
+  symbol    String   @unique // Canonical ticker (e.g., "AAPL", "COMI")
+  dataJson  Json     // Full insider analysis payload
+  fetchedAt DateTime @default(now())
+  createdAt DateTime @default(now())
+
+  @@index([symbol, fetchedAt])
+}

@@ -1,78 +1,123 @@
 {
   "symbol": "COMI",
+  "available": false,
+  "reason": "Insider tracking currently available for US-listed stocks only",
+  "message_ar": "تتبع المطلعين متاح حالياً للأسهم الأمريكية فقط",
+  "message_en": "Insider tracking currently available for US stocks only",
+  "insider_transactions": [],
+  "clusters": [],
+  "insider_summary": {
+    "total_buys_90d": 0,
+    "total_sells_90d": 0,
+    "net_flow": "$0",
+    "cluster_buy_detected": false,
+    "cluster_sell_detected": false
+  },
+  "institutional_holdings": [],
+  "institutional_summary": {
+    "total_holders": 0,
+    "top_10_concentration_pct": 0,
+    "notable_changes": []
+  },
+  "data_quality": {
+    "source": "SEC EDGAR",
+    "fetched_at": "2026-11-04T00:50:37.832663",
+    "available": false
+  },
+  "transactions": [
+    {
+      "date": "2026-10-26",
+      "insider": "المجموعة المالية هيرميس (حساب عملاء)",
+      "role": "مؤسسة استثمارية",
+      "type": "BUY",
+      "shares": 450000,
+      "price": 121.5,
+      "value": 54675000.0,
+      "is_open_market": true,
+      "insider_name": "المجموعة المالية هيرميس (حساب عملاء)",
+      "transaction_type": "BUY",
+      "total_value": 54675000.0
+    },
+    {
+      "date": "2026-10-20",
+      "insider": "صندوق التأمين الاجتماعي للعاملين",
+      "role": "مساهم رئيسي",
+      "type": "BUY",
+      "shares": 280000,
+      "price": 120.0,
+      "value": 33600000.0,
+      "is_open_market": true,
+      "insider_name": "صندوق التأمين الاجتماعي للعاملين",
+      "transaction_type": "BUY",
+      "total_value": 33600000.0
+    },
+    {
+      "date": "2026-10-14",
+      "insider": "أعضاء مجلس الإدارة ومجموعات مرتبطة",
+      "role": "إدارة تنفيذية",
+      "type": "BUY",
+      "shares": 150000,
+      "price": 119.2,
+      "value": 17880000.0,
+      "is_open_market": true,
+      "insider_name": "أعضاء مجلس الإدارة ومجموعات مرتبطة",
+      "transaction_type": "BUY",
+      "total_value": 17880000.0
+    },
+    {
+      "date": "2026-09-18",
+      "insider": "مساهم غير تنفيذي",
+      "role": "مجلس إدارة",
+      "type": "SELL",
+      "shares": 80000,
+      "price": 124.0,
+      "value": 9920000.0,
+      "is_open_market": true,
+      "insider_name": "مساهم غير تنفيذي",
+      "transaction_type": "SELL",
+      "total_value": 9920000.0
+    }
+  ],
   "has_cluster_buy": true,
   "cluster_info": {
     "insider_count": 3,
     "distinct_insiders": [
+      "أعضاء مجلس الإدارة ومجموعات مرتبطة",
       "المجموعة المالية هيرميس (حساب عملاء)",
-      "صندوق التأمين الاجتماعي للعاملين",
-      "أعضاء مجلس الإدارة ومجموعات مرتبطة"
+      "صندوق التأمين الاجتماعي للعاملين"
     ],
-    "total_shares": 880000,
-    "total_value": 106155000,
+    "total_shares": 0,
+    "total_value": 106155000.0,
     "window_days": 30
   },
-  "summary_ar": "تم رصد شراء جماعي مكثف (Cluster Buy) من قِبل 3 قيادات تنفيذية خلال 30 يوماً بقيمة 106,155,000، وهي إشارة ثقة مؤسسية قوية.",
-  "summary_en": "Institutional Cluster Buy detected: 3 distinct corporate insiders purchased shares within 30 days (total 106,155,000), signalling high executive conviction.",
+  "summary_ar": "تتبع المطلعين متاح حالياً للأسهم الأمريكية فقط عبر هيئة الأوراق المالية والبورصات الأمريكية (SEC EDGAR).",
+  "summary_en": "Insider tracking currently available for US stocks only via SEC EDGAR.",
   "institutional_ownership": {
     "total_pct": 54.8,
     "quarterly_change_pct": 1.9,
     "holders_count": 310,
     "top_holders": [
       {
-        "name": "Alpha Dhabi Holding / ADQ",
-        "shares": "380M",
-        "pct": 18.5
+        "institution": "Alpha Dhabi Holding / ADQ",
+        "shares": 380000000,
+        "value": 46170000000,
+        "percent_of_company": 18.5,
+        "change_pct": 0.0
       },
       {
-        "name": "National Bank of Egypt",
-        "shares": "195M",
-        "pct": 9.4
+        "institution": "National Bank of Egypt",
+        "shares": 195000000,
+        "value": 23692500000,
+        "percent_of_company": 9.4,
+        "change_pct": 0.0
       },
       {
-        "name": "Foreign Institutional Mutual Funds",
-        "shares": "520M",
-        "pct": 25.2
+        "institution": "Foreign Institutional Mutual Funds",
+        "shares": 520000000,
+        "value": 63180000000,
+        "percent_of_company": 25.2,
+        "change_pct": 1.9
       }
     ]
-  },
-  "transactions": [
-    {
-      "date": "2026-10-26",
-      "insider_name": "المجموعة المالية هيرميس (حساب عملاء)",
-      "role": "مؤسسة استثمارية",
-      "transaction_type": "BUY",
-      "shares": 450000,
-      "price": 121.5,
-      "total_value": 54675000
-    },
-    {
-      "date": "2026-10-20",
-      "insider_name": "صندوق التأمين الاجتماعي للعاملين",
-      "role": "مساهم رئيسي",
-      "transaction_type": "BUY",
-      "shares": 280000,
-      "price": 120.0,
-      "total_value": 33600000
-    },
-    {
-      "date": "2026-10-14",
-      "insider_name": "أعضاء مجلس الإدارة ومجموعات مرتبطة",
-      "role": "إدارة تنفيذية",
-      "transaction_type": "BUY",
-      "shares": 150000,
-      "price": 119.2,
-      "total_value": 17880000
-    },
-    {
-      "date": "2026-09-18",
-      "insider_name": "مساهم غير تنفيذي",
-      "role": "مجلس إدارة",
-      "transaction_type": "SELL",
-      "shares": 80000,
-      "price": 124.0,
-      "total_value": 9920000
-    }
-  ],
-  "updated_at": "2026-11-03"
+  }
 }

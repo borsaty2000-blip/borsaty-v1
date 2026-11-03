@@ -945,6 +945,14 @@ def get_insider_activity_endpoint(symbol: str, force_refresh: bool = False):
     return global_insider_tracker.get_insider_activity(symbol, force_refresh=force_refresh)
 
 
+@app.get("/intelligence/insider/{symbol}/history")
+def get_insider_history_endpoint(symbol: str, days: int = 365):
+    return {
+        "symbol": symbol.upper().strip(),
+        "history": global_insider_tracker.get_history(symbol, days=days),
+    }
+
+
 if __name__ == "__main__":
     import uvicorn
     port = int(os.environ.get("PORT", 8000))

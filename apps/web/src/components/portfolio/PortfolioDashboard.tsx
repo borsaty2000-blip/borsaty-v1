@@ -40,6 +40,7 @@ import {
 import { useApp } from '@/context/AppContext';
 import { toast } from 'sonner';
 import AddTransactionModal from './AddTransactionModal';
+import ApplyStrategyModal from './ApplyStrategyModal';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import AnimatedNumber from '@/components/ui/AnimatedNumber';
 
@@ -102,6 +103,7 @@ export default function PortfolioDashboard() {
   const [sectorAllocation, setSectorAllocation] = useState<SectorAllocation[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isStrategyModalOpen, setIsStrategyModalOpen] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const fetchPortfolio = useCallback(async () => {
@@ -221,6 +223,13 @@ export default function PortfolioDashboard() {
             title="Refresh"
           >
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+          </button>
+          <button
+            onClick={() => setIsStrategyModalOpen(true)}
+            className="px-3.5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-black border border-slate-300 dark:border-slate-700 flex items-center gap-2 transition-all cursor-pointer"
+          >
+            <Layers className="w-4 h-4" />
+            <span>{isAr ? 'تطبيق استراتيجية' : 'Apply Strategy'}</span>
           </button>
           <button
             onClick={() => setIsModalOpen(true)}
@@ -645,6 +654,13 @@ export default function PortfolioDashboard() {
       <AddTransactionModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+        onSuccess={() => fetchPortfolio()}
+      />
+
+      {/* Apply Strategy Modal */}
+      <ApplyStrategyModal
+        isOpen={isStrategyModalOpen}
+        onClose={() => setIsStrategyModalOpen(false)}
         onSuccess={() => fetchPortfolio()}
       />
     </div>

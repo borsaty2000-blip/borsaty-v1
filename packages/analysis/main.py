@@ -877,12 +877,27 @@ from strategies import STRATEGY_REGISTRY, list_all_strategies, get_strategy
 def get_all_strategies_endpoint():
     return {"strategies": list_all_strategies()}
 
+@app.get("/strategies/{strategy_name}")
+def get_strategy_detail_endpoint(strategy_name: str):
+    strat = get_strategy(strategy_name)
+    if not strat:
+        raise HTTPException(status_code=404, detail=f"Strategy '{strategy_name}' not found. Available: {list(STRATEGY_REGISTRY.keys())}")
+    return strat.to_detail_dict()
+
 @app.get("/strategies/{strategy_name}/picks")
 def get_strategy_picks_endpoint(strategy_name: str):
     strat = get_strategy(strategy_name)
     if not strat:
         raise HTTPException(status_code=404, detail=f"Strategy '{strategy_name}' not found. Available: {list(STRATEGY_REGISTRY.keys())}")
     return strat.to_summary_dict()
+
+@app.get("/strategies/{strategy_name}/backtest")
+def get_strategy_backtest_endpoint(strategy_name: str):
+    strat = get_strategy(strategy_name)
+    if not strat:
+        raise HTTPException(status_code=404, detail=f"Strategy '{strategy_name}' not found. Available: {list(STRATEGY_REGISTRY.keys())}")
+    bt = strat.backtest_2y()
+    return bt.to_dict()
 
 
 

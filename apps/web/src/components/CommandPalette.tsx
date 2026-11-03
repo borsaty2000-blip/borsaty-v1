@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Command } from 'cmdk';
 import {
@@ -22,6 +22,8 @@ import {
   FileCode,
   History,
   Info,
+  Clock,
+  Trash2,
 } from 'lucide-react';
 import { useBorsaty } from '@/context/BorsatyContext';
 import { useApp } from '@/context/AppContext';
@@ -32,6 +34,14 @@ interface StockQuickItem {
   nameAr: string;
   market: string;
   currency: string;
+}
+
+interface RecentSearchItem {
+  symbol: string;
+  nameEn: string;
+  nameAr: string;
+  market: string;
+  timestamp: number;
 }
 
 const POPULAR_STOCKS: StockQuickItem[] = [
@@ -47,13 +57,51 @@ const POPULAR_STOCKS: StockQuickItem[] = [
   { symbol: 'EAST', nameEn: 'Eastern Company', nameAr: 'الشرقية للدخان', market: 'EGX', currency: 'EGP' },
 ];
 
+const RECENT_SEARCHES_KEY = 'borsaty_recent_searches_v1';
+
 export default function CommandPalette() {
   const router = useRouter();
   const { isCommandPaletteOpen, setIsCommandPaletteOpen, activeSymbol } = useBorsaty();
   const { language, setLanguage, theme, toggleTheme } = useApp();
   const [query, setQuery] = useState('');
+  const [recentSearches, setRecentSearches] = useState<RecentSearchItem[]>([]);
 
   const isAr = language === 'ar';
+
+  // Load recent searches from localStorage on mount
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(RECENT_SEARCHES_KEY);
+      if (stored) {
+        setRecentSearches(JSON.parse(stored));
+      }
+    } catch {
+      // Non-blocking
+    }
+  }, [isCommandPaletteOpen]);
+
+  const saveRecentSearch = useCallback((stock: { symbol: string; nameEn: string; nameAr: string; market: string }) => {
+    try {
+      setRecentSearches((prev) => {
+        const filtered = prev.filter((item) => item.symbol !== stock.symbol);
+        const updated = [{ ...stock, timestamp: Date.now() }, ...filtered].slice(0, 5);
+        localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(updated));
+        return updated;
+      });
+    } catch {
+      // Non-blocking
+    }
+  }, []);
+
+  const clearRecentSearches = useCallback((e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    try {
+      localStorage.removeItem(RECENT_SEARCHES_KEY);
+      setRecentSearches([]);
+    } catch {
+      // Non-blocking
+    }
+  }, []);
 
   // Global keyboard shortcuts: Ctrl+K / Cmd+K and G+H, G+P, G+W, G+S
   useEffect(() => {
@@ -122,10 +170,11 @@ export default function CommandPalette() {
 
   if (!isCommandPaletteOpen) return null;
 
-  const handleSelectStock = (sym: string) => {
+  const handleSelectStock = (stock: StockQuickItem | RecentSearchItem) => {
+    saveRecentSearch(stock);
     setIsCommandPaletteOpen(false);
     setQuery('');
-    router.push(`/stock/${sym}`);
+    router.push(`/stock/${stock.symbol}`);
   };
 
   const handleNavigate = (path: string) => {
@@ -155,11 +204,11 @@ export default function CommandPalette() {
     <div
       role="dialog"
       aria-modal="true"
-      className="fixed inset-0 z-50 flex items-start justify-center pt-20 px-4 bg-slate-950/60 backdrop-blur-sm transition-opacity"
+      className="fixed inset-0 z-50 flex items-start justify-center pt-20 px-4 bg-slate-950/70 backdrop-blur-md transition-opacity animate-in fade-in duration-150"
       onClick={() => setIsCommandPaletteOpen(false)}
     >
       <div
-        className="w-full max-w-xl bg-white dark:bg-[#0f172a] rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden text-slate-900 dark:text-white"
+        className="w-full max-w-xl bg-white dark:bg-[#0B1120] rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden text-slate-900 dark:text-white"
         onClick={(e) => e.stopPropagation()}
       >
         <Command
@@ -171,7 +220,7 @@ export default function CommandPalette() {
         >
           {/* Search Input Bar */}
           <div className="flex items-center px-4 border-b border-slate-200 dark:border-slate-800 gap-3">
-            <Search className="w-5 h-5 text-slate-400 shrink-0" />
+            <Search className="w-5 h-5 text-emerald-500 shrink-0" />
             <Command.Input
               value={query}
               onValueChange={setQuery}
@@ -194,11 +243,60 @@ export default function CommandPalette() {
               {isAr ? 'لا توجد نتائج مطابقة لبحثك' : 'No matching results found.'}
             </Command.Empty>
 
-            {/* Quick Stocks Group */}
+            {/* 1. Recent Searches (If Available) */}
+            {recentSearches.length > 0 && query.trim() === '' && (
+              <Command.Group
+                heading={
+                  <div className="flex items-center justify-between px-3 py-1 text-[11px] font-black tracking-wider uppercase text-slate-400">
+                    <span className="flex items-center gap-1.5">
+                      <Clock className="w-3.5 h-3.5 text-slate-400" />
+                      {isAr ? 'عمليات البحث الأخيرة' : 'Recent Searches'}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={clearRecentSearches}
+                      className="hover:text-rose-500 transition-colors flex items-center gap-1 text-[10px] lowercase cursor-pointer"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                      {isAr ? 'مسح' : 'clear'}
+                    </button>
+                  </div>
+                }
+              >
+                {recentSearches.map((stock) => (
+                  <Command.Item
+                    key={`recent-${stock.symbol}`}
+                    value={`recent ${stock.symbol} ${stock.nameEn} ${stock.nameAr}`}
+                    onSelect={() => handleSelectStock(stock)}
+                    className="flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors aria-selected:bg-emerald-50 dark:aria-selected:bg-emerald-500/10 aria-selected:text-emerald-600 dark:aria-selected:text-emerald-400"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-bold text-[11px] text-slate-600 dark:text-slate-300">
+                        <Clock className="w-3.5 h-3.5 text-slate-400" />
+                      </div>
+                      <div>
+                        <div className="font-extrabold text-sm">{stock.symbol}</div>
+                        <div className="text-[11px] text-slate-500 dark:text-slate-400">
+                          {isAr ? stock.nameAr : stock.nameEn}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-slate-100 dark:bg-slate-800 text-slate-500">
+                        {stock.market}
+                      </span>
+                      <ArrowRight className="w-3.5 h-3.5 text-slate-400 rtl:rotate-180" />
+                    </div>
+                  </Command.Item>
+                ))}
+              </Command.Group>
+            )}
+
+            {/* 2. Popular Stocks Group */}
             <Command.Group
               heading={
                 <span className="text-[11px] font-black tracking-wider uppercase text-slate-400 px-3 py-1 block">
-                  {isAr ? 'الأسهم والأدوات الفنية' : 'Stocks & Instruments'}
+                  {isAr ? 'الأسهم الأكثر تداولاً' : 'Popular Stocks'}
                 </span>
               }
             >
@@ -206,7 +304,7 @@ export default function CommandPalette() {
                 <Command.Item
                   key={stock.symbol}
                   value={`${stock.symbol} ${stock.nameEn} ${stock.nameAr} ${stock.market}`}
-                  onSelect={() => handleSelectStock(stock.symbol)}
+                  onSelect={() => handleSelectStock(stock)}
                   className="flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors aria-selected:bg-emerald-50 dark:aria-selected:bg-emerald-500/10 aria-selected:text-emerald-600 dark:aria-selected:text-emerald-400"
                 >
                   <div className="flex items-center gap-3">
@@ -224,13 +322,13 @@ export default function CommandPalette() {
                     <span className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-slate-100 dark:bg-slate-800 text-slate-500">
                       {stock.market}
                     </span>
-                    <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
+                    <ArrowRight className="w-3.5 h-3.5 text-slate-400 rtl:rotate-180" />
                   </div>
                 </Command.Item>
               ))}
             </Command.Group>
 
-            {/* Platform Navigation */}
+            {/* 3. Platform Navigation */}
             <Command.Group
               heading={
                 <span className="text-[11px] font-black tracking-wider uppercase text-slate-400 px-3 py-1 block">
@@ -263,17 +361,6 @@ export default function CommandPalette() {
               </Command.Item>
 
               <Command.Item
-                value="signals trading setups إشارات التداول"
-                onSelect={() => handleNavigate('/signals')}
-                className="flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors aria-selected:bg-emerald-50 dark:aria-selected:bg-emerald-500/10"
-              >
-                <div className="flex items-center gap-3">
-                  <BarChart3 className="w-4 h-4 text-indigo-600" />
-                  <span>{isAr ? 'الإشارات والفرص الفنية' : 'Trading Signals & Confluence'}</span>
-                </div>
-              </Command.Item>
-
-              <Command.Item
                 value="portfolio holdings stocks tracker المحفظة الصفقات"
                 onSelect={() => handleNavigate('/portfolio')}
                 className="flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors aria-selected:bg-emerald-50 dark:aria-selected:bg-emerald-500/10"
@@ -286,6 +373,17 @@ export default function CommandPalette() {
               </Command.Item>
 
               <Command.Item
+                value="compare stocks performance correlation مقارنة الأسهم"
+                onSelect={() => handleNavigate('/compare')}
+                className="flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors aria-selected:bg-emerald-50 dark:aria-selected:bg-emerald-500/10"
+              >
+                <div className="flex items-center gap-3">
+                  <GitCompare className="w-4 h-4 text-violet-500" />
+                  <span>{isAr ? 'مقارنة الأسهم والمؤشرات (Compare)' : 'Compare Assets Terminal'}</span>
+                </div>
+              </Command.Item>
+
+              <Command.Item
                 value="calendar economic events macro cpi fed الأجندة الاقتصادية"
                 onSelect={() => handleNavigate('/calendar')}
                 className="flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors aria-selected:bg-emerald-50 dark:aria-selected:bg-emerald-500/10"
@@ -294,7 +392,6 @@ export default function CommandPalette() {
                   <Calendar className="w-4 h-4 text-rose-500" />
                   <span>{isAr ? 'الأجندة الاقتصادية والمؤشرات (Calendar)' : 'Economic Calendar'}</span>
                 </div>
-                <kbd className="text-[10px] text-slate-400 font-mono">G + C</kbd>
               </Command.Item>
 
               <Command.Item
@@ -310,13 +407,13 @@ export default function CommandPalette() {
               </Command.Item>
 
               <Command.Item
-                value="compare stocks performance correlation مقارنة الأسهم"
-                onSelect={() => handleNavigate('/compare')}
+                value="signals trading setups إشارات التداول"
+                onSelect={() => handleNavigate('/signals')}
                 className="flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors aria-selected:bg-emerald-50 dark:aria-selected:bg-emerald-500/10"
               >
                 <div className="flex items-center gap-3">
-                  <GitCompare className="w-4 h-4 text-violet-500" />
-                  <span>{isAr ? 'مقارنة الأسهم والمؤشرات (Compare)' : 'Compare Assets Terminal'}</span>
+                  <BarChart3 className="w-4 h-4 text-emerald-600" />
+                  <span>{isAr ? 'الإشارات والفرص الفنية' : 'Trading Signals & Confluence'}</span>
                 </div>
               </Command.Item>
 
@@ -365,7 +462,7 @@ export default function CommandPalette() {
               </Command.Item>
             </Command.Group>
 
-            {/* Quick Actions & Settings */}
+            {/* 4. Quick Actions & Settings */}
             <Command.Group
               heading={
                 <span className="text-[11px] font-black tracking-wider uppercase text-slate-400 px-3 py-1 block">
@@ -373,6 +470,22 @@ export default function CommandPalette() {
                 </span>
               }
             >
+              {activeSymbol && (
+                <Command.Item
+                  value={`download pdf institutional report تحميل تقرير ${activeSymbol}`}
+                  onSelect={handleDownloadPdf}
+                  className="flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors aria-selected:bg-emerald-50 dark:aria-selected:bg-emerald-500/10"
+                >
+                  <div className="flex items-center gap-3">
+                    <FileDown className="w-4 h-4 text-rose-500" />
+                    <span>
+                      {isAr ? `تحميل التقرير المؤسسي PDF (${activeSymbol})` : `Download Institutional PDF (${activeSymbol})`}
+                    </span>
+                  </div>
+                  <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                </Command.Item>
+              )}
+
               <Command.Item
                 value="theme toggle dark light mode تغيير المظهر"
                 onSelect={handleToggleTheme}
@@ -394,22 +507,6 @@ export default function CommandPalette() {
                   <span>{language === 'ar' ? 'Change Language to English' : 'تغيير اللغة إلى العربية'}</span>
                 </div>
               </Command.Item>
-
-              {activeSymbol && (
-                <Command.Item
-                  value={`download pdf institutional report تحميل تقرير ${activeSymbol}`}
-                  onSelect={handleDownloadPdf}
-                  className="flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors aria-selected:bg-emerald-50 dark:aria-selected:bg-emerald-500/10"
-                >
-                  <div className="flex items-center gap-3">
-                    <FileDown className="w-4 h-4 text-rose-500" />
-                    <span>
-                      {isAr ? `تحميل التقرير المؤسسي PDF (${activeSymbol})` : `Download Institutional PDF (${activeSymbol})`}
-                    </span>
-                  </div>
-                  <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                </Command.Item>
-              )}
             </Command.Group>
           </Command.List>
 

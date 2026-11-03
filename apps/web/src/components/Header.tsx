@@ -117,17 +117,19 @@ export default function Header() {
 
         {/* Far Right: Search, Language, Theme, Clerk Auth */}
         <div className="flex items-center gap-2">
-          {/* Prominent Search Trigger: Pill on desktop, icon on mobile */}
+          {/* Prominent Search Trigger: Sleek Input-style button */}
           <button
             onClick={() => setIsCommandPaletteOpen(true)}
-            className="flex items-center gap-2 h-9 px-3 bg-slate-50 dark:bg-slate-900/90 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-xs text-slate-500 dark:text-slate-400 transition-colors shadow-sm cursor-pointer"
-            aria-label="Search markets and stocks"
+            className="group flex items-center justify-between w-36 sm:w-48 md:w-56 h-9 px-3 bg-slate-100/90 dark:bg-slate-900/90 hover:bg-slate-200/80 dark:hover:bg-slate-800/90 border border-slate-200 dark:border-slate-800 hover:border-emerald-500/40 dark:hover:border-emerald-500/40 rounded-xl text-xs text-slate-500 dark:text-slate-400 transition-all shadow-sm cursor-pointer"
+            aria-label="Search markets and stocks (Ctrl+K)"
           >
-            <Search className="w-3.5 h-3.5 text-slate-400" />
-            <span className="hidden sm:inline-block pe-4 text-start">
-              {t("common.searchPlaceholder")}
-            </span>
-            <kbd className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-mono font-bold text-slate-400 bg-slate-200/80 dark:bg-slate-800 rounded border border-slate-300 dark:border-slate-700">
+            <div className="flex items-center gap-2 truncate">
+              <Search className="w-3.5 h-3.5 text-slate-400 group-hover:text-emerald-500 transition-colors shrink-0" />
+              <span className="truncate text-slate-500 dark:text-slate-400 font-medium">
+                {isAr ? "ابحث في الأسواق..." : "Search markets..."}
+              </span>
+            </div>
+            <kbd className="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] font-mono font-bold text-slate-400 bg-white dark:bg-slate-800 rounded border border-slate-200 dark:border-slate-700 shadow-2xs shrink-0">
               ⌘K
             </kbd>
           </button>

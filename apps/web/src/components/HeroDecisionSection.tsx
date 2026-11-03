@@ -13,9 +13,11 @@ import {
   AlertTriangle,
   PlusCircle,
   Loader2,
+  ArrowLeftRight,
 } from 'lucide-react';
 import WatchlistButton from '@/components/WatchlistButton';
 import AlertButton from '@/components/AlertButton';
+import ShareStockButton from '@/components/stock/ShareStockButton';
 import AnimatedNumber from '@/components/ui/AnimatedNumber';
 import Logo from '@/components/branding/Logo';
 import { useApp } from '@/context/AppContext';
@@ -223,6 +225,15 @@ export default function HeroDecisionSection({
             symbol={company.symbol}
             currentPrice={quote.price}
           />
+          <ShareStockButton symbol={company.symbol} />
+          <Link
+            href={`/compare?s1=${company.symbol}`}
+            title={isAr ? 'مقارنة هذا السهم مع أسهم أخرى' : 'Compare stock with peers'}
+            className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-colors shadow-2xs"
+          >
+            <ArrowLeftRight className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">{isAr ? 'مقارنة' : 'Compare'}</span>
+          </Link>
           {getStrategyBadges(company.symbol).length > 0 && (
             <>
               <span className="text-slate-300 dark:text-slate-700">|</span>

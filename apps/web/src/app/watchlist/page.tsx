@@ -16,7 +16,8 @@ import {
   Activity,
   Layers,
   Sparkles,
-  User
+  User,
+  Download,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useApp } from "@/context/AppContext";
@@ -96,6 +97,34 @@ export default function WatchlistPage() {
     }
   };
 
+  const exportWatchlistToCSV = () => {
+    if (items.length === 0) return;
+    const headers = ["Symbol", "Name EN", "Name AR", "Price", "Change %", "Currency", "Market"];
+    const rows = items.map((item) => {
+      const q = quotes[item.symbol];
+      return [
+        item.symbol,
+        `"${(item.nameEn || "").replace(/"/g, '""')}"`,
+        `"${(item.nameAr || "").replace(/"/g, '""')}"`,
+        q ? q.price.toFixed(2) : "",
+        q ? `${q.changePct.toFixed(2)}%` : "",
+        q ? q.currency : "EGP",
+        q ? q.market : "EGX",
+      ];
+    });
+
+    const csvContent =
+      "data:text/csv;charset=utf-8,\uFEFF" + [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `borsaty_watchlist_${new Date().toISOString().split("T")[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success(isAr ? "تم تصدير قائمة المتابعة بنجاح بصيغة CSV" : "Watchlist exported to CSV");
+  };
+
   useEffect(() => {
     if (isLoaded) {
       fetchWatchlist();
@@ -167,6 +196,17 @@ export default function WatchlistPage() {
         </div>
 
         <div className="flex items-center gap-2">
+          {items.length > 0 && (
+            <button
+              type="button"
+              onClick={exportWatchlistToCSV}
+              aria-label={isAr ? "تصدير إلى CSV" : "Export to CSV"}
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors shadow-sm cursor-pointer"
+            >
+              <Download className="w-3.5 h-3.5 text-slate-500" />
+              <span>{isAr ? "تصدير CSV" : "Export CSV"}</span>
+            </button>
+          )}
           <Link
             href="/screener"
             className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-bold border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors shadow-sm"

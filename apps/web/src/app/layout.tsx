@@ -4,6 +4,7 @@ import { Cairo, Inter } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import CommandPalette from "@/components/CommandPalette";
+import KeyboardShortcutsModal from "@/components/KeyboardShortcutsModal";
 import MobileBottomNav from "@/components/MobileBottomNav";
 import ThePulse from "@/components/ThePulse";
 import Logo from "@/components/branding/Logo";
@@ -61,6 +62,7 @@ export default function RootLayout({
               <ServiceWorkerRegister />
               <DevToolsGuard />
               <CommandPalette />
+              <KeyboardShortcutsModal />
               <Toaster position="top-right" richColors closeButton />
               <Header />
               <main className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 pb-28 md:pb-16">

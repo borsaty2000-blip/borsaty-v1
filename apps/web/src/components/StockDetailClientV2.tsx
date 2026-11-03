@@ -39,6 +39,8 @@ const InsiderActivityCard = dynamic(() => import('@/components/InsiderActivityCa
   loading: () => <div className="h-64 rounded-xl bg-slate-100 dark:bg-slate-900/40 animate-pulse border border-slate-200 dark:border-slate-800" />,
 });
 import ErrorBoundary from '@/components/ErrorBoundary';
+import RecentlyViewedStocks, { recordRecentlyViewed } from '@/components/stock/RecentlyViewedStocks';
+import QuickTipsCard from '@/components/stock/QuickTipsCard';
 import { safeParseAnalysis, ValidatedUnifiedAnalysis } from '@/lib/schemas';
 import { useApp } from '@/context/AppContext';
 import { useBorsaty, ChartHighlightPoint } from '@/context/BorsatyContext';
@@ -170,6 +172,13 @@ export default function StockDetailClientV2({
   // Sync active symbol with global context
   useEffect(() => {
     setActiveSymbol(company.symbol);
+    recordRecentlyViewed({
+      symbol: company.symbol,
+      nameEn: company.nameEn,
+      nameAr: company.nameAr,
+      price: quote.price,
+      changePct: quote.changePct,
+    });
     return () => {
       setActiveSymbol(null);
       clearHighlight();
@@ -833,6 +842,12 @@ export default function StockDetailClientV2({
         />
       </section>
 
+      {/* Institutional Analyst Guide & Recently Viewed Ticker Bar */}
+      <div className="space-y-4 my-2">
+        <RecentlyViewedStocks currentSymbol={company.symbol} />
+        <QuickTipsCard />
+      </div>
+
       {/* ═══════════════════════════════════════════════════════════════ */}
       {/* PART 2: THE INTERMEDIATE LAYER (Simple Chart + Plain Narrative) */}
       {/* ═══════════════════════════════════════════════════════════════ */}
@@ -891,6 +906,8 @@ export default function StockDetailClientV2({
           />
         </ErrorBoundary>
       </section>
+
+
 
       {/* ═══════════════════════════════════════════════════════════════ */}
       {/* PART 3: THE ADVANCED LAYER (Below the Fold — Progressive Disclosure) */}
@@ -978,6 +995,8 @@ export default function StockDetailClientV2({
           })}
         </div>
       </section>
+
+
     </div>
   );
 }

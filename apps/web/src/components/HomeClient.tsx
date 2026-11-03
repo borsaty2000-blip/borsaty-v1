@@ -18,6 +18,7 @@ import {
 import dynamic from 'next/dynamic';
 import { useApp } from '@/context/AppContext';
 import { DataWrapper } from '@/components/ui/DataWrapper';
+import OpportunityScanner from '@/components/OpportunityScanner';
 
 const SectorHeatmap = dynamic(() => import('@/components/SectorHeatmap'), {
   ssr: false,
@@ -294,6 +295,11 @@ export default function HomeClient() {
           })}
         </div>
       </div>
+
+      {/* ═══════════════════════════════════════════════════════════════ */}
+      {/* KILLER FEATURE: THE OPPORTUNITY SCANNER (Top 3 Setups)         */}
+      {/* ═══════════════════════════════════════════════════════════════ */}
+      <OpportunityScanner />
 
       {/* ═══════════════════════════════════════════════════════════════ */}
       {/* ROW 2: THE MARKET HEAT MAP (Full-Width Finviz-Style Treemap) */}

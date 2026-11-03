@@ -60,6 +60,9 @@ interface QuoteInfo {
   change: number;
   changePct: number;
   currency: string;
+  freshness?: 'LIVE' | 'TODAY_CLOSE' | 'DELAYED';
+  priceTimestamp?: string;
+  isUnderMaintenance?: boolean;
 }
 
 interface StockDetailClientProps {
@@ -279,27 +282,54 @@ export default function StockDetailClientV2({
           </div>
         </div>
 
-        {/* Current Price Banner */}
-        <div className="flex items-baseline gap-3">
-          <div className="text-3xl md:text-4xl font-black tabular-nums text-slate-900 dark:text-white flex items-baseline">
-            <AnimatedNumber value={quote.price} decimals={2} />
-            <span className="text-sm font-bold text-slate-500 ms-1.5">{quote.currency}</span>
-          </div>
-          <div
-            className={`flex items-center gap-1 text-sm md:text-base font-extrabold px-2.5 py-1 rounded-lg ${
-              isPositive
-                ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
-                : 'bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400'
-            }`}
-          >
-            {isPositive ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
-            <span className="tabular-nums flex items-center">
-              {isPositive ? '+' : ''}
-              <AnimatedNumber value={quote.change} decimals={2} />
-              <span className="mx-1">
-                (<AnimatedNumber value={quote.changePct} decimals={2} prefix={isPositive ? '+' : ''} suffix="%" />)
+        {/* Current Price Banner & Freshness */}
+        <div className="flex flex-col md:items-end gap-1.5">
+          <div className="flex items-baseline gap-3">
+            <div className="text-3xl md:text-4xl font-black tabular-nums text-slate-900 dark:text-white flex items-baseline">
+              <AnimatedNumber value={quote.price} decimals={2} />
+              <span className="text-sm font-bold text-slate-500 ms-1.5">{quote.currency}</span>
+            </div>
+            <div
+              className={`flex items-center gap-1 text-sm md:text-base font-extrabold px-2.5 py-1 rounded-lg ${
+                isPositive
+                  ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+                  : 'bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400'
+              }`}
+            >
+              {isPositive ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
+              <span className="tabular-nums flex items-center">
+                {isPositive ? '+' : ''}
+                <AnimatedNumber value={quote.change} decimals={2} />
+                <span className="mx-1">
+                  (<AnimatedNumber value={quote.changePct} decimals={2} prefix={isPositive ? '+' : ''} suffix="%" />)
+                </span>
               </span>
-            </span>
+            </div>
+          </div>
+
+          {/* Freshness Badge */}
+          <div className="flex items-center gap-2">
+            {quote.isUnderMaintenance ? (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">
+                <AlertTriangle className="w-3 h-3" />
+                {isAr ? 'بيانات تحت الصيانة' : 'Data Under Maintenance'}
+              </span>
+            ) : quote.freshness === 'LIVE' ? (
+              <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                {isAr ? 'لحظي مباشر' : 'Live'}
+              </span>
+            ) : quote.freshness === 'DELAYED' ? (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">
+                <AlertTriangle className="w-3 h-3" />
+                {isAr ? 'بيانات مؤجلة' : 'Data Delayed'}
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-slate-700">
+                <span className="w-1.5 h-1.5 rounded-full bg-sky-500" />
+                {isAr ? 'إغلاق اليوم' : "Today's Close"}
+              </span>
+            )}
           </div>
         </div>
       </div>

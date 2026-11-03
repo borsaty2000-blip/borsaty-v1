@@ -70,6 +70,9 @@ export default async function StockDetailPage({ params }: StockPageProps) {
   let currentPrice = company.currentPrice || 86.5;
   let change = company.change || 0;
   let changePct = company.changePct || 0;
+  let freshness: "LIVE" | "TODAY_CLOSE" | "DELAYED" = "TODAY_CLOSE";
+  let priceTimestamp = new Date().toISOString();
+  let isUnderMaintenance = false;
   let rawCandles: CandleDataPoint[] = [];
 
   try {
@@ -88,6 +91,9 @@ export default async function StockDetailPage({ params }: StockPageProps) {
         currentPrice = q.price;
         change = typeof q.change === "number" ? q.change : change;
         changePct = typeof q.change_pct === "number" ? q.change_pct : changePct;
+        freshness = (q.freshness as "LIVE" | "TODAY_CLOSE" | "DELAYED") || "TODAY_CLOSE";
+        priceTimestamp = q.price_timestamp || priceTimestamp;
+        isUnderMaintenance = Boolean(q.is_under_maintenance);
       }
     }
 
@@ -117,16 +123,19 @@ export default async function StockDetailPage({ params }: StockPageProps) {
     price: currentPrice,
     change: change,
     changePct: changePct,
+    freshness,
+    priceTimestamp,
+    isUnderMaintenance,
     dataQuality: {
       provider: "Live Data Feed",
-      isRealtime: true,
-      isDelayed: false,
-      delayMinutes: 0,
+      isRealtime: freshness === "LIVE",
+      isDelayed: freshness === "DELAYED",
+      delayMinutes: freshness === "DELAYED" ? 15 : 0,
       hasOrderBook: hasOrderBook,
       orderBookProxyUsed: !hasOrderBook,
-      warnings: [],
+      warnings: isUnderMaintenance ? ["Price deviation audit active"] : [],
       missingFields: !hasOrderBook ? ["Bid/Ask Depth"] : [],
-      verifiedAt: new Date().toISOString(),
+      verifiedAt: priceTimestamp,
     },
   };
 

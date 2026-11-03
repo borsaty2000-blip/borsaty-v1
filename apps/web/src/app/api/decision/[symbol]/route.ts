@@ -16,6 +16,52 @@ export async function GET(
   const candles = await getStockCandles(sym);
   const currentPrice = company?.currentPrice || (candles.length > 0 ? candles[candles.length - 1].close : 86.5);
 
+  // Safety net: check if candle close drastically diverges from verified company current price (>25%)
+  if (candles.length > 0 && company?.currentPrice) {
+    const lastClose = candles[candles.length - 1].close;
+    const deviation = Math.abs(currentPrice - lastClose) / Math.max(lastClose, 1);
+    if (deviation > 0.25) {
+      return NextResponse.json({
+        symbol: sym,
+        decision: "MAINTENANCE",
+        confidence_level: "LOW",
+        confidence_score: 0.0,
+        direction: "neutral",
+        timeframe: "1D",
+        generated_at: new Date().toISOString(),
+        entry_zone: [0, 0],
+        stop_loss: 0,
+        targets: [],
+        primary_rr: 0,
+        why_ar: [
+          "البيانات السعرية للسهم تخضع للتدقيق والصيانة الفنية لضمان دقة الأسعار والصفقات.",
+          "تم تعليق إشارات الشراء والبيع تلقائياً لحماية قرارات التداول من أي أسعار غير دقيقة."
+        ],
+        why_en: [
+          "Stock price feed is undergoing technical verification to ensure institutional accuracy.",
+          "Automated trade signals are suspended to prevent decisions based on divergent prices."
+        ],
+        risks_ar: ["التداول أثناء صيانة البيانات قد يؤدي إلى أوامر غير دقيقة."],
+        risks_en: ["Trading during data maintenance exposes orders to execution discrepancies."],
+        historical_evidence: {
+          status: "under_maintenance",
+          sample_adequate: false,
+          hit_rate_t1: null,
+          wilson_ci_95: null,
+          total_signals: 0,
+          message_ar: "البيانات تحت الصيانة الفنية",
+          message_en: "Data under technical maintenance"
+        },
+        disclaimer_ar: "هذا التحليل والقرار تعليمي وكمي بحت، ولا يُعتبر توصية استثمارية مباشرة بالبيع أو الشراء.",
+        disclaimer_en: "This analysis is strictly educational and quantitative, and does not constitute financial or investment advice."
+      }, {
+        headers: {
+          "Cache-Control": "public, s-maxage=60, stale-while-revalidate=30",
+        },
+      });
+    }
+  }
+
   const analysisUrl = getPythonServiceUrl();
 
   try {

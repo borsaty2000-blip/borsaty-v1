@@ -24,6 +24,7 @@ from typing import Optional, Tuple, List, Dict, Any, Union
 INSTRUMENTS = {
     "COMI":   {"start_price": 65.0,    "annual_drift": 0.12, "annual_vol": 0.28},
     "ABUK":   {"start_price": 18.0,    "annual_drift": 0.09, "annual_vol": 0.32},
+    "SWDY":   {"start_price": 45.0,    "annual_drift": 0.18, "annual_vol": 0.30},
     "2222":   {"start_price": 32.0,    "annual_drift": 0.08, "annual_vol": 0.22},
     "1120":   {"start_price": 120.0,   "annual_drift": 0.10, "annual_vol": 0.25},
     "AAPL":   {"start_price": 145.0,   "annual_drift": 0.15, "annual_vol": 0.30},

@@ -23,6 +23,9 @@ export async function GET(request: Request) {
   let liveChange = company.change;
   let liveChangePct = company.changePct;
   let quoteSource = "db";
+  let freshness: "LIVE" | "TODAY_CLOSE" | "DELAYED" = "TODAY_CLOSE";
+  let priceTimestamp = new Date().toISOString();
+  let isUnderMaintenance = false;
 
   // 1. Try Redis cache for quote
   try {
@@ -33,6 +36,9 @@ export async function GET(request: Request) {
       liveChange = parsed.change;
       liveChangePct = parsed.changePct;
       quoteSource = parsed.source || "cache";
+      freshness = parsed.freshness || "TODAY_CLOSE";
+      priceTimestamp = parsed.priceTimestamp || priceTimestamp;
+      isUnderMaintenance = Boolean(parsed.isUnderMaintenance);
     }
   } catch {
     // Redis offline
@@ -52,11 +58,22 @@ export async function GET(request: Request) {
           liveChange = typeof qData.change === "number" ? qData.change : liveChange;
           liveChangePct = typeof qData.change_pct === "number" ? qData.change_pct : liveChangePct;
           quoteSource = qData.source || "live";
+          freshness = (qData.freshness as "LIVE" | "TODAY_CLOSE" | "DELAYED") || "TODAY_CLOSE";
+          priceTimestamp = qData.price_timestamp || priceTimestamp;
+          isUnderMaintenance = Boolean(qData.is_under_maintenance);
 
           // Save to Redis (5 min TTL)
           await redis.set(
             cacheKey,
-            JSON.stringify({ price: livePrice, change: liveChange, changePct: liveChangePct, source: quoteSource }),
+            JSON.stringify({
+              price: livePrice,
+              change: liveChange,
+              changePct: liveChangePct,
+              source: quoteSource,
+              freshness,
+              priceTimestamp,
+              isUnderMaintenance,
+            }),
             { ex: 300 }
           );
         }
@@ -77,6 +94,9 @@ export async function GET(request: Request) {
     price: livePrice,
     change: liveChange,
     changePct: liveChangePct,
+    freshness,
+    priceTimestamp,
+    isUnderMaintenance,
     high52w: company.high52w,
     low52w: company.low52w,
     marketCap: company.marketCap,
@@ -86,15 +106,15 @@ export async function GET(request: Request) {
     timestamp: new Date().toISOString(),
     source: quoteSource,
     dataQuality: {
-      provider: "Live Data Feed (yfinance / EODHD)",
-      isRealtime: true,
-      isDelayed: false,
-      delayMinutes: 0,
+      provider: "Live Data Feed (TradingView / yfinance / EODHD)",
+      isRealtime: freshness === "LIVE",
+      isDelayed: freshness === "DELAYED",
+      delayMinutes: freshness === "DELAYED" ? 15 : 0,
       hasOrderBook: hasOrderBook,
       orderBookProxyUsed: !hasOrderBook,
-      warnings: [],
+      warnings: isUnderMaintenance ? ["Price deviation audit active"] : [],
       missingFields: !hasOrderBook ? ["Bid/Ask Depth L2"] : [],
-      verifiedAt: new Date().toISOString(),
+      verifiedAt: priceTimestamp,
     },
   }, {
     headers: {

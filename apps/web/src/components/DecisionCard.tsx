@@ -62,23 +62,28 @@ export function DecisionCard({
   const [portfolioModalOpen, setPortfolioModalOpen] = useState(false);
 
   const dec = decisionData.decision?.toUpperCase() || 'WAIT';
-  const isStrongBuy = dec.includes('STRONG BUY');
-  const isBuy = dec.includes('BUY');
-  const isStrongSell = dec.includes('STRONG SELL');
-  const isSell = dec.includes('SELL');
+  const isMaintenance = dec === 'MAINTENANCE';
+  const isStrongBuy = !isMaintenance && dec.includes('STRONG BUY');
+  const isBuy = !isMaintenance && dec.includes('BUY');
+  const isStrongSell = !isMaintenance && dec.includes('STRONG SELL');
+  const isSell = !isMaintenance && dec.includes('SELL');
 
   // Confluence percentage (0 - 100)
-  const confluencePct = Math.round(decisionData.confidence_score * 100);
+  const confluencePct = isMaintenance ? 0 : Math.round(decisionData.confidence_score * 100);
 
   // Massive background colors per requirements
-  const cardGradient = isBuy
+  const cardGradient = isMaintenance
+    ? 'bg-gradient-to-br from-amber-950 via-slate-900 to-slate-950 text-white shadow-xl border-amber-600/40'
+    : isBuy
     ? 'bg-gradient-to-br from-emerald-600 via-emerald-700 to-teal-900 text-white shadow-xl shadow-emerald-950/20 border-emerald-500/40'
     : isSell
     ? 'bg-gradient-to-br from-rose-600 via-rose-700 to-red-950 text-white shadow-xl shadow-rose-950/20 border-rose-500/40'
     : 'bg-gradient-to-br from-slate-700 via-slate-800 to-slate-950 text-white shadow-xl border-slate-600/40';
 
   // Primary decision text
-  const decisionTextEn = isStrongBuy
+  const decisionTextEn = isMaintenance
+    ? 'DATA UNDER MAINTENANCE'
+    : isStrongBuy
     ? 'STRONG BUY'
     : isBuy
     ? 'BUY'
@@ -88,7 +93,9 @@ export function DecisionCard({
     ? 'SELL'
     : 'WATCH & WAIT';
 
-  const decisionTextAr = isStrongBuy
+  const decisionTextAr = isMaintenance
+    ? 'بيانات تحت الصيانة الفنية'
+    : isStrongBuy
     ? 'شراء قوي'
     : isBuy
     ? 'شراء'
@@ -190,50 +197,68 @@ export function DecisionCard({
           </div>
         </div>
 
-        {/* Trade Parameters 4-Box Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 py-4 border-b border-white/15 text-xs font-semibold">
-          <div className="bg-white/10 backdrop-blur-md p-3 rounded-xl border border-white/15">
-            <span className="text-[10px] text-white/70 block mb-1">
-              {isAr ? 'نطاق الدخول' : 'Entry Zone'}
-            </span>
-            <span className="text-sm md:text-base font-black tabular-nums text-white">
-              {decisionData.entry_zone[0]} - {decisionData.entry_zone[1]}
-            </span>
-            <span className="text-[10px] text-white/70 ms-1">{currency}</span>
+        {/* Trade Parameters 4-Box Grid or Maintenance Banner */}
+        {isMaintenance ? (
+          <div className="py-4 border-b border-white/15">
+            <div className="flex items-start gap-3 bg-white/10 backdrop-blur-md p-4 rounded-xl border border-white/15">
+              <AlertTriangle className="w-5 h-5 text-amber-300 shrink-0 mt-0.5" />
+              <div className="space-y-1 text-xs">
+                <span className="font-extrabold text-white block">
+                  {isAr ? 'حماية دقة الأسعار مفعلة' : 'Institutional Price Accuracy Guard Active'}
+                </span>
+                <p className="text-white/80 leading-relaxed">
+                  {isAr
+                    ? 'يتم تدقيق ومطابقة أسعار السهم مع دفاتر التداول المباشرة. تم تعليق الإشارات الفنية التلقائية لحماية رأس المال حتى اكتمال التحقق الفني.'
+                    : 'Stock price data is currently undergoing audit and verification with official market feeds. Automated trading signals are paused to prevent inaccurate execution.'}
+                </p>
+              </div>
+            </div>
           </div>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 py-4 border-b border-white/15 text-xs font-semibold">
+            <div className="bg-white/10 backdrop-blur-md p-3 rounded-xl border border-white/15">
+              <span className="text-[10px] text-white/70 block mb-1">
+                {isAr ? 'نطاق الدخول' : 'Entry Zone'}
+              </span>
+              <span className="text-sm md:text-base font-black tabular-nums text-white">
+                {decisionData.entry_zone[0]} - {decisionData.entry_zone[1]}
+              </span>
+              <span className="text-[10px] text-white/70 ms-1">{currency}</span>
+            </div>
 
-          <div className="bg-white/10 backdrop-blur-md p-3 rounded-xl border border-white/15">
-            <span className="text-[10px] text-rose-200 block mb-1">
-              {isAr ? 'وقف الخسارة' : 'Stop Loss'}
-            </span>
-            <span className="text-sm md:text-base font-black tabular-nums text-white">
-              {decisionData.stop_loss}
-            </span>
-            <span className="text-[10px] text-white/70 ms-1">{currency}</span>
-          </div>
+            <div className="bg-white/10 backdrop-blur-md p-3 rounded-xl border border-white/15">
+              <span className="text-[10px] text-rose-200 block mb-1">
+                {isAr ? 'وقف الخسارة' : 'Stop Loss'}
+              </span>
+              <span className="text-sm md:text-base font-black tabular-nums text-white">
+                {decisionData.stop_loss}
+              </span>
+              <span className="text-[10px] text-white/70 ms-1">{currency}</span>
+            </div>
 
-          <div className="bg-white/10 backdrop-blur-md p-3 rounded-xl border border-white/15">
-            <span className="text-[10px] text-emerald-200 block mb-1">
-              {isAr ? 'الهدف الأول (T1)' : 'Target 1'}
-            </span>
-            <span className="text-sm md:text-base font-black tabular-nums text-white">
-              {decisionData.targets[0] || '—'}
-            </span>
-            <span className="text-[10px] text-white/70 ms-1">{currency}</span>
-          </div>
+            <div className="bg-white/10 backdrop-blur-md p-3 rounded-xl border border-white/15">
+              <span className="text-[10px] text-emerald-200 block mb-1">
+                {isAr ? 'الهدف الأول (T1)' : 'Target 1'}
+              </span>
+              <span className="text-sm md:text-base font-black tabular-nums text-white">
+                {decisionData.targets[0] || '—'}
+              </span>
+              <span className="text-[10px] text-white/70 ms-1">{currency}</span>
+            </div>
 
-          <div className="bg-white/10 backdrop-blur-md p-3 rounded-xl border border-white/15">
-            <span className="text-[10px] text-emerald-200 block mb-1">
-              {isAr ? 'نسبة العائد:المخاطرة' : 'R:R Ratio'}
-            </span>
-            <span className="text-sm md:text-base font-black tabular-nums text-white">
-              {decisionData.primary_rr}:1
-            </span>
-            <span className="text-[9px] text-white/70 block">
-              {isAr ? 'مكافأة ممتازة' : 'Reward/Risk'}
-            </span>
+            <div className="bg-white/10 backdrop-blur-md p-3 rounded-xl border border-white/15">
+              <span className="text-[10px] text-emerald-200 block mb-1">
+                {isAr ? 'نسبة العائد:المخاطرة' : 'R:R Ratio'}
+              </span>
+              <span className="text-sm md:text-base font-black tabular-nums text-white">
+                {decisionData.primary_rr}:1
+              </span>
+              <span className="text-[9px] text-white/70 block">
+                {isAr ? 'مكافأة ممتازة' : 'Reward/Risk'}
+              </span>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Target 2 & Catalysts preview */}
         <div className="py-3 text-xs space-y-2">

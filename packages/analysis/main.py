@@ -673,6 +673,20 @@ def decision_endpoint(symbol: str, payload: Optional[DecisionRequest] = None):
     sym = symbol.upper()
     tf = (payload.timeframe if payload else "1D") or "1D"
     
+    # Check maintenance flag from data fetcher
+    try:
+        q_check = global_real_data_fetcher.fetch_quote(sym, "EGX")
+        if q_check and q_check.get("is_under_maintenance"):
+            full_res = {"is_under_maintenance": True}
+            dec = global_decision_engine.decide(
+                symbol=sym,
+                full_analysis=full_res,
+                timeframe=tf,
+            )
+            return dataclasses.asdict(dec)
+    except Exception:
+        pass
+
     # If candles supplied, run fast analysis to formulate decision
     raw_candles = [c.model_dump() for c in payload.candles] if payload and payload.candles else None
     

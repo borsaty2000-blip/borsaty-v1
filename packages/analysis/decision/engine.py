@@ -70,6 +70,43 @@ class DecisionEngine:
     ) -> DecisionResult:
         sym = symbol.upper()
         now_str = datetime.now(timezone.utc).isoformat()
+
+        # 0. Safety net / Maintenance guard
+        if full_analysis.get("is_under_maintenance"):
+            return DecisionResult(
+                symbol=sym,
+                decision="MAINTENANCE",
+                confidence_level="LOW",
+                confidence_score=0.0,
+                direction="neutral",
+                timeframe=timeframe,
+                generated_at=now_str,
+                entry_zone=[0.0, 0.0],
+                stop_loss=0.0,
+                targets=[],
+                primary_rr=0.0,
+                why_ar=[
+                    "البيانات السعرية للسهم تخضع للتدقيق والصيانة الفنية لضمان دقة الأسعار والصفقات.",
+                    "تم تعليق إشارات الشراء والبيع تلقائياً لحماية قرارات التداول من أي أسعار غير دقيقة.",
+                ],
+                why_en=[
+                    "Stock price feed is undergoing technical verification to ensure institutional accuracy.",
+                    "Automated trade signals are suspended to prevent decisions based on divergent prices.",
+                ],
+                risks_ar=["التداول أثناء صيانة البيانات قد يؤدي إلى أوامر غير دقيقة."],
+                risks_en=["Trading during data maintenance exposes orders to execution discrepancies."],
+                historical_evidence={
+                    "status": "under_maintenance",
+                    "sample_adequate": False,
+                    "hit_rate_t1": None,
+                    "wilson_ci_95": None,
+                    "total_signals": 0,
+                    "message_ar": "البيانات تحت الصيانة الفنية",
+                    "message_en": "Data under technical maintenance",
+                },
+                disclaimer_ar=DISCLAIMER_AR,
+                disclaimer_en=DISCLAIMER_EN,
+            )
         
         tp = trade_plan or full_analysis.get("trade_plan") or {}
         confluence = full_analysis.get("confluence") or {}

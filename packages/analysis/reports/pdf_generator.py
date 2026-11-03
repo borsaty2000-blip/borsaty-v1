@@ -11,6 +11,7 @@ Performance: < 1.0 second per generation.
 from __future__ import annotations
 
 import io
+import os
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
@@ -24,6 +25,7 @@ from reportlab.lib.units import cm, mm
 from reportlab.pdfgen import canvas
 from reportlab.platypus import (
     HRFlowable,
+    Image as RLImage,
     KeepTogether,
     PageBreak,
     Paragraph,
@@ -110,11 +112,15 @@ class PDFReportGenerator:
         # PAGE 1: ARABIC
         # ═════════════════════════════════════════════════════════════════════
         
+        logo_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "assets", "logo.png"))
+        has_logo = os.path.exists(logo_path)
+        logo_elem_ar = RLImage(logo_path, width=4.5 * cm, height=1.0 * cm) if has_logo else Paragraph("<b><font size=14 color='#0A0A0A'>BORSATY</font></b>", styles["Normal"])
+
         # Header Table
         header_data_ar = [
             [
                 Paragraph(f"<b>{date_str}</b> | {shape_ar('التقرير الفني والكمي الشامل')}", styles["Normal"]),
-                Paragraph(f"<b><font size=14 color='#059669'>{shape_ar('بورصاتي')} BORSATY</font></b>", styles["Normal"]),
+                logo_elem_ar,
             ]
         ]
         t_header_ar = Table(header_data_ar, colWidths=[10 * cm, 7 * cm])
@@ -208,10 +214,12 @@ class PDFReportGenerator:
         # ═════════════════════════════════════════════════════════════════════
         story.append(PageBreak())
 
+        logo_elem_en = RLImage(logo_path, width=4.5 * cm, height=1.0 * cm) if has_logo else Paragraph("<b><font size=14 color='#0A0A0A'>BORSATY</font></b>", styles["Normal"])
+
         # Header Table (EN)
         header_data_en = [
             [
-                Paragraph("<b><font size=14 color='#059669'>BORSATY</font></b> | Quantitative Decision Platform", styles["Normal"]),
+                logo_elem_en,
                 Paragraph(f"<b>{date_str}</b> | Comprehensive Technical Report", styles["Normal"]),
             ]
         ]

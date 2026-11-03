@@ -9,6 +9,7 @@ import {
   Moon,
 } from 'lucide-react';
 import AuthButton from '@/components/AuthButton';
+import Logo from '@/components/branding/Logo';
 import { useApp } from '@/context/AppContext';
 import { useBorsaty } from '@/context/BorsatyContext';
 import LiveMegaMenu from '@/components/navigation/LiveMegaMenu';
@@ -77,12 +78,13 @@ export default function Header() {
           </button>
 
           <Link href="/" className="flex items-center gap-2.5 whitespace-nowrap group">
-            <div className="w-8 h-8 rounded-md bg-black text-white flex items-center justify-center font-bold text-lg shadow-xs group-hover:bg-slate-900 transition-colors border border-slate-800">
-              <span>B</span>
-            </div>
-            <span className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
-              {isAr ? 'بورصتي' : 'Borsaty'}
-            </span>
+            <Logo variant="primary" size={32} showText={true} className="dark:hidden" />
+            <Logo variant="white" size={32} showText={true} className="hidden dark:block" />
+            {isAr && (
+              <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 ms-0.5 border-s border-slate-200 dark:border-slate-800 ps-2">
+                بورصتي
+              </span>
+            )}
           </Link>
         </div>
 

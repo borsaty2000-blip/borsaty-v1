@@ -5,6 +5,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import CommandPalette from "@/components/CommandPalette";
 import MobileBottomNav from "@/components/MobileBottomNav";
+import Logo from "@/components/branding/Logo";
 import { AppProvider } from "@/context/AppContext";
 import { BorsatyProvider } from "@/context/BorsatyContext";
 import { ClerkProvider } from "@clerk/nextjs";
@@ -28,6 +29,15 @@ export const metadata: Metadata = {
   title: "Borsaty — Financial Markets & Stock Analysis",
   description: "Real-time market quotes, technical indicators, portfolio tracker, and economic calendar on Borsaty.",
   manifest: "/manifest.json",
+  icons: {
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/favicon.svg", type: "image/svg+xml" },
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+  },
 };
 
 export default function RootLayout({
@@ -57,13 +67,10 @@ export default function RootLayout({
                 <div className="max-w-7xl mx-auto space-y-6">
                   {/* Top Row: Logo, Status Indicator, Exchange tags */}
                   <div className="flex flex-col md:flex-row items-center justify-between gap-4 pb-6 border-b border-slate-800/80">
-                    <div className="flex items-center gap-2 whitespace-nowrap">
-                      <div className="relative w-6 h-6 rounded bg-black border border-slate-700 flex items-center justify-center text-white font-black text-xs shadow-sm">
-                        <span>B</span>
-                      </div>
-                      <span className="font-bold text-sm tracking-tight text-white">Borsaty</span>
-                      <span className="text-slate-400 font-normal">| بورصتي</span>
-                    </div>
+                    <Link href="/" className="flex items-center gap-2 whitespace-nowrap group">
+                      <Logo variant="white" size={24} showText={true} />
+                      <span className="text-slate-400 font-normal ms-1">| بورصتي</span>
+                    </Link>
 
                     {/* Operational Health Badge */}
                     <Link

@@ -25,6 +25,7 @@ import {
   Flame,
 } from 'lucide-react';
 import AuthButton from '@/components/AuthButton';
+import Logo from '@/components/branding/Logo';
 import { Language } from '@/context/AppContext';
 import { DEFAULT_MEGA_MENU_DATA } from './marketMenuData';
 
@@ -93,18 +94,9 @@ export default function MobileNavSheet({
           >
             {/* 1. Header Bar */}
             <div className="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-800">
-              <Link href="/" onClick={onClose} className="flex items-center gap-2.5">
-                <div className="relative w-8 h-8 rounded-lg bg-black text-white flex items-center justify-center font-black text-base shadow-sm border border-slate-800">
-                  <span>B</span>
-                </div>
-                <div>
-                  <span className="text-lg font-black tracking-tight block">
-                    {isAr ? 'بورصتي' : 'Borsaty'}
-                  </span>
-                  <span className="text-[10px] font-mono text-slate-500 font-bold uppercase tracking-wider block -mt-1">
-                    Terminal
-                  </span>
-                </div>
+              <Link href="/" onClick={onClose} className="flex items-center gap-2">
+                <Logo variant="primary" size={28} showText={true} className="dark:hidden" />
+                <Logo variant="white" size={28} showText={true} className="hidden dark:block" />
               </Link>
               <button
                 onClick={onClose}

@@ -115,7 +115,7 @@ export default function MobileNavSheet({
                 className="w-full flex items-center justify-between min-h-[48px] px-3.5 bg-slate-100/90 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-600 dark:text-slate-300 hover:border-blue-500/40 transition-all cursor-pointer shadow-xs"
               >
                 <div className="flex items-center gap-2.5">
-                  <Search className="w-4 h-4 text-blue-600 shrink-0" />
+                  <Search className="w-4 h-4 text-slate-500 dark:text-slate-400 shrink-0" />
                   <span className="font-medium">
                     {isAr ? 'ابحث عن سهم، أداة، أو مؤشر...' : 'Search stocks, tools, indicators...'}
                   </span>
@@ -135,12 +135,12 @@ export default function MobileNavSheet({
                   className="w-full flex items-center justify-between min-h-[48px] p-3.5 text-start font-bold text-sm text-slate-900 dark:text-white hover:bg-slate-100/60 dark:hover:bg-slate-800/50 transition-colors"
                 >
                   <div className="flex items-center gap-2.5">
-                    <TrendingUp className="w-4 h-4 text-blue-600" />
+                    <TrendingUp className="w-4 h-4 text-slate-500 dark:text-slate-400" />
                     <span>{isAr ? 'الأسواق والمؤشرات' : 'Markets & Indices'}</span>
                   </div>
                   <ChevronDown
                     className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${
-                      expandedSection === 'markets' ? 'rotate-180 text-blue-600' : ''
+                      expandedSection === 'markets' ? 'rotate-180 text-slate-900 dark:text-white' : ''
                     }`}
                   />
                 </button>
@@ -182,7 +182,7 @@ export default function MobileNavSheet({
                       <Link
                         href="/"
                         onClick={onClose}
-                        className="mt-1 w-full min-h-[48px] flex items-center justify-center gap-1.5 text-xs font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 rounded-xl hover:bg-blue-100 transition-colors"
+                        className="mt-1 w-full min-h-[48px] flex items-center justify-center gap-1.5 text-xs font-bold text-white bg-slate-900 dark:bg-slate-800 rounded-xl hover:bg-slate-800 transition-colors"
                       >
                         <span>{isAr ? 'عرض خريطة السوق' : 'Open Market Heatmap'}</span>
                         <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
@@ -199,12 +199,12 @@ export default function MobileNavSheet({
                   className="w-full flex items-center justify-between min-h-[48px] p-3.5 text-start font-bold text-sm text-slate-900 dark:text-white hover:bg-slate-100/60 dark:hover:bg-slate-800/50 transition-colors"
                 >
                   <div className="flex items-center gap-2.5">
-                    <SlidersHorizontal className="w-4 h-4 text-cyan-600" />
+                    <SlidersHorizontal className="w-4 h-4 text-slate-500 dark:text-slate-400" />
                     <span>{isAr ? 'الأدوات والتحليل' : 'Tools & Terminal'}</span>
                   </div>
                   <ChevronDown
                     className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${
-                      expandedSection === 'tools' ? 'rotate-180 text-cyan-600' : ''
+                      expandedSection === 'tools' ? 'rotate-180 text-slate-900 dark:text-white' : ''
                     }`}
                   />
                 </button>
@@ -221,9 +221,9 @@ export default function MobileNavSheet({
                       <Link
                         href="/screener"
                         onClick={onClose}
-                        className="flex items-center gap-3 min-h-[48px] px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/60 text-xs font-semibold hover:border-blue-400 transition-colors"
+                        className="flex items-center gap-3 min-h-[48px] px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/60 text-xs font-semibold hover:border-slate-400 transition-colors"
                       >
-                        <SlidersHorizontal className="w-4 h-4 text-cyan-600 shrink-0" />
+                        <SlidersHorizontal className="w-4 h-4 text-slate-500 dark:text-slate-400 shrink-0" />
                         <div>
                           <div className="font-bold">{isAr ? 'مصفّي الأسهم' : 'Stock Screener'}</div>
                           <div className="text-[11px] text-slate-400 font-normal">
@@ -235,9 +235,9 @@ export default function MobileNavSheet({
                       <Link
                         href="/portfolio"
                         onClick={onClose}
-                        className="flex items-center gap-3 min-h-[48px] px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/60 text-xs font-semibold hover:border-blue-400 transition-colors"
+                        className="flex items-center gap-3 min-h-[48px] px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/60 text-xs font-semibold hover:border-slate-400 transition-colors"
                       >
-                        <Briefcase className="w-4 h-4 text-slate-600 dark:text-slate-400 shrink-0" />
+                        <Briefcase className="w-4 h-4 text-slate-500 dark:text-slate-400 shrink-0" />
                         <div>
                           <div className="font-bold">{isAr ? 'محفظة الأوراق المالية' : 'Portfolio Terminal'}</div>
                           <div className="text-[11px] text-slate-400 font-normal">
@@ -249,9 +249,9 @@ export default function MobileNavSheet({
                       <Link
                         href="/compare"
                         onClick={onClose}
-                        className="flex items-center gap-3 min-h-[48px] px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/60 text-xs font-semibold hover:border-blue-400 transition-colors"
+                        className="flex items-center gap-3 min-h-[48px] px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/60 text-xs font-semibold hover:border-slate-400 transition-colors"
                       >
-                        <GitCompare className="w-4 h-4 text-indigo-600 shrink-0" />
+                        <GitCompare className="w-4 h-4 text-slate-500 dark:text-slate-400 shrink-0" />
                         <div>
                           <div className="font-bold">{isAr ? 'مقارنة الأصول والأسهم' : 'Side-by-Side Compare'}</div>
                           <div className="text-[11px] text-slate-400 font-normal">
@@ -263,9 +263,9 @@ export default function MobileNavSheet({
                       <Link
                         href="/calendar"
                         onClick={onClose}
-                        className="flex items-center gap-3 min-h-[48px] px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/60 text-xs font-semibold hover:border-blue-400 transition-colors"
+                        className="flex items-center gap-3 min-h-[48px] px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/60 text-xs font-semibold hover:border-slate-400 transition-colors"
                       >
-                        <Calendar className="w-4 h-4 text-rose-500 shrink-0" />
+                        <Calendar className="w-4 h-4 text-slate-500 dark:text-slate-400 shrink-0" />
                         <div>
                           <div className="font-bold">{isAr ? 'الأجندة الاقتصادية' : 'Economic Calendar'}</div>
                           <div className="text-[11px] text-slate-400 font-normal">
@@ -285,12 +285,12 @@ export default function MobileNavSheet({
                   className="w-full flex items-center justify-between min-h-[48px] p-3.5 text-start font-bold text-sm text-slate-900 dark:text-white hover:bg-slate-100/60 dark:hover:bg-slate-800/50 transition-colors"
                 >
                   <div className="flex items-center gap-2.5">
-                    <FileDown className="w-4 h-4 text-emerald-600" />
+                    <FileDown className="w-4 h-4 text-slate-500 dark:text-slate-400" />
                     <span>{isAr ? 'التقارير المؤسسية' : 'Institutional Reports'}</span>
                   </div>
                   <ChevronDown
                     className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${
-                      expandedSection === 'reports' ? 'rotate-180 text-emerald-600' : ''
+                      expandedSection === 'reports' ? 'rotate-180 text-slate-900 dark:text-white' : ''
                     }`}
                   />
                 </button>
@@ -307,9 +307,9 @@ export default function MobileNavSheet({
                       <Link
                         href="/signals"
                         onClick={onClose}
-                        className="flex items-center gap-3 min-h-[48px] px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/60 text-xs font-semibold hover:border-emerald-400 transition-colors"
+                        className="flex items-center gap-3 min-h-[48px] px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/60 text-xs font-semibold hover:border-slate-400 transition-colors"
                       >
-                        <BarChart3 className="w-4 h-4 text-emerald-600" />
+                        <BarChart3 className="w-4 h-4 text-slate-500 dark:text-slate-400" />
                         <div>
                           <div className="font-bold">{isAr ? 'إشارات وتوصيات السوق' : 'Market Signals & Opportunities'}</div>
                           <div className="text-[11px] text-slate-400 font-normal">
@@ -321,9 +321,9 @@ export default function MobileNavSheet({
                       <Link
                         href="/watchlist"
                         onClick={onClose}
-                        className="flex items-center gap-3 min-h-[48px] px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/60 text-xs font-semibold hover:border-amber-400 transition-colors"
+                        className="flex items-center gap-3 min-h-[48px] px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/60 text-xs font-semibold hover:border-slate-400 transition-colors"
                       >
-                        <Star className="w-4 h-4 text-amber-500 fill-amber-500/20" />
+                        <Star className="w-4 h-4 text-slate-500 dark:text-slate-400" />
                         <div>
                           <div className="font-bold">{isAr ? 'قائمة المتابعة الخاصة' : 'Personal Watchlist'}</div>
                           <div className="text-[11px] text-slate-400 font-normal">
@@ -335,9 +335,9 @@ export default function MobileNavSheet({
                       <Link
                         href="/docs"
                         onClick={onClose}
-                        className="flex items-center gap-3 min-h-[48px] px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/60 text-xs font-semibold hover:border-sky-400 transition-colors"
+                        className="flex items-center gap-3 min-h-[48px] px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/60 text-xs font-semibold hover:border-slate-400 transition-colors"
                       >
-                        <FileCode className="w-4 h-4 text-sky-500" />
+                        <FileCode className="w-4 h-4 text-slate-500 dark:text-slate-400" />
                         <div>
                           <div className="font-bold">{isAr ? 'دليل الـ API المؤسسي' : 'Institutional API Docs'}</div>
                           <div className="text-[11px] text-slate-400 font-normal">
@@ -357,12 +357,12 @@ export default function MobileNavSheet({
                   className="w-full flex items-center justify-between min-h-[48px] p-3.5 text-start font-bold text-sm text-slate-900 dark:text-white hover:bg-slate-100/60 dark:hover:bg-slate-800/50 transition-colors"
                 >
                   <div className="flex items-center gap-2.5">
-                    <Settings className="w-4 h-4 text-slate-600 dark:text-slate-400" />
+                    <Settings className="w-4 h-4 text-slate-500 dark:text-slate-400" />
                     <span>{isAr ? 'الإعدادات والمظهر' : 'Settings & Preferences'}</span>
                   </div>
                   <ChevronDown
                     className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${
-                      expandedSection === 'settings' ? 'rotate-180 text-slate-600' : ''
+                      expandedSection === 'settings' ? 'rotate-180 text-slate-900 dark:text-white' : ''
                     }`}
                   />
                 </button>
@@ -381,7 +381,7 @@ export default function MobileNavSheet({
                         className="w-full flex items-center justify-between min-h-[48px] px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/60 text-xs font-semibold"
                       >
                         <span className="flex items-center gap-2">
-                          <Globe className="w-4 h-4 text-blue-600" />
+                          <Globe className="w-4 h-4 text-slate-500 dark:text-slate-400" />
                           {isAr ? 'لغة الواجهة' : 'Interface Language'}
                         </span>
                         <span className="font-mono text-slate-500 font-bold">
@@ -397,7 +397,7 @@ export default function MobileNavSheet({
                           {theme === 'light' ? (
                             <Moon className="w-4 h-4 text-slate-600" />
                           ) : (
-                            <Sun className="w-4 h-4 text-amber-400" />
+                            <Sun className="w-4 h-4 text-slate-400" />
                           )}
                           {isAr ? 'المظهر' : 'Theme'}
                         </span>
@@ -417,12 +417,12 @@ export default function MobileNavSheet({
                   className="w-full flex items-center justify-between min-h-[48px] p-3.5 text-start font-bold text-sm text-slate-900 dark:text-white hover:bg-slate-100/60 dark:hover:bg-slate-800/50 transition-colors"
                 >
                   <div className="flex items-center gap-2.5">
-                    <Info className="w-4 h-4 text-blue-500" />
+                    <Info className="w-4 h-4 text-slate-500 dark:text-slate-400" />
                     <span>{isAr ? 'عن المنصة' : 'About Borsaty'}</span>
                   </div>
                   <ChevronDown
                     className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${
-                      expandedSection === 'about' ? 'rotate-180 text-blue-500' : ''
+                      expandedSection === 'about' ? 'rotate-180 text-slate-900 dark:text-white' : ''
                     }`}
                   />
                 </button>
@@ -441,7 +441,7 @@ export default function MobileNavSheet({
                         onClick={onClose}
                         className="flex items-center gap-3 min-h-[48px] px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/60 text-xs font-semibold"
                       >
-                        <Info className="w-4 h-4 text-blue-500" />
+                        <Info className="w-4 h-4 text-slate-500 dark:text-slate-400" />
                         <div>
                           <div className="font-bold">{isAr ? 'رؤيتنا ومنهجيتنا' : 'Our Mission & Approach'}</div>
                           <div className="text-[11px] text-slate-400 font-normal">
@@ -455,7 +455,7 @@ export default function MobileNavSheet({
                         onClick={onClose}
                         className="flex items-center gap-3 min-h-[48px] px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/60 text-xs font-semibold"
                       >
-                        <History className="w-4 h-4 text-amber-500" />
+                        <History className="w-4 h-4 text-slate-500 dark:text-slate-400" />
                         <div>
                           <div className="font-bold">{isAr ? 'سجل التحديثات' : 'Changelog'}</div>
                           <div className="text-[11px] text-slate-400 font-normal">
@@ -469,7 +469,7 @@ export default function MobileNavSheet({
                         onClick={onClose}
                         className="flex items-center gap-3 min-h-[48px] px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/60 text-xs font-semibold"
                       >
-                        <ShieldCheck className="w-4 h-4 text-emerald-500" />
+                        <ShieldCheck className="w-4 h-4 text-slate-500 dark:text-slate-400" />
                         <div>
                           <div className="font-bold">{isAr ? 'حالة النظام المباشرة' : 'System Telemetry'}</div>
                           <div className="text-[11px] text-slate-400 font-normal">

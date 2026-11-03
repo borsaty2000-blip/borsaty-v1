@@ -65,9 +65,9 @@ export default function ExplainabilityPanel({
       labelAr: "مؤكد (Confirmed)",
     },
     Probable: {
-      bg: "bg-teal-500/10",
-      text: "text-teal-400",
-      border: "border-teal-500/30",
+      bg: "bg-slate-800",
+      text: "text-slate-300",
+      border: "border-slate-700",
       labelAr: "راجح (Probable)",
     },
     Potential: {
@@ -94,7 +94,7 @@ export default function ExplainabilityPanel({
         className="p-4 bg-gradient-to-r from-[#141d30] to-[#121929] border-b border-[#232e48] flex items-center justify-between cursor-pointer select-none hover:bg-[#18233b] transition-colors"
       >
         <div className="flex flex-wrap items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+          <div className="w-9 h-9 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-300">
             <Compass className="w-5 h-5" />
           </div>
           <div>

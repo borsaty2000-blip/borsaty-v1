@@ -69,16 +69,16 @@ export default function MobileBottomNav() {
                 whileTap={{ scale: 0.95 }}
                 className={`flex flex-col items-center gap-0.5 transition-colors ${
                   active
-                    ? 'text-[#1E40AF] dark:text-blue-400 font-bold'
+                    ? 'text-slate-900 dark:text-white font-extrabold'
                     : 'text-slate-500 dark:text-slate-400 font-medium hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 <div className="relative">
-                  <Icon className={`w-6 h-6 ${active ? 'stroke-[2.2px]' : 'stroke-[1.8px]'}`} />
+                  <Icon className={`w-6 h-6 ${active ? 'stroke-[2.4px]' : 'stroke-[1.8px]'}`} />
                   {active && (
                     <motion.span
                       layoutId="nav-pill"
-                      className="absolute -bottom-1 inset-x-0 h-0.5 bg-[#1E40AF] dark:bg-blue-400 rounded-full"
+                      className="absolute -bottom-1 inset-x-0 h-0.5 bg-slate-900 dark:bg-white rounded-full"
                       transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                     />
                   )}
@@ -102,16 +102,16 @@ export default function MobileBottomNav() {
             whileTap={{ scale: 0.95 }}
             className={`flex flex-col items-center gap-0.5 transition-colors ${
               isMobileMenuOpen
-                ? 'text-[#1E40AF] dark:text-blue-400 font-bold'
+                ? 'text-slate-900 dark:text-white font-extrabold'
                 : 'text-slate-500 dark:text-slate-400 font-medium hover:text-slate-900 dark:hover:text-white'
             }`}
           >
             <div className="relative">
-              <Menu className={`w-6 h-6 ${isMobileMenuOpen ? 'stroke-[2.2px]' : 'stroke-[1.8px]'}`} />
+              <Menu className={`w-6 h-6 ${isMobileMenuOpen ? 'stroke-[2.4px]' : 'stroke-[1.8px]'}`} />
               {isMobileMenuOpen && (
                 <motion.span
                   layoutId="nav-pill"
-                  className="absolute -bottom-1 inset-x-0 h-0.5 bg-[#1E40AF] dark:bg-blue-400 rounded-full"
+                  className="absolute -bottom-1 inset-x-0 h-0.5 bg-slate-900 dark:bg-white rounded-full"
                   transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                 />
               )}

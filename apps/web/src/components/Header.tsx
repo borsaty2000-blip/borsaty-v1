@@ -42,22 +42,22 @@ export default function Header() {
 
         <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
           <div className="flex items-center gap-6 overflow-x-auto no-scrollbar whitespace-nowrap">
-            <span className="hover:text-emerald-400 cursor-pointer font-bold transition-colors">
+            <span className="hover:text-white cursor-pointer font-bold transition-colors">
               EGX 30: <span className="text-emerald-400 tabular-nums">+1.24%</span>
             </span>
-            <span className="hover:text-emerald-400 cursor-pointer font-bold transition-colors">
+            <span className="hover:text-white cursor-pointer font-bold transition-colors">
               TASI: <span className="text-emerald-400 tabular-nums">+0.68%</span>
             </span>
-            <span className="hover:text-emerald-400 cursor-pointer font-bold transition-colors">
+            <span className="hover:text-white cursor-pointer font-bold transition-colors">
               S&P 500: <span className="text-emerald-400 tabular-nums">+0.35%</span>
             </span>
-            <span className="hover:text-emerald-400 cursor-pointer font-bold transition-colors">
+            <span className="hover:text-white cursor-pointer font-bold transition-colors">
               Gold: <span className="text-emerald-400 tabular-nums">+0.54%</span>
             </span>
-            <span className="hover:text-emerald-400 cursor-pointer font-bold transition-colors">
+            <span className="hover:text-white cursor-pointer font-bold transition-colors">
               BTC/USD: <span className="text-emerald-400 tabular-nums">+2.10%</span>
             </span>
-            <span className="hover:text-rose-400 cursor-pointer font-bold transition-colors">
+            <span className="hover:text-white cursor-pointer font-bold transition-colors">
               EUR/USD: <span className="text-rose-400 tabular-nums">-0.17%</span>
             </span>
           </div>

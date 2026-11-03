@@ -124,8 +124,8 @@ export default function WatchlistPage() {
   if (isLoaded && !isSignedIn) {
     return (
       <div className="py-16 max-w-xl mx-auto text-center px-4">
-        <div className="w-16 h-16 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mx-auto mb-6 shadow-sm">
-          <Star className="w-8 h-8 fill-emerald-500/20" />
+        <div className="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 flex items-center justify-center mx-auto mb-6 shadow-sm">
+          <Star className="w-8 h-8 fill-slate-300 dark:fill-slate-700" />
         </div>
         <h1 className="text-2xl font-black text-slate-900 dark:text-white mb-3">
           {isAr ? "سجّل الدخول لعرض قائمة المتابعة" : "Sign In to Access Your Watchlist"}
@@ -136,7 +136,7 @@ export default function WatchlistPage() {
             : "Track your favorite assets across Egyptian, Saudi, and US markets with live price feeds and automated technical decision metrics."}
         </p>
         <SignInButton mode="modal">
-          <button className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm shadow-md shadow-emerald-600/20 transition-all hover:scale-[1.02]">
+          <button className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm shadow-md transition-all hover:scale-[1.02]">
             <User className="w-4 h-4" />
             <span>{isAr ? "تسجيل الدخول / إنشاء حساب" : "Sign In / Create Account"}</span>
           </button>

@@ -397,14 +397,14 @@ export default function StockDetailClientV2({
                 >
                   <div>
                     <div className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-blue-500" />
+                      <span className="w-2 h-2 rounded-full bg-slate-700 dark:bg-slate-300" />
                       <span>Harmonic (X-A-B-C-D)</span>
                     </div>
                     <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                       {isAr ? 'عرض نقاط التراجع الفيبوناتشي' : 'Plot PRZ geometry'}
                     </div>
                   </div>
-                  <Maximize2 className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-600 transition-colors" />
+                  <Maximize2 className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white transition-colors" />
                 </button>
 
                 <button
@@ -413,30 +413,30 @@ export default function StockDetailClientV2({
                 >
                   <div>
                     <div className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-purple-500" />
+                      <span className="w-2 h-2 rounded-full bg-slate-700 dark:bg-slate-300" />
                       <span>Elliott (1-2-3-4-5)</span>
                     </div>
                     <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                       {isAr ? 'عرض الموجة الدافعة' : 'Plot impulse cycle'}
                     </div>
                   </div>
-                  <Maximize2 className="w-3.5 h-3.5 text-slate-400 group-hover:text-purple-600 transition-colors" />
+                  <Maximize2 className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white transition-colors" />
                 </button>
 
                 <button
                   onClick={highlightTradePlan}
-                  className="flex items-center justify-between p-3.5 rounded-lg border border-slate-200 dark:border-slate-800 hover:border-emerald-500/50 hover:bg-emerald-50/20 dark:hover:bg-emerald-500/10 transition-all text-start group cursor-pointer"
+                  className="flex items-center justify-between p-3.5 rounded-lg border border-slate-200 dark:border-slate-800 hover:border-slate-400 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-all text-start group cursor-pointer"
                 >
                   <div>
                     <div className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                      <span className="w-2 h-2 rounded-full bg-slate-700 dark:bg-slate-300" />
                       <span>Trade Plan Levels</span>
                     </div>
                     <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                       {isAr ? 'مستويات الدخول والوقف والأهداف' : 'Plot SL, Entry & Targets'}
                     </div>
                   </div>
-                  <Maximize2 className="w-3.5 h-3.5 text-slate-400 group-hover:text-emerald-600 transition-colors" />
+                  <Maximize2 className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white transition-colors" />
                 </button>
               </div>
             </div>

@@ -429,7 +429,7 @@ export default function LiveMegaMenu({ language, onLinkClick }: LiveMegaMenuProp
                       setActiveMenu(null);
                       onLinkClick?.();
                     }}
-                    className="inline-flex items-center gap-1.5 font-semibold text-navy-800 dark:text-blue-400 hover:underline"
+                    className="inline-flex items-center gap-1.5 font-semibold text-slate-900 dark:text-white hover:underline"
                   >
                     <span>{isAr ? 'عرض كافة الأسواق ←' : 'View Full Markets →'}</span>
                   </Link>
@@ -457,7 +457,7 @@ export default function LiveMegaMenu({ language, onLinkClick }: LiveMegaMenuProp
                       <SlidersHorizontal className="w-5 h-5" />
                     </div>
                     <div>
-                      <div className="text-sm font-bold text-slate-900 dark:text-white group-hover:text-navy-800 dark:group-hover:text-blue-400 transition-colors">
+                      <div className="text-sm font-bold text-slate-900 dark:text-white group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
                         {isAr ? 'مصفّي الأسهم المؤسسي' : 'Stock Screener'}
                       </div>
                       <div className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
@@ -482,7 +482,7 @@ export default function LiveMegaMenu({ language, onLinkClick }: LiveMegaMenuProp
                       <Briefcase className="w-5 h-5" />
                     </div>
                     <div>
-                      <div className="text-sm font-bold text-slate-900 dark:text-white group-hover:text-navy-800 dark:group-hover:text-blue-400 transition-colors">
+                      <div className="text-sm font-bold text-slate-900 dark:text-white group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
                         {isAr ? 'محفظة الأوراق المالية (Portfolio)' : 'Portfolio Terminal'}
                       </div>
                       <div className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
@@ -507,7 +507,7 @@ export default function LiveMegaMenu({ language, onLinkClick }: LiveMegaMenuProp
                       <Calendar className="w-5 h-5" />
                     </div>
                     <div>
-                      <div className="text-sm font-bold text-slate-900 dark:text-white group-hover:text-navy-800 dark:group-hover:text-blue-400 transition-colors">
+                      <div className="text-sm font-bold text-slate-900 dark:text-white group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
                         {isAr ? 'الأجندة الاقتصادية (Macro Calendar)' : 'Economic Calendar'}
                       </div>
                       <div className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
@@ -532,7 +532,7 @@ export default function LiveMegaMenu({ language, onLinkClick }: LiveMegaMenuProp
                       <GitCompare className="w-5 h-5" />
                     </div>
                     <div>
-                      <div className="text-sm font-bold text-slate-900 dark:text-white group-hover:text-navy-800 dark:group-hover:text-blue-400 transition-colors">
+                      <div className="text-sm font-bold text-slate-900 dark:text-white group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
                         {isAr ? 'مقارنة الأصول والأسهم (Asset Compare)' : 'Side-by-Side Compare'}
                       </div>
                       <div className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
@@ -565,7 +565,7 @@ export default function LiveMegaMenu({ language, onLinkClick }: LiveMegaMenuProp
                       <History className="w-4 h-4" />
                     </div>
                     <div>
-                      <div className="text-xs font-bold text-slate-900 dark:text-white group-hover:text-navy-800 dark:group-hover:text-blue-400 transition-colors">
+                      <div className="text-xs font-bold text-slate-900 dark:text-white group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
                         {isAr ? 'سجل التحديثات والإصدارات' : 'Release Changelog'}
                       </div>
                       <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
@@ -587,7 +587,7 @@ export default function LiveMegaMenu({ language, onLinkClick }: LiveMegaMenuProp
                       <FileCode className="w-4 h-4" />
                     </div>
                     <div>
-                      <div className="text-xs font-bold text-slate-900 dark:text-white group-hover:text-navy-800 dark:group-hover:text-blue-400 transition-colors">
+                      <div className="text-xs font-bold text-slate-900 dark:text-white group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
                         {isAr ? 'دليل الـ API والمطورين' : 'Developer API Docs'}
                       </div>
                       <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
@@ -609,7 +609,7 @@ export default function LiveMegaMenu({ language, onLinkClick }: LiveMegaMenuProp
                       <Activity className="w-4 h-4" />
                     </div>
                     <div>
-                      <div className="text-xs font-bold text-slate-900 dark:text-white group-hover:text-navy-800 dark:group-hover:text-blue-400 transition-colors">
+                      <div className="text-xs font-bold text-slate-900 dark:text-white group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
                         {isAr ? 'حالة النظام والخوادم' : 'System Health Telemetry'}
                       </div>
                       <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
@@ -631,7 +631,7 @@ export default function LiveMegaMenu({ language, onLinkClick }: LiveMegaMenuProp
                       <Info className="w-4 h-4" />
                     </div>
                     <div>
-                      <div className="text-xs font-bold text-slate-900 dark:text-white group-hover:text-navy-800 dark:group-hover:text-blue-400 transition-colors">
+                      <div className="text-xs font-bold text-slate-900 dark:text-white group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
                         {isAr ? 'عن المنصة والرؤية الكمية' : 'About Borsaty'}
                       </div>
                       <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">

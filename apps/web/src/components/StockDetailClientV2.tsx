@@ -20,6 +20,7 @@ import {
   ShieldCheck,
   Info,
   Sparkles,
+  Building2,
 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -76,6 +77,11 @@ const EarningsCard = dynamic(() => import('@/components/intelligence/EarningsCar
   loading: () => <div className="h-64 rounded-2xl bg-slate-100 dark:bg-slate-900/40 animate-pulse" />,
 });
 
+const InsiderCard = dynamic(() => import('@/components/intelligence/InsiderCard'), {
+  ssr: false,
+  loading: () => <div className="h-64 rounded-2xl bg-slate-100 dark:bg-slate-900/40 animate-pulse" />,
+});
+
 interface CompanyInfo {
   symbol: string;
   nameEn: string;
@@ -101,7 +107,7 @@ interface StockDetailClientProps {
   candles: CandleDataPoint[];
 }
 
-export type AdvancedTabType = 'technical' | 'patterns' | 'multitf' | 'tradePlan' | 'earnings';
+export type AdvancedTabType = 'technical' | 'patterns' | 'multitf' | 'tradePlan' | 'earnings' | 'insider';
 
 export default function StockDetailClientV2({
   company,
@@ -329,6 +335,7 @@ export default function StockDetailClientV2({
     { id: 'multitf', labelAr: 'الفريمات', labelEn: 'Timeframes', icon: <Layers className="w-3.5 h-3.5" /> },
     { id: 'tradePlan', labelAr: 'تفاصيل الصفقة', labelEn: 'Trade Details', icon: <Target className="w-3.5 h-3.5" /> },
     { id: 'earnings', labelAr: 'تحليل الأرباح', labelEn: 'Earnings', icon: <Sparkles className="w-3.5 h-3.5" /> },
+    { id: 'insider', labelAr: 'حركة المطلعين', labelEn: 'Insider Activity', icon: <Building2 className="w-3.5 h-3.5" /> },
   ];
 
   // Tab 4 Position sizing calculations
@@ -723,6 +730,15 @@ export default function StockDetailClientV2({
           <div className="space-y-6">
             <ErrorBoundary fallbackTitleEn="Earnings Analysis Error" fallbackTitleAr="تعذر عرض تحليل نتائج الأعمال">
               <EarningsCard symbol={company.symbol} />
+            </ErrorBoundary>
+          </div>
+        );
+
+      case 'insider':
+        return (
+          <div className="space-y-6">
+            <ErrorBoundary fallbackTitleEn="Insider Tracking Error" fallbackTitleAr="تعذر عرض حركة المطلعين">
+              <InsiderCard symbol={company.symbol} />
             </ErrorBoundary>
           </div>
         );

@@ -55,6 +55,14 @@ export default function ScreenerPage() {
     "أسهم فوق SMA200 وتحت SMA50",
   ];
 
+  const handleReset = () => {
+    setQuery("");
+    setResults(null);
+    setError(null);
+    setExplanation(null);
+    setInterpretedDsl(null);
+  };
+
   const handleSearch = async (overrideQuery?: string) => {
     const q = overrideQuery || query;
     if (!q.trim()) return;
@@ -179,9 +187,17 @@ export default function ScreenerPage() {
                 </h4>
                 <p className="text-xs text-slate-500 max-w-sm mx-auto leading-relaxed">
                   {isAr
-                    ? "لم نجد أي أسهم مطابقة لمعايير البحث الحالية. جرّب تخفيف القيود أو استخدام أحد الأمثلة المقترحة بالأعلى."
-                    : "No instruments matched these screening criteria. Try broadening your query or selecting a suggested filter above."}
+                    ? "لم تطابق أي أدوات مالية الفلاتر المحددة. جرب توسيع معايير البحث أو إعادة ضبط الفلاتر."
+                    : "No instruments match the selected filters. Try broadening your criteria."}
                 </p>
+                <div className="pt-2">
+                  <button
+                    onClick={handleReset}
+                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-black hover:bg-neutral-800 text-white text-xs font-bold transition-all shadow-sm"
+                  >
+                    <span>{isAr ? "إعادة ضبط الفلاتر" : "Reset Filters"}</span>
+                  </button>
+                </div>
               </div>
             ) : undefined
           }

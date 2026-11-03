@@ -21,7 +21,7 @@ const PortfolioDashboard = dynamic(
 );
 
 export const metadata: Metadata = {
-  title: 'Portfolio Terminal | Borsaty — محفظة الأوراق المالية',
+  title: 'Borsaty | Portfolio Terminal',
   description: 'Track real-time stock holdings, cost basis, unrealized P&L, sector allocation, and transaction logs on Borsaty.',
 };
 

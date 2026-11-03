@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 import { useBorsaty } from '@/context/BorsatyContext';
 import { useApp } from '@/context/AppContext';
+import { toast } from 'sonner';
 
 interface StockQuickItem {
   symbol: string;
@@ -195,7 +196,15 @@ export default function CommandPalette() {
 
   const handleDownloadPdf = () => {
     if (activeSymbol) {
-      window.open(`/api/reports/${activeSymbol}/download?lang=${language}`, '_blank');
+      toast.info(
+        language === 'ar' ? 'جاري تجهيز التقرير المؤسسي...' : 'Generating institutional report...'
+      );
+      window.open(`/api/report/${activeSymbol}/pdf?lang=${language}`, '_blank');
+      setTimeout(() => {
+        toast.success(
+          language === 'ar' ? 'تم بدء تحميل التقرير المؤسسي' : 'Institutional report download initiated'
+        );
+      }, 1200);
     }
     setIsCommandPaletteOpen(false);
   };

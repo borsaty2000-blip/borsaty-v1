@@ -15,6 +15,7 @@ import {
   Percent,
 } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
+import { toast } from 'sonner';
 import AddTransactionModal from '@/components/portfolio/AddTransactionModal';
 
 export interface DecisionCardProps {
@@ -111,21 +112,31 @@ export function DecisionCard({
   const handleDownloadPDF = async () => {
     try {
       setDownloading(true);
-      const res = await fetch(`/api/report/${symbol}/pdf`);
+      toast.info(
+        isAr ? 'جاري تجهيز التقرير المؤسسي...' : 'Generating institutional report...'
+      );
+      const res = await fetch(`/api/report/${symbol}/pdf?lang=${isAr ? 'ar' : 'en'}`);
       if (res.ok) {
         const blob = await res.blob();
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `BORSATY_${symbol}_DECISION.pdf`;
+        a.download = `BORSATY_${symbol}_REPORT_${isAr ? 'AR' : 'EN'}.pdf`;
         document.body.appendChild(a);
         a.click();
         a.remove();
+        toast.success(
+          isAr ? 'تم تحميل التقرير المؤسسي بنجاح' : 'Institutional report downloaded'
+        );
       } else {
-        alert(isAr ? 'تعذر تحميل التقرير حالياً، يرجى المحاولة بعد قليل' : 'Failed to download PDF. Please try again.');
+        toast.error(
+          isAr ? 'تعذر تحميل التقرير حالياً، يرجى المحاولة بعد قليل' : 'Failed to download report. Please try again.'
+        );
       }
     } catch {
-      alert(isAr ? 'حدث خطأ أثناء تحميل التقرير' : 'An error occurred during PDF generation');
+      toast.error(
+        isAr ? 'حدث خطأ أثناء تحميل التقرير' : 'An error occurred during report generation'
+      );
     } finally {
       setDownloading(false);
     }

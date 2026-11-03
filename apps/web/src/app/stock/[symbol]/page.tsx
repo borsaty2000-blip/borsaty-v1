@@ -24,15 +24,15 @@ export async function generateMetadata({ params }: StockPageProps): Promise<Meta
   const market = company?.market || "EGX";
 
   return {
-    title: `تحليل سهم ${name} (${symbol}) - قرار شراء/بيع وتوافق فني | Borsaty`,
+    title: `Borsaty | ${name} — ${symbol}`,
     description: `تحليل فني وكمي مباشر لسهم ${name} في سوق ${market}. تفكيك موجات إليوت، نماذج الهارمونيك، مستويات الدخول، وقف الخسارة، ونسبة العائد للمخاطرة على بورصتي.`,
     openGraph: {
-      title: `${symbol} - ${name} | Borsaty Quantitative Terminal`,
+      title: `Borsaty | ${name} — ${symbol}`,
       description: `Institutional quantitative stock analysis, wave counts, and trade plans for ${symbol}.`,
     },
     twitter: {
       card: "summary_large_image",
-      title: `تحليل سهم ${symbol} | Borsaty`,
+      title: `Borsaty | ${name} — ${symbol}`,
       description: `التحليل الكمي والفني لسهم ${name} على منصة بورصتي.`,
     },
   };

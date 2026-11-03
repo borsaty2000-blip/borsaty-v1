@@ -27,8 +27,11 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Borsaty — Financial Markets & Stock Analysis",
-  description: "Real-time market quotes, technical indicators, portfolio tracker, and economic calendar on Borsaty.",
+  title: {
+    default: "Borsaty | Financial Markets & Institutional Terminal",
+    template: "Borsaty | %s",
+  },
+  description: "Real-time market quotes, deterministic quantitative analytics, portfolio risk terminal, and economic calendar on Borsaty.",
   manifest: "/manifest.json",
   icons: {
     icon: [

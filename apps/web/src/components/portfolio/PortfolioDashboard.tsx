@@ -544,12 +544,12 @@ export default function PortfolioDashboard() {
               <Briefcase className="w-6 h-6 stroke-[1.5]" />
             </div>
             <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200 mb-1">
-              {isAr ? 'محفظتك فارغة حالياً' : 'Your Portfolio is Empty'}
+              {isAr ? 'لا توجد مراكز نشطة' : 'No active holdings'}
             </h4>
             <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mb-4">
               {isAr
-                ? 'ابدأ بإضافة أول صفقة لتتبع القيمة السوقية، والأرباح والخسائر، وتوزيع الأصول مباشرة.'
-                : 'Add your first transaction to track live profit & loss, market value, and sector allocation.'}
+                ? 'لا توجد مراكز نشطة. سجّل صفقتك الأولى لتتبع أداء المحفظة وتوزيع المخاطر وتطور القيمة السوقية.'
+                : 'No active holdings. Record your first transaction to track portfolio performance and exposure.'}
             </p>
             <button
               onClick={() => setIsModalOpen(true)}

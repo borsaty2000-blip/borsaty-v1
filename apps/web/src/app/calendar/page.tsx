@@ -3,7 +3,7 @@ import CalendarPage from '@/components/calendar/CalendarPage';
 import ErrorBoundary from '@/components/ErrorBoundary';
 
 export const metadata: Metadata = {
-  title: 'Economic Calendar & Macro Markets | Borsaty — الأجندة الاقتصادية',
+  title: 'Borsaty | Economic Calendar',
   description: 'Monitor Central Bank interest rate meetings (Federal Reserve, CBE Egypt), CPI inflation reports, and OPEC+ policy announcements on Borsaty.',
 };
 

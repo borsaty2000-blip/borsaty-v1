@@ -198,17 +198,26 @@ export default function WatchlistPage() {
       {/* Empty State */}
       {!isLoading && items.length === 0 && (
         <div className="py-16 px-6 text-center border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-3xl bg-slate-50/50 dark:bg-slate-900/20 max-w-2xl mx-auto">
-          <div className="w-14 h-14 rounded-2xl bg-amber-50 dark:bg-amber-500/10 text-amber-500 flex items-center justify-center mx-auto mb-4 border border-amber-200 dark:border-amber-500/20">
+          <div className="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 flex items-center justify-center mx-auto mb-4 border border-slate-200 dark:border-slate-700">
             <Star className="w-7 h-7" />
           </div>
           <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">
-            {isAr ? "قائمة المتابعة فارغة حالياً" : "Your watchlist is empty"}
+            {isAr ? "قائمة المتابعة المؤسسية فارغة" : "Your institutional watchlist is empty"}
           </h3>
           <p className="text-xs md:text-sm text-slate-500 dark:text-gray-400 max-w-md mx-auto mb-6 leading-relaxed">
             {isAr
-              ? "ابدأ بتتبع أسهمك وأصولك المفضلة بالنقر على أيقونة النجمة في صفحة أي سهم."
-              : "Start tracking your favorite stocks. Click the star icon on any stock page to monitor it here."}
+              ? "قائمة المتابعة المؤسسية فارغة. أضف الأدوات المالية من الماسح الفني أو صفحات الأسهم لمتابعتها لحظياً."
+              : "Your institutional watchlist is empty. Add instruments from the screener or stock pages to track them."}
           </p>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-6">
+            <Link
+              href="/screener"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-black hover:bg-neutral-800 text-white text-xs font-bold transition-all shadow-sm"
+            >
+              <span>{isAr ? "استعراض الماسح الفني" : "Browse Screener"}</span>
+            </Link>
+          </div>
 
           <div className="flex flex-wrap items-center justify-center gap-2">
             <span className="text-xs text-slate-400 me-1">

@@ -161,9 +161,19 @@ export default function HeroDecisionSection({
   const handleDownloadPDF = () => {
     try {
       setDownloading(true);
-      window.open(`/api/report/${company.symbol}/pdf`, '_blank');
+      toast.info(
+        isAr ? 'جاري تجهيز التقرير المؤسسي...' : 'Generating institutional report...'
+      );
+      window.open(`/api/report/${company.symbol}/pdf?lang=${isAr ? 'ar' : 'en'}`, '_blank');
+      setTimeout(() => {
+        toast.success(
+          isAr ? 'تم بدء تحميل التقرير المؤسسي' : 'Institutional report download initiated'
+        );
+      }, 1200);
     } catch {
-      // non-blocking
+      toast.error(
+        isAr ? 'تعذر تجهيز التقرير المؤسسي' : 'Failed to generate report'
+      );
     } finally {
       setTimeout(() => setDownloading(false), 1500);
     }

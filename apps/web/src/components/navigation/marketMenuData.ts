@@ -164,7 +164,7 @@ export const DEFAULT_MEGA_MENU_DATA: MegaMenuData = {
       nameEn: 'Commercial Int. Bank',
       nameAr: 'البنك التجاري الدولي',
       market: 'EGX',
-      price: 86.5,
+      price: 123.50,
       changePct: 2.49,
     },
     {
@@ -198,7 +198,7 @@ export const DEFAULT_MEGA_MENU_DATA: MegaMenuData = {
       nameEn: 'Elsewedy Electric',
       nameAr: 'السويدي إليكتريك',
       market: 'EGX',
-      price: 48.1,
+      price: 108.60,
       changePct: -0.75,
     },
     {

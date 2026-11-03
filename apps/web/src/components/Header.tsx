@@ -21,6 +21,7 @@ import {
 import AuthButton from "@/components/AuthButton";
 import { useApp } from "@/context/AppContext";
 import { useBorsaty } from "@/context/BorsatyContext";
+import LiveMegaMenu from "@/components/navigation/LiveMegaMenu";
 
 export default function Header() {
   const [moreMenuOpen, setMoreMenuOpen] = useState(false);
@@ -109,61 +110,9 @@ export default function Header() {
           </Link>
         </div>
 
-        {/* Center / Left Navigation Links */}
-        <div className="hidden md:flex items-center gap-1 text-[13px] font-semibold text-slate-600 dark:text-slate-300">
-          {/* Top 3 links: Always visible on tablet & desktop */}
-          {primaryNav.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="px-3 py-2 rounded-md hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors flex items-center gap-1.5"
-            >
-              {link.icon}
-              {link.label}
-            </Link>
-          ))}
-
-          {/* Desktop (>1150px): Direct links for remaining items */}
-          <div className="hidden xl:flex items-center gap-1">
-            {secondaryNav.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="px-3 py-2 rounded-md hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors flex items-center gap-1.5"
-              >
-                {link.icon}
-                {link.label}
-              </Link>
-            ))}
-          </div>
-
-          {/* Tablet (768px - 1150px): "More" dropdown for secondary links */}
-          <div className="relative xl:hidden" ref={moreMenuRef}>
-            <button
-              onClick={() => setMoreMenuOpen(!moreMenuOpen)}
-              className="px-3 py-2 rounded-md hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors flex items-center gap-1 text-[13px] font-semibold"
-              aria-label="More navigation links"
-            >
-              <span>{isAr ? "المزيد" : "More"}</span>
-              <ChevronDown className="w-3.5 h-3.5 opacity-70" />
-            </button>
-
-            {moreMenuOpen && (
-              <div className="absolute start-0 mt-2 w-44 bg-white dark:bg-slate-900 rounded-lg shadow-xl border border-slate-200 dark:border-slate-800 py-1.5 z-50">
-                {secondaryNav.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    onClick={() => setMoreMenuOpen(false)}
-                    className="flex items-center gap-2 px-3 py-2 text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors"
-                  >
-                    {link.icon}
-                    {link.label}
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
+        {/* Center / Left Navigation: The Live Mega Menu */}
+        <div className="hidden md:flex items-center">
+          <LiveMegaMenu language={language} />
         </div>
 
         {/* Far Right: Search, Language, Theme, Clerk Auth */}

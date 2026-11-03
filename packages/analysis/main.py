@@ -892,6 +892,18 @@ def get_earnings_intelligence_endpoint(symbol: str, force_refresh: bool = False)
     return global_earnings_analyzer.analyze(symbol, force_refresh=force_refresh)
 
 
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Insider & Institutional Tracking Endpoints
+# ─────────────────────────────────────────────────────────────────────────────
+
+from intelligence.insider_tracker import global_insider_tracker
+
+@app.get("/intelligence/insider/{symbol}")
+def get_insider_activity_endpoint(symbol: str, force_refresh: bool = False):
+    return global_insider_tracker.get_insider_activity(symbol, force_refresh=force_refresh)
+
+
 if __name__ == "__main__":
     import uvicorn
     port = int(os.environ.get("PORT", 8000))

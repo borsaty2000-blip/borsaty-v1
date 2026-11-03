@@ -26,6 +26,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import HeroDecisionSection from '@/components/HeroDecisionSection';
 import FairValueCard from '@/components/FairValueCard';
 import EarningsInsightCard from '@/components/EarningsInsightCard';
+import InsiderActivityCard from '@/components/InsiderActivityCard';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { safeParseAnalysis, ValidatedUnifiedAnalysis } from '@/lib/schemas';
 import { useApp } from '@/context/AppContext';
@@ -838,6 +839,13 @@ export default function StockDetailClientV2({
         {/* 4. Earnings Call Intelligence & Management Sentiment */}
         <ErrorBoundary fallbackTitleEn="Earnings Intelligence Error" fallbackTitleAr="تعذر عرض ذكاء نتائج الأعمال">
           <EarningsInsightCard
+            symbol={company.symbol}
+          />
+        </ErrorBoundary>
+
+        {/* 5. Insider & Institutional Ownership Tracking */}
+        <ErrorBoundary fallbackTitleEn="Insider Tracking Error" fallbackTitleAr="تعذر عرض تتبع الداخليين والمؤسسات">
+          <InsiderActivityCard
             symbol={company.symbol}
           />
         </ErrorBoundary>

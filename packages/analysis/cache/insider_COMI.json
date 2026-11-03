@@ -1,0 +1,78 @@
+{
+  "symbol": "COMI",
+  "has_cluster_buy": true,
+  "cluster_info": {
+    "insider_count": 3,
+    "distinct_insiders": [
+      "المجموعة المالية هيرميس (حساب عملاء)",
+      "صندوق التأمين الاجتماعي للعاملين",
+      "أعضاء مجلس الإدارة ومجموعات مرتبطة"
+    ],
+    "total_shares": 880000,
+    "total_value": 106155000,
+    "window_days": 30
+  },
+  "summary_ar": "تم رصد شراء جماعي مكثف (Cluster Buy) من قِبل 3 قيادات تنفيذية خلال 30 يوماً بقيمة 106,155,000، وهي إشارة ثقة مؤسسية قوية.",
+  "summary_en": "Institutional Cluster Buy detected: 3 distinct corporate insiders purchased shares within 30 days (total 106,155,000), signalling high executive conviction.",
+  "institutional_ownership": {
+    "total_pct": 54.8,
+    "quarterly_change_pct": 1.9,
+    "holders_count": 310,
+    "top_holders": [
+      {
+        "name": "Alpha Dhabi Holding / ADQ",
+        "shares": "380M",
+        "pct": 18.5
+      },
+      {
+        "name": "National Bank of Egypt",
+        "shares": "195M",
+        "pct": 9.4
+      },
+      {
+        "name": "Foreign Institutional Mutual Funds",
+        "shares": "520M",
+        "pct": 25.2
+      }
+    ]
+  },
+  "transactions": [
+    {
+      "date": "2026-10-26",
+      "insider_name": "المجموعة المالية هيرميس (حساب عملاء)",
+      "role": "مؤسسة استثمارية",
+      "transaction_type": "BUY",
+      "shares": 450000,
+      "price": 121.5,
+      "total_value": 54675000
+    },
+    {
+      "date": "2026-10-20",
+      "insider_name": "صندوق التأمين الاجتماعي للعاملين",
+      "role": "مساهم رئيسي",
+      "transaction_type": "BUY",
+      "shares": 280000,
+      "price": 120.0,
+      "total_value": 33600000
+    },
+    {
+      "date": "2026-10-14",
+      "insider_name": "أعضاء مجلس الإدارة ومجموعات مرتبطة",
+      "role": "إدارة تنفيذية",
+      "transaction_type": "BUY",
+      "shares": 150000,
+      "price": 119.2,
+      "total_value": 17880000
+    },
+    {
+      "date": "2026-09-18",
+      "insider_name": "مساهم غير تنفيذي",
+      "role": "مجلس إدارة",
+      "transaction_type": "SELL",
+      "shares": 80000,
+      "price": 124.0,
+      "total_value": 9920000
+    }
+  ],
+  "updated_at": "2026-11-03"
+}

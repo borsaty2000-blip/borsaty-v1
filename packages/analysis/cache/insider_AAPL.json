@@ -1,0 +1,92 @@
+{
+  "symbol": "AAPL",
+  "has_cluster_buy": true,
+  "cluster_info": {
+    "insider_count": 3,
+    "distinct_insiders": [
+      "Gorguet Alex",
+      "Levinson Arthur D",
+      "Kearney Monica"
+    ],
+    "total_shares": 55500,
+    "total_value": 12781000,
+    "window_days": 30
+  },
+  "summary_ar": "تم رصد شراء جماعي مكثف (Cluster Buy) من قِبل 3 قيادات تنفيذية خلال 30 يوماً بقيمة 12,781,000، وهي إشارة ثقة مؤسسية قوية.",
+  "summary_en": "Institutional Cluster Buy detected: 3 distinct corporate insiders purchased shares within 30 days (total 12,781,000), signalling high executive conviction.",
+  "institutional_ownership": {
+    "total_pct": 61.4,
+    "quarterly_change_pct": 2.4,
+    "holders_count": 3840,
+    "top_holders": [
+      {
+        "name": "The Vanguard Group, Inc.",
+        "shares": "1.34B",
+        "pct": 8.6
+      },
+      {
+        "name": "BlackRock, Inc.",
+        "shares": "1.12B",
+        "pct": 7.1
+      },
+      {
+        "name": "Berkshire Hathaway Inc.",
+        "shares": "400M",
+        "pct": 2.6
+      },
+      {
+        "name": "State Street Corporation",
+        "shares": "580M",
+        "pct": 3.7
+      }
+    ]
+  },
+  "transactions": [
+    {
+      "date": "2026-10-28",
+      "insider_name": "Levinson Arthur D",
+      "role": "Chairman",
+      "transaction_type": "BUY",
+      "shares": 25000,
+      "price": 231.8,
+      "total_value": 5795000
+    },
+    {
+      "date": "2026-10-22",
+      "insider_name": "Kearney Monica",
+      "role": "Director",
+      "transaction_type": "BUY",
+      "shares": 18000,
+      "price": 229.5,
+      "total_value": 4131000
+    },
+    {
+      "date": "2026-10-15",
+      "insider_name": "Gorguet Alex",
+      "role": "VP Operations",
+      "transaction_type": "BUY",
+      "shares": 12500,
+      "price": 228.4,
+      "total_value": 2855000
+    },
+    {
+      "date": "2026-09-12",
+      "insider_name": "O'Brien Deirdre",
+      "role": "Senior VP Retail",
+      "transaction_type": "SELL",
+      "shares": 15000,
+      "price": 234.1,
+      "total_value": 3511500
+    },
+    {
+      "date": "2026-08-20",
+      "insider_name": "Cook Timothy D",
+      "role": "CEO",
+      "transaction_type": "OPTION_EXERCISE",
+      "shares": 50000,
+      "price": 226.5,
+      "total_value": 11325000
+    }
+  ],
+  "updated_at": "2026-11-03"
+}

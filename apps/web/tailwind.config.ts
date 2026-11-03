@@ -43,6 +43,16 @@ const config: Config = {
         bearish: "#dc2626",
         neutral: "#6b7280",
       },
+      borderRadius: {
+        btn: "8px",
+        card: "12px",
+        sm: "6px",
+      },
+      boxShadow: {
+        card: "0 1px 3px rgba(0, 0, 0, 0.06)",
+        "card-hover": "0 4px 12px rgba(0, 0, 0, 0.08)",
+        modal: "0 20px 40px rgba(0, 0, 0, 0.12)",
+      },
       fontFamily: {
         arabic: ["Cairo", "IBM Plex Sans Arabic", "sans-serif"],
         sans: ["var(--font-inter)", "var(--font-cairo)", "system-ui", "sans-serif"],

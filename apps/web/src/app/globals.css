@@ -67,6 +67,21 @@
   transform: scale(0.98);
 }
 
+.row-hover {
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+  border-inline-start: 2px solid transparent;
+}
+
+.row-hover:hover {
+  background-color: #FAFAFA;
+  border-inline-start-color: #1E40AF;
+}
+
+.dark .row-hover:hover {
+  background-color: rgba(30, 41, 59, 0.5);
+  border-inline-start-color: #3B82F6;
+}
+
 /* Custom scrollbars */
 ::-webkit-scrollbar {
   width: 6px;

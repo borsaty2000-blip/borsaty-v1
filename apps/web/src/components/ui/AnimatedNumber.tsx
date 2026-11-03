@@ -17,7 +17,7 @@ export default function AnimatedNumber({
   decimals = 2,
   prefix = "",
   suffix = "",
-  duration = 1.2,
+  duration = 0.35,
   className = "",
 }: AnimatedNumberProps) {
   const [mounted, setMounted] = useState(false);

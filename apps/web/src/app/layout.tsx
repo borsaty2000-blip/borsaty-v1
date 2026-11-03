@@ -57,7 +57,7 @@ export default function RootLayout({
               <ServiceWorkerRegister />
               <DevToolsGuard />
               <CommandPalette />
-              <Toaster position="bottom-right" richColors />
+              <Toaster position="top-right" richColors closeButton />
               <Header />
               <main className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 pb-20 md:pb-6">
                 {children}

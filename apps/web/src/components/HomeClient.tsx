@@ -515,7 +515,7 @@ export default function HomeClient() {
                 return (
                   <tr
                     key={stock.symbol}
-                    className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+                    className="row-hover transition-colors"
                   >
                     <td className="py-3 px-3 text-start font-bold font-mono text-slate-900 dark:text-white">
                       <Link href={`/stock/${stock.symbol}`} className="hover:text-blue-600 transition-colors">

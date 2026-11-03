@@ -220,7 +220,7 @@ export default function CommandPalette() {
         >
           {/* Search Input Bar */}
           <div className="flex items-center px-4 border-b border-slate-200 dark:border-slate-800 gap-3">
-            <Search className="w-5 h-5 text-emerald-500 shrink-0" />
+            <Search className="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0" />
             <Command.Input
               value={query}
               onValueChange={setQuery}
@@ -268,7 +268,7 @@ export default function CommandPalette() {
                     key={`recent-${stock.symbol}`}
                     value={`recent ${stock.symbol} ${stock.nameEn} ${stock.nameAr}`}
                     onSelect={() => handleSelectStock(stock)}
-                    className="flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors aria-selected:bg-emerald-50 dark:aria-selected:bg-emerald-500/10 aria-selected:text-emerald-600 dark:aria-selected:text-emerald-400"
+                    className="flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors aria-selected:bg-blue-50 dark:aria-selected:bg-blue-900/20 aria-selected:text-blue-600 dark:aria-selected:text-blue-400"
                   >
                     <div className="flex items-center gap-3">
                       <div className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-bold text-[11px] text-slate-600 dark:text-slate-300">
@@ -305,7 +305,7 @@ export default function CommandPalette() {
                   key={stock.symbol}
                   value={`${stock.symbol} ${stock.nameEn} ${stock.nameAr} ${stock.market}`}
                   onSelect={() => handleSelectStock(stock)}
-                  className="flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors aria-selected:bg-emerald-50 dark:aria-selected:bg-emerald-500/10 aria-selected:text-emerald-600 dark:aria-selected:text-emerald-400"
+                  className="flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors aria-selected:bg-blue-50 dark:aria-selected:bg-blue-900/20 aria-selected:text-blue-600 dark:aria-selected:text-blue-400"
                 >
                   <div className="flex items-center gap-3">
                     <div className="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center font-bold text-[11px] text-slate-700 dark:text-slate-300">
@@ -339,7 +339,7 @@ export default function CommandPalette() {
               <Command.Item
                 value="markets overview home الرئيسية"
                 onSelect={() => handleNavigate('/')}
-                className="flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors aria-selected:bg-emerald-50 dark:aria-selected:bg-emerald-500/10"
+                className="flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors aria-selected:bg-blue-50 dark:aria-selected:bg-blue-900/20"
               >
                 <div className="flex items-center gap-3">
                   <TrendingUp className="w-4 h-4 text-emerald-600" />
@@ -349,9 +349,9 @@ export default function CommandPalette() {
               </Command.Item>
 
               <Command.Item
-                value="screener ai quantitative scanner فلتر الأسهم"
+                value="screener quantitative technical scanner فلتر الأسهم"
                 onSelect={() => handleNavigate('/screener')}
-                className="flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors aria-selected:bg-emerald-50 dark:aria-selected:bg-emerald-500/10"
+                className="flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors aria-selected:bg-blue-50 dark:aria-selected:bg-blue-900/20"
               >
                 <div className="flex items-center gap-3">
                   <SlidersHorizontal className="w-4 h-4 text-cyan-600" />
@@ -363,7 +363,7 @@ export default function CommandPalette() {
               <Command.Item
                 value="portfolio holdings stocks tracker المحفظة الصفقات"
                 onSelect={() => handleNavigate('/portfolio')}
-                className="flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors aria-selected:bg-emerald-50 dark:aria-selected:bg-emerald-500/10"
+                className="flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors aria-selected:bg-blue-50 dark:aria-selected:bg-blue-900/20"
               >
                 <div className="flex items-center gap-3">
                   <Briefcase className="w-4 h-4 text-slate-600 dark:text-slate-400" />
@@ -375,7 +375,7 @@ export default function CommandPalette() {
               <Command.Item
                 value="compare stocks performance correlation مقارنة الأسهم"
                 onSelect={() => handleNavigate('/compare')}
-                className="flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors aria-selected:bg-emerald-50 dark:aria-selected:bg-emerald-500/10"
+                className="flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors aria-selected:bg-blue-50 dark:aria-selected:bg-blue-900/20"
               >
                 <div className="flex items-center gap-3">
                   <GitCompare className="w-4 h-4 text-slate-600 dark:text-slate-400" />
@@ -386,7 +386,7 @@ export default function CommandPalette() {
               <Command.Item
                 value="calendar economic events macro cpi fed الأجندة الاقتصادية"
                 onSelect={() => handleNavigate('/calendar')}
-                className="flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors aria-selected:bg-emerald-50 dark:aria-selected:bg-emerald-500/10"
+                className="flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors aria-selected:bg-blue-50 dark:aria-selected:bg-blue-900/20"
               >
                 <div className="flex items-center gap-3">
                   <Calendar className="w-4 h-4 text-rose-500" />
@@ -397,7 +397,7 @@ export default function CommandPalette() {
               <Command.Item
                 value="watchlist portfolio المتابعة المفضلة"
                 onSelect={() => handleNavigate('/watchlist')}
-                className="flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors aria-selected:bg-emerald-50 dark:aria-selected:bg-emerald-500/10"
+                className="flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors aria-selected:bg-blue-50 dark:aria-selected:bg-blue-900/20"
               >
                 <div className="flex items-center gap-3">
                   <Star className="w-4 h-4 text-amber-500 fill-amber-500/20" />
@@ -409,7 +409,7 @@ export default function CommandPalette() {
               <Command.Item
                 value="signals trading setups إشارات التداول"
                 onSelect={() => handleNavigate('/signals')}
-                className="flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors aria-selected:bg-emerald-50 dark:aria-selected:bg-emerald-500/10"
+                className="flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors aria-selected:bg-blue-50 dark:aria-selected:bg-blue-900/20"
               >
                 <div className="flex items-center gap-3">
                   <BarChart3 className="w-4 h-4 text-emerald-600" />
@@ -420,7 +420,7 @@ export default function CommandPalette() {
               <Command.Item
                 value="status system health telemetry uptime حالة النظام"
                 onSelect={() => handleNavigate('/status')}
-                className="flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors aria-selected:bg-emerald-50 dark:aria-selected:bg-emerald-500/10"
+                className="flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors aria-selected:bg-blue-50 dark:aria-selected:bg-blue-900/20"
               >
                 <div className="flex items-center gap-3">
                   <Activity className="w-4 h-4 text-emerald-500" />
@@ -431,7 +431,7 @@ export default function CommandPalette() {
               <Command.Item
                 value="docs api developer endpoints documentation التوثيق البرمجي"
                 onSelect={() => handleNavigate('/docs')}
-                className="flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors aria-selected:bg-emerald-50 dark:aria-selected:bg-emerald-500/10"
+                className="flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors aria-selected:bg-blue-50 dark:aria-selected:bg-blue-900/20"
               >
                 <div className="flex items-center gap-3">
                   <FileCode className="w-4 h-4 text-sky-500" />
@@ -442,7 +442,7 @@ export default function CommandPalette() {
               <Command.Item
                 value="changelog release notes version history سجل التحديثات"
                 onSelect={() => handleNavigate('/changelog')}
-                className="flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors aria-selected:bg-emerald-50 dark:aria-selected:bg-emerald-500/10"
+                className="flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors aria-selected:bg-blue-50 dark:aria-selected:bg-blue-900/20"
               >
                 <div className="flex items-center gap-3">
                   <History className="w-4 h-4 text-amber-500" />
@@ -453,7 +453,7 @@ export default function CommandPalette() {
               <Command.Item
                 value="about mission institutional methodology عن المنصة"
                 onSelect={() => handleNavigate('/about')}
-                className="flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors aria-selected:bg-emerald-50 dark:aria-selected:bg-emerald-500/10"
+                className="flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors aria-selected:bg-blue-50 dark:aria-selected:bg-blue-900/20"
               >
                 <div className="flex items-center gap-3">
                   <Info className="w-4 h-4 text-blue-500" />
@@ -474,7 +474,7 @@ export default function CommandPalette() {
                 <Command.Item
                   value={`download pdf institutional report تحميل تقرير ${activeSymbol}`}
                   onSelect={handleDownloadPdf}
-                  className="flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors aria-selected:bg-emerald-50 dark:aria-selected:bg-emerald-500/10"
+                  className="flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors aria-selected:bg-blue-50 dark:aria-selected:bg-blue-900/20"
                 >
                   <div className="flex items-center gap-3">
                     <FileDown className="w-4 h-4 text-rose-500" />
@@ -489,7 +489,7 @@ export default function CommandPalette() {
               <Command.Item
                 value="theme toggle dark light mode تغيير المظهر"
                 onSelect={handleToggleTheme}
-                className="flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors aria-selected:bg-emerald-50 dark:aria-selected:bg-emerald-500/10"
+                className="flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors aria-selected:bg-blue-50 dark:aria-selected:bg-blue-900/20"
               >
                 <div className="flex items-center gap-3">
                   {theme === 'light' ? <Moon className="w-4 h-4 text-slate-600" /> : <Sun className="w-4 h-4 text-amber-400" />}
@@ -500,7 +500,7 @@ export default function CommandPalette() {
               <Command.Item
                 value="language arabic english تبديل اللغة العربية الإنجليزية"
                 onSelect={handleToggleLang}
-                className="flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors aria-selected:bg-emerald-50 dark:aria-selected:bg-emerald-500/10"
+                className="flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors aria-selected:bg-blue-50 dark:aria-selected:bg-blue-900/20"
               >
                 <div className="flex items-center gap-3">
                   <Globe className="w-4 h-4 text-emerald-600" />

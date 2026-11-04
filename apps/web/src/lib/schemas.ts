@@ -461,6 +461,52 @@ export const AnalystConsensusResponseSchema = z.object({
 
 export type ValidatedAnalystConsensusResponse = z.infer<typeof AnalystConsensusResponseSchema>;
 
+export const DividendsResponseSchema = z.object({
+  symbol: z.string(),
+  market: z.enum(["US", "EGX", "TASI"]),
+  available: z.boolean(),
+  reason: z.string().optional(),
+  message_ar: z.string().optional(),
+  message_en: z.string().optional(),
+  current_yield: z.object({
+    annual_dividend: z.number().nullable(),
+    current_yield_pct: z.number().nullable(),
+    frequency: z.enum(["quarterly", "semi-annual", "annual"]),
+  }).nullable().optional(),
+  payout_ratio: z.object({
+    payout_ratio_pct: z.number(),
+    is_sustainable: z.boolean(),
+  }).nullable().optional(),
+  growth: z.object({
+    cagr_5y_pct: z.number().nullable(),
+    consecutive_increase_years: z.number(),
+    is_aristocrat: z.boolean(),
+  }).nullable().optional(),
+  upcoming: z.object({
+    ex_date: z.string(),
+    amount: z.number().nullable(),
+    yield_pct: z.number().nullable(),
+    days_until: z.number(),
+  }).nullable().optional(),
+  history: z.array(z.object({
+    date: z.string(),
+    amount_per_share: z.number(),
+    currency: z.string(),
+    type: z.enum(["regular", "special"]),
+  })).default([]),
+  splits: z.array(z.object({
+    date: z.string(),
+    ratio: z.string(),
+    factor: z.number(),
+  })).default([]),
+  data_quality: z.object({
+    source: z.string().optional(),
+    last_updated: z.string().optional(),
+  }).optional(),
+});
+
+export type ValidatedDividendsResponse = z.infer<typeof DividendsResponseSchema>;
+
 export const NewsArticleSchema = z.object({
   id: z.string(),
   title: z.string(),

@@ -47,6 +47,13 @@ const AnalystConsensusCard = dynamic(
     loading: () => <div className="h-72 rounded-xl bg-slate-100 dark:bg-slate-900/40 animate-pulse border border-slate-200 dark:border-slate-800" />,
   }
 );
+const DividendsCard = dynamic(
+  () => import('@/components/fundamental/DividendsCard'),
+  {
+    ssr: false,
+    loading: () => <div className="h-96 rounded-xl bg-slate-100 dark:bg-slate-900/40 animate-pulse border border-slate-200 dark:border-slate-800" />,
+  }
+);
 const EarningsInsightCard = dynamic(() => import('@/components/EarningsInsightCard'), {
   ssr: false,
   loading: () => <div className="h-64 rounded-xl bg-slate-100 dark:bg-slate-900/40 animate-pulse border border-slate-200 dark:border-slate-800" />,
@@ -794,6 +801,13 @@ export default function StockDetailClientV2({
             </ErrorBoundary>
             <ErrorBoundary fallbackTitleEn="Analyst Consensus Error" fallbackTitleAr="تعذر عرض إجماع المحللين">
               <AnalystConsensusCard symbol={company.symbol} currency={company.currency} />
+            </ErrorBoundary>
+            <ErrorBoundary fallbackTitleEn="Dividend Data Error" fallbackTitleAr="تعذر عرض بيانات التوزيعات">
+              <DividendsCard
+                symbol={company.symbol}
+                market={company.market}
+                currency={company.currency}
+              />
             </ErrorBoundary>
             <ErrorBoundary fallbackTitleEn="Financial Statements Error" fallbackTitleAr="تعذر عرض القوائم المالية">
               <FinancialStatementsCard

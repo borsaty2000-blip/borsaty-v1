@@ -821,6 +821,7 @@ def history_endpoint(symbol: str, market: Optional[str] = "EGX", period: Optiona
 from fundamental.fair_value import global_fair_value_engine
 from fundamental.financials import global_financials_engine
 from fundamental.analyst_consensus import global_analyst_consensus_engine
+from fundamental.dividends import global_dividends_engine
 from news.news_engine import global_news_engine
 
 class FairValueRequest(BaseModel):
@@ -888,6 +889,15 @@ def get_analyst_consensus_endpoint(symbol: str, market: str = "US"):
     if market_code not in {"US", "EGX", "TASI"}:
         raise HTTPException(status_code=400, detail="market must be US, EGX, or TASI")
     return global_analyst_consensus_engine.analyze(symbol, market_code).to_dict()
+
+
+@app.get("/fundamental/dividends/{symbol}")
+def get_dividends_endpoint(symbol: str, market: str = "US"):
+    """Fetch dividend history, yield, growth, upcoming distributions, and splits."""
+    market_code = market.strip().upper()
+    if market_code not in {"US", "EGX", "TASI"}:
+        raise HTTPException(status_code=400, detail="market must be US, EGX, or TASI")
+    return global_dividends_engine.analyze(symbol, market_code).to_dict()
 
 
 @app.get("/news/market")

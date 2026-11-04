@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Search, Home, TrendingUp, AlertCircle, ArrowLeft } from "lucide-react";
 import { resolveStockAlias } from "@borsaty/shared";
 import { useApp } from "@/context/AppContext";
+import Logo from "@/components/branding/Logo";
 
 export default function NotFound() {
   const [query, setQuery] = useState("");
@@ -28,6 +29,7 @@ export default function NotFound() {
   return (
     <div className="min-h-[65vh] flex items-center justify-center px-4 py-12">
       <div className="max-w-md w-full text-center space-y-6 bg-white dark:bg-[#0B1120] border border-slate-200 dark:border-slate-800 rounded-2xl p-8 shadow-sm">
+        <Logo variant="monochrome-black" size={32} showText className="mx-auto dark:invert" />
         {/* Brand Icon Badge */}
         <div className="mx-auto w-14 h-14 rounded-2xl bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center">
           <AlertCircle className="w-8 h-8" />

@@ -17,6 +17,7 @@ import dynamic from 'next/dynamic';
 import { useApp } from '@/context/AppContext';
 import { NewsArticle, NewsResponseSchema } from '@/lib/schemas';
 import { DataWrapper } from '@/components/ui/DataWrapper';
+import ErrorBoundary from '@/components/ErrorBoundary';
 import OpportunityScanner from '@/components/OpportunityScanner';
 import ProPicksHomeSection from '@/components/ProPicksHomeSection';
 import ConvictionIndex from '@/components/ConvictionIndex';
@@ -299,7 +300,14 @@ export default function HomeClient() {
           </h2>
           <span className="text-xs font-mono text-slate-400">Treemap View</span>
         </div>
-        <SectorHeatmap />
+        <ErrorBoundary
+          fallbackTitleEn="Heatmap unavailable"
+          fallbackTitleAr="الخريطة غير متاحة"
+          fallbackSubtitleEn="Sector performance could not be displayed right now."
+          fallbackSubtitleAr="تعذر عرض أداء القطاعات في الوقت الحالي."
+        >
+          <SectorHeatmap />
+        </ErrorBoundary>
       </section>
 
       {/* ═══════════════════════════════════════════════════════════════ */}

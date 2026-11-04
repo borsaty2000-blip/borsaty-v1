@@ -9,7 +9,7 @@ handler path.
 - **Pages:** 21
 - **API route handlers:** 58
 - **Explicit page-level ErrorBoundary wrappers:** 12 page modules
-- **Segment-specific `error.tsx` / `loading.tsx`:** 0
+- **Segment-specific `error.tsx` / `loading.tsx`:** 20 (plus root fallbacks for `/`)
 - **Root fallbacks:** `app/error.tsx`, `app/loading.tsx`, and `app/not-found.tsx`
 - **APIs covered by middleware rate limiting:** 58
 - **Additional APIs with route-handler rate limiting:** 4 (some overlap middleware)
@@ -25,31 +25,32 @@ JSON when signed out.
 
 | Route | Type | Auth | Rate Limit | Error Boundary | Motion |
 |---|---|---|---|---|---|
-| `/` | Page | Public | N/A | Root `error.tsx`; no page-source wrapper found | Component-level |
-| `/about` | Page | Public | N/A | Root `error.tsx`; explicit wrapper | Component-level |
-| `/alerts` | Page | Middleware Clerk protection | N/A | Root `error.tsx`; no page-source wrapper found | Component-level |
-| `/calendar` | Page | Public | N/A | Root `error.tsx`; explicit wrapper | Component-level |
-| `/changelog` | Page | Public | N/A | Root `error.tsx`; explicit wrapper | Component-level |
-| `/compare` | Page | Public | N/A | Root `error.tsx`; explicit wrapper | Component-level |
-| `/docs` | Page | Public | N/A | Root `error.tsx`; explicit wrapper | Component-level |
-| `/news` | Page | Public | N/A | Root `error.tsx`; no page-source wrapper found | Component-level |
-| `/portfolio` | Page | Middleware Clerk protection | N/A | Root `error.tsx`; explicit page wrapper | Component-level |
-| `/privacy` | Page | Public | N/A | Root `error.tsx`; explicit wrapper | Component-level |
-| `/screener` | Page | Public | N/A | Root `error.tsx`; explicit wrapper | Component-level |
-| `/signals` | Page | Public | N/A | Root `error.tsx`; no page-source wrapper found | Component-level |
-| `/sign-in/[[...sign-in]]` | Page | Public sign-in flow | N/A | Root `error.tsx`; no page-source wrapper found | Component-level |
-| `/sign-up/[[...sign-up]]` | Page | Public sign-up flow | N/A | Root `error.tsx`; no page-source wrapper found | Component-level |
-| `/status` | Page | Public | N/A | Root `error.tsx`; explicit wrapper | Component-level |
-| `/stock/[symbol]` | Page | Public | N/A | Root `error.tsx`; explicit page wrapper | Component-level |
-| `/stock/[symbol]/report` | Page | Public | N/A | Root `error.tsx`; no page-source wrapper found | Component-level |
-| `/strategies` | Page | Public | N/A | Root `error.tsx`; no page-source wrapper found | Component-level |
-| `/strategies/[name]` | Page | Public | N/A | Root `error.tsx`; no page-source wrapper found | Component-level |
-| `/terms` | Page | Public | N/A | Root `error.tsx`; explicit wrapper | Component-level |
-| `/watchlist` | Page | Middleware Clerk protection | N/A | Root `error.tsx`; no page-source wrapper found | Component-level |
+| `/` | Page | Public | N/A | Root `error.tsx`; explicit page wrapper | Component-level |
+| `/about` | Page | Public | N/A | Segment `error.tsx` + root fallback | Component-level |
+| `/alerts` | Page | Middleware Clerk protection | N/A | Segment `error.tsx` + root fallback | Component-level |
+| `/calendar` | Page | Public | N/A | Segment `error.tsx` + root fallback | Component-level |
+| `/changelog` | Page | Public | N/A | Segment `error.tsx` + root fallback | Component-level |
+| `/compare` | Page | Public | N/A | Segment `error.tsx` + root fallback | Component-level |
+| `/docs` | Page | Public | N/A | Segment `error.tsx` + root fallback | Component-level |
+| `/news` | Page | Public | N/A | Segment `error.tsx` + root fallback | Component-level |
+| `/portfolio` | Page | Middleware Clerk protection | N/A | Segment `error.tsx` + root fallback | Component-level |
+| `/privacy` | Page | Public | N/A | Segment `error.tsx` + root fallback | Component-level |
+| `/screener` | Page | Public | N/A | Segment `error.tsx` + root fallback | Component-level |
+| `/signals` | Page | Public | N/A | Segment `error.tsx` + root fallback | Component-level |
+| `/sign-in/[[...sign-in]]` | Page | Public sign-in flow | N/A | Segment `error.tsx` + root fallback | Component-level |
+| `/sign-up/[[...sign-up]]` | Page | Public sign-up flow | N/A | Segment `error.tsx` + root fallback | Component-level |
+| `/status` | Page | Public | N/A | Segment `error.tsx` + root fallback | Component-level |
+| `/stock/[symbol]` | Page | Public | N/A | Segment `error.tsx` + root fallback | Component-level |
+| `/stock/[symbol]/report` | Page | Public | N/A | Segment `error.tsx` + root fallback | Component-level |
+| `/strategies` | Page | Public | N/A | Segment `error.tsx` + root fallback | Component-level |
+| `/strategies/[name]` | Page | Public | N/A | Segment `error.tsx` + root fallback | Component-level |
+| `/terms` | Page | Public | N/A | Segment `error.tsx` + root fallback | Component-level |
+| `/watchlist` | Page | Middleware Clerk protection | N/A | Segment `error.tsx` + root fallback | Component-level |
 
-The root `loading.tsx` is the only app loading boundary. There are no
-route-specific loading skeletons or `error.tsx` files. Root `error.tsx` does
-not catch failures in the root layout itself.
+All 21 page routes have an applicable loading and error fallback: 20 route
+segments use shared route-specific skeleton/error components, and `/` uses
+root fallbacks. Root `error.tsx` does not catch failures in the root layout
+itself.
 
 ## API Route Handlers
 
@@ -112,10 +113,10 @@ Rate limits below reflect the current middleware and handler implementations.
    remain restricted to the configured edge proxy.
 4. **Admin credential failures consistently return 403.** A disabled admin
    test route still returns 404 in production to keep that endpoint hidden.
-5. **Fallback coverage is global, not segment-specific.** All routes share
-   root `loading.tsx`, `error.tsx`, and `not-found.tsx`; only 12 page modules
-   contain an explicit ErrorBoundary wrapper. Pages that need targeted recovery
-   do not yet have route-specific boundaries.
+5. **All page routes now have route-appropriate fallbacks.** Twenty route
+   segments use shared skeleton and error components; `/` uses the root
+   boundaries. Twelve page modules also contain an explicit component
+   ErrorBoundary wrapper for recoverable subtrees.
 6. **No global page-transition template exists.** Motion is used in selected
    client components, but reduced-motion handling and route-wide transitions
    are not established centrally.

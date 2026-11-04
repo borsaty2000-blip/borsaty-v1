@@ -912,12 +912,19 @@ export default function StockDetailClientV2({
       {/* PART 1: THE HERO DECISION SECTION (Above the Fold — 3 Seconds) */}
       {/* ═══════════════════════════════════════════════════════════════ */}
       <section ref={heroSectionRef} className="min-h-[calc(100vh-140px)] flex flex-col justify-center">
-        <HeroDecisionSection
-          company={company}
-          quote={quote}
-          decisionData={decisionData}
-          loading={decisionLoading}
-        />
+        <ErrorBoundary
+          fallbackTitleEn="Analysis unavailable"
+          fallbackTitleAr="التحليل غير متاح"
+          fallbackSubtitleEn="The decision summary could not be displayed."
+          fallbackSubtitleAr="تعذر عرض ملخص القرار."
+        >
+          <HeroDecisionSection
+            company={company}
+            quote={quote}
+            decisionData={decisionData}
+            loading={decisionLoading}
+          />
+        </ErrorBoundary>
       </section>
 
       {/* Institutional Analyst Guide & Recently Viewed Ticker Bar */}
@@ -941,7 +948,12 @@ export default function StockDetailClientV2({
 
         {/* 1. Candlestick Chart (Defaults to Simple View: price + EMA 20/50 + S/R lines, 500px desktop / 300px mobile) */}
         {chartReady ? (
-          <ErrorBoundary fallbackTitleEn="Chart Display Error" fallbackTitleAr="تعذر عرض الرسم البياني">
+          <ErrorBoundary
+            fallbackTitleEn="Chart unavailable"
+            fallbackTitleAr="الرسم البياني غير متاح"
+            fallbackSubtitleEn="Price data could not be displayed right now."
+            fallbackSubtitleAr="تعذر عرض بيانات الأسعار في الوقت الحالي."
+          >
             <PriceChart
               candles={candles}
               symbol={company.symbol}

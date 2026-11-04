@@ -17,6 +17,7 @@ import {
 import { useApp } from '@/context/AppContext';
 import { toast } from 'sonner';
 import AddTransactionModal from '@/components/portfolio/AddTransactionModal';
+import ErrorBoundary from '@/components/ErrorBoundary';
 
 export interface DecisionCardProps {
   symbol: string;
@@ -50,7 +51,7 @@ export interface DecisionCardProps {
   };
 }
 
-export function DecisionCard({
+function DecisionCardContent({
   symbol,
   currency = 'EGP',
   currentPrice,
@@ -323,5 +324,18 @@ export function DecisionCard({
         initialPrice={currentPrice || decisionData.entry_zone[0]}
       />
     </>
+  );
+}
+
+export function DecisionCard(props: DecisionCardProps) {
+  return (
+    <ErrorBoundary
+      fallbackTitleEn="Analysis unavailable"
+      fallbackTitleAr="التحليل غير متاح"
+      fallbackSubtitleEn="The decision card could not be displayed."
+      fallbackSubtitleAr="تعذر عرض بطاقة القرار."
+    >
+      <DecisionCardContent {...props} />
+    </ErrorBoundary>
   );
 }

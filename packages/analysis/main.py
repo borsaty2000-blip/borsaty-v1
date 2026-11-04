@@ -819,6 +819,7 @@ def history_endpoint(symbol: str, market: Optional[str] = "EGX", period: Optiona
 # ─────────────────────────────────────────────────────────────────────────────
 
 from fundamental.fair_value import global_fair_value_engine
+from fundamental.financials import global_financials_engine
 
 class FairValueRequest(BaseModel):
     symbol: str
@@ -864,6 +865,19 @@ def get_fair_value_history_endpoint(symbol: str, market: Optional[str] = "EGX", 
         "history": res.historical_90d[-days:] if res.historical_90d else [],
         "count": len(res.historical_90d[-days:] if res.historical_90d else []),
     }
+
+@app.get("/fundamental/financials/{symbol}")
+def get_financials_endpoint(
+    symbol: str,
+    period: str = "annual",
+    years: int = 3,
+    market: Optional[str] = None,
+):
+    """
+    Fetch 3-year annual or quarterly financial statements and 20 fundamental ratios.
+    """
+    return global_financials_engine.get_financials(symbol, period=period, years=years, market=market)
+
 
 
 

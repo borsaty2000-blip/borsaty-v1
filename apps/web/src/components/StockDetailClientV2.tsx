@@ -21,11 +21,21 @@ import {
   Info,
   Sparkles,
   Building2,
+  FileText,
 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import HeroDecisionSection from '@/components/HeroDecisionSection';
+const FinancialStatementsCard = dynamic(
+  () => import('@/components/fundamental/FinancialStatementsCard'),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-96 rounded-xl bg-slate-100 dark:bg-slate-900/40 animate-pulse border border-slate-200 dark:border-slate-800" />
+    ),
+  }
+);
 const FairValueCard = dynamic(() => import('@/components/FairValueCard'), {
   ssr: false,
   loading: () => <div className="h-64 rounded-xl bg-slate-100 dark:bg-slate-900/40 animate-pulse border border-slate-200 dark:border-slate-800" />,
@@ -118,7 +128,7 @@ interface StockDetailClientProps {
   candles: CandleDataPoint[];
 }
 
-export type AdvancedTabType = 'technical' | 'patterns' | 'multitf' | 'tradePlan' | 'earnings' | 'insider';
+export type AdvancedTabType = 'technical' | 'patterns' | 'multitf' | 'tradePlan' | 'financials' | 'earnings' | 'insider';
 
 export default function StockDetailClientV2({
   company,
@@ -378,6 +388,7 @@ export default function StockDetailClientV2({
     { id: 'patterns', labelAr: 'الأنماط والموجات', labelEn: 'Patterns & Waves', icon: <Workflow className="w-3.5 h-3.5" /> },
     { id: 'multitf', labelAr: 'الفريمات', labelEn: 'Timeframes', icon: <Layers className="w-3.5 h-3.5" /> },
     { id: 'tradePlan', labelAr: 'تفاصيل الصفقة', labelEn: 'Trade Details', icon: <Target className="w-3.5 h-3.5" /> },
+    { id: 'financials', labelAr: 'القوائم والنسب المالية', labelEn: 'Financials', icon: <FileText className="w-3.5 h-3.5" /> },
     { id: 'earnings', labelAr: 'تحليل الأرباح', labelEn: 'Earnings', icon: <Sparkles className="w-3.5 h-3.5" /> },
     { id: 'insider', labelAr: 'حركة المطلعين', labelEn: 'Insider Activity', icon: <Building2 className="w-3.5 h-3.5" /> },
   ];
@@ -766,6 +777,18 @@ export default function StockDetailClientV2({
 
             {/* 4. Financial News Wire */}
             <NewsFeed symbol={company.symbol} />
+          </div>
+        );
+
+      case 'financials':
+        return (
+          <div className="space-y-6">
+            <ErrorBoundary fallbackTitleEn="Financial Statements Error" fallbackTitleAr="تعذر عرض القوائم المالية">
+              <FinancialStatementsCard
+                symbol={company.symbol}
+                currency={company.currency}
+              />
+            </ErrorBoundary>
           </div>
         );
 

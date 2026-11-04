@@ -331,3 +331,83 @@ export const FairValueSchema = z.object({
 });
 
 export type ValidatedFairValue = z.infer<typeof FairValueSchema>;
+
+// 10. Financial Statements & 20 Ratios Schema
+export const IncomeStatementItemSchema = z.object({
+  year: z.string(),
+  as_of_date: z.string().optional(),
+  revenue: z.number().nullable().optional(),
+  cogs: z.number().nullable().optional(),
+  gross_profit: z.number().nullable().optional(),
+  operating_income: z.number().nullable().optional(),
+  net_income: z.number().nullable().optional(),
+  eps: z.number().nullable().optional(),
+  ebitda: z.number().nullable().optional(),
+});
+
+export const BalanceSheetItemSchema = z.object({
+  year: z.string(),
+  as_of_date: z.string().optional(),
+  total_assets: z.number().nullable().optional(),
+  total_liabilities: z.number().nullable().optional(),
+  total_equity: z.number().nullable().optional(),
+  cash: z.number().nullable().optional(),
+  total_debt: z.number().nullable().optional(),
+});
+
+export const CashFlowItemSchema = z.object({
+  year: z.string(),
+  as_of_date: z.string().optional(),
+  operating_cf: z.number().nullable().optional(),
+  investing_cf: z.number().nullable().optional(),
+  financing_cf: z.number().nullable().optional(),
+  free_cf: z.number().nullable().optional(),
+});
+
+export const FinancialRatiosSchema = z.object({
+  gross_margin: z.number().nullable().optional(),
+  operating_margin: z.number().nullable().optional(),
+  net_margin: z.number().nullable().optional(),
+  roe: z.number().nullable().optional(),
+  roa: z.number().nullable().optional(),
+  current_ratio: z.number().nullable().optional(),
+  quick_ratio: z.number().nullable().optional(),
+  debt_to_equity: z.number().nullable().optional(),
+  debt_to_ebitda: z.number().nullable().optional(),
+  interest_coverage: z.number().nullable().optional(),
+  asset_turnover: z.number().nullable().optional(),
+  inventory_turnover: z.number().nullable().optional(),
+  receivables_turnover: z.number().nullable().optional(),
+  pe: z.number().nullable().optional(),
+  pb: z.number().nullable().optional(),
+  ps: z.number().nullable().optional(),
+  ev_ebitda: z.number().nullable().optional(),
+  peg: z.number().nullable().optional(),
+  dividend_yield: z.number().nullable().optional(),
+  fcf_yield: z.number().nullable().optional(),
+}).catchall(z.any());
+
+export const FinancialsResponseSchema = z.object({
+  symbol: z.string(),
+  period: z.enum(["annual", "quarterly"]).default("annual"),
+  income_statement: z.array(IncomeStatementItemSchema).default([]),
+  balance_sheet: z.array(BalanceSheetItemSchema).default([]),
+  cash_flow: z.array(CashFlowItemSchema).default([]),
+  ratios: FinancialRatiosSchema.default({}),
+  data_quality: z.object({
+    source: z.string().default("yfinance"),
+    confidence: z.string().default("HIGH"),
+    is_available: z.boolean().default(true),
+    message: z.string().optional(),
+  }).default({
+    source: "none",
+    confidence: "LOW",
+    is_available: false,
+  }),
+});
+
+export type ValidatedFinancialsResponse = z.infer<typeof FinancialsResponseSchema>;
+export type IncomeStatementItem = z.infer<typeof IncomeStatementItemSchema>;
+export type BalanceSheetItem = z.infer<typeof BalanceSheetItemSchema>;
+export type CashFlowItem = z.infer<typeof CashFlowItemSchema>;
+export type FinancialRatios = z.infer<typeof FinancialRatiosSchema>;

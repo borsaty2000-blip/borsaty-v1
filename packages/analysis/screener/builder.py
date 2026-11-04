@@ -165,7 +165,7 @@ class ScreenerEngine:
                 "market": "US",
                 "assetClass": "EQUITY",
                 "sector": "تكنولوجيا",
-                "close": 235.50,
+                "close": 331.90,
                 "open": 233.00,
                 "high": 236.20,
                 "low": 232.50,

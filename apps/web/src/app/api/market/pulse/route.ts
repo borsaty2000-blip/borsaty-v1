@@ -24,7 +24,7 @@ const DEFAULT_PULSE: PulseItem[] = [
   { symbol: "FWRY", name: "Fawry Banking", price: 8.92, change: 0.14, changePct: 1.59 },
   { symbol: "2222", name: "Saudi Aramco", price: 27.85, change: 0.15, changePct: 0.54 },
   { symbol: "1120", name: "Al Rajhi Bank", price: 92.40, change: 0.80, changePct: 0.87 },
-  { symbol: "AAPL", name: "Apple Inc.", price: 235.10, change: 1.85, changePct: 0.79 },
+  { symbol: "AAPL", name: "Apple Inc.", price: 331.90, change: 1.85, changePct: 0.56 },
   { symbol: "NVDA", name: "NVIDIA Corp.", price: 141.50, change: 3.20, changePct: 2.31 },
   { symbol: "MSFT", name: "Microsoft Corp.", price: 428.15, change: 1.10, changePct: 0.26 },
   { symbol: "GOLD", name: "Gold Spot", price: 2735.40, change: 14.60, changePct: 0.54 },

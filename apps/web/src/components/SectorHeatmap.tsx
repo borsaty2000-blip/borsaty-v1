@@ -61,7 +61,7 @@ const SECTOR_HEATMAP_DATA: SectorData[] = [
     marketCapBillion: 340.5,
     stocks: [
       { symbol: "NVDA", nameEn: "NVIDIA Corp", nameAr: "إنفيديا", price: 130.4, changePct: 3.42, currency: "USD", market: "NASDAQ" },
-      { symbol: "AAPL", nameEn: "Apple Inc", nameAr: "أبل", price: 235.1, changePct: 1.64, currency: "USD", market: "NASDAQ" },
+      { symbol: "AAPL", nameEn: "Apple Inc", nameAr: "أبل", price: 331.9, changePct: 1.64, currency: "USD", market: "NASDAQ" },
       { symbol: "7203", nameEn: "Elm Information", nameAr: "عِلم للحلول الرقمية", price: 980.0, changePct: 1.85, currency: "SAR", market: "TASI" },
     ],
   },

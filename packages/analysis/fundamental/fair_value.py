@@ -171,7 +171,7 @@ KNOWN_FUNDAMENTALS: Dict[str, Dict[str, Any]] = {
         "target_price": 72.0,
     },
     "AAPL": {
-        "current_price": 235.00,
+        "current_price": 331.90,
         "eps": 7.40,
         "bvps": 5.20,
         "fcf_per_share": 7.10,

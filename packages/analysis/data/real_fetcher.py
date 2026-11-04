@@ -40,7 +40,7 @@ KNOWN_REFERENCE_PRICES: Dict[str, Dict[str, Any]] = {
     "2222": {"price": 26.16, "market": "TASI", "currency": "SAR"},
     "1120": {"price": 60.15, "market": "TASI", "currency": "SAR"},
     "2010": {"price": 72.40, "market": "TASI", "currency": "SAR"},
-    "AAPL": {"price": 330.00, "market": "US", "currency": "USD"},
+    "AAPL": {"price": 331.90, "market": "US", "currency": "USD"},
     "NVDA": {"price": 208.50, "market": "US", "currency": "USD"},
     "MSFT": {"price": 415.00, "market": "US", "currency": "USD"},
     "TSLA": {"price": 245.00, "market": "US", "currency": "USD"},

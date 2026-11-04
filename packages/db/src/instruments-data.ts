@@ -22,7 +22,7 @@ export interface SeedInstrument {
 
 // Major Global Stocks
 const US_MAJOR_STOCKS = [
-  { symbol: "AAPL", nameEn: "Apple Inc.", sector: "Technology", price: 235.50 },
+  { symbol: "AAPL", nameEn: "Apple Inc.", sector: "Technology", price: 331.90 },
   { symbol: "MSFT", nameEn: "Microsoft Corp.", sector: "Technology", price: 428.20 },
   { symbol: "NVDA", nameEn: "NVIDIA Corp.", sector: "Technology", price: 138.40 },
   { symbol: "AMZN", nameEn: "Amazon.com Inc.", sector: "Consumer Cyclical", price: 198.80 },

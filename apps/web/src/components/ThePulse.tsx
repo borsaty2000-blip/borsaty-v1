@@ -18,7 +18,7 @@ const FALLBACK_PULSE: PulseItem[] = [
   { symbol: 'TASI', name: 'TASI', price: 12180.50, change: 82.4, changePct: 0.68 },
   { symbol: 'SWDY', name: 'Elsewedy Electric', price: 108.60, change: 1.77, changePct: 1.66 },
   { symbol: 'COMI', name: 'CIB Egypt', price: 123.48, change: 0.98, changePct: 0.80 },
-  { symbol: 'AAPL', name: 'Apple Inc.', price: 235.10, change: 1.85, changePct: 0.79 },
+  { symbol: 'AAPL', name: 'Apple Inc.', price: 331.90, change: 1.85, changePct: 0.56 },
   { symbol: 'NVDA', name: 'NVIDIA Corp.', price: 141.50, change: 3.20, changePct: 2.31 },
   { symbol: 'TMGH', name: 'Talaat Moustafa', price: 58.20, change: -0.40, changePct: -0.68 },
   { symbol: 'EAST', name: 'Eastern Co', price: 34.50, change: 0.35, changePct: 1.02 },

@@ -165,7 +165,7 @@ function calculateMACD(data: CandleDataPoint[]) {
 
 export function PriceChart({
   candles,
-  height = 420,
+  height,
   symbol = 'COMI',
   currency = 'EGP',
   onCrosshairMove,
@@ -232,7 +232,7 @@ export function PriceChart({
     const border = isDark ? '#334155' : '#e2e8f0';
 
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
-    const chartHeight = height !== undefined ? height : (isMobile ? 300 : 500);
+    const chartHeight = height ?? (isMobile ? 300 : 500);
 
     const mainChart = createChart(mainContainerRef.current, {
       width: mainContainerRef.current.clientWidth,
@@ -402,7 +402,7 @@ export function PriceChart({
     const handleResize = () => {
       if (mainContainerRef.current && mainChartRef.current) {
         const isMob = window.innerWidth < 640;
-        const h = height !== undefined ? height : (isMob ? 300 : 500);
+        const h = height ?? (isMob ? 300 : 500);
         mainChartRef.current.applyOptions({
           width: mainContainerRef.current.clientWidth,
           height: h,
@@ -410,9 +410,12 @@ export function PriceChart({
       }
     };
     window.addEventListener('resize', handleResize);
+    const resizeObserver = new ResizeObserver(handleResize);
+    resizeObserver.observe(mainContainerRef.current);
 
     return () => {
       window.removeEventListener('resize', handleResize);
+      resizeObserver.disconnect();
       mainChart.remove();
       mainChartRef.current = null;
     };

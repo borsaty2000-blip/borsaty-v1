@@ -54,7 +54,9 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en" dir="ltr" className={`${cairo.variable} ${inter.variable}`}>
         <head>
-          <meta name="theme-color" content="#ffffff" />
+          <meta name="theme-color" content="#0A0A0A" />
+          <meta name="apple-mobile-web-app-capable" content="yes" />
+          <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         </head>
         <body className="min-h-screen bg-white text-slate-900 dark:bg-[#0B1120] dark:text-gray-100 flex flex-col font-sans transition-colors duration-200">
           <AppProvider>

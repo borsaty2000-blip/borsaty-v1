@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
@@ -18,8 +18,27 @@ export default function MobileBottomNav() {
   const pathname = usePathname();
   const { language } = useApp();
   const { isMobileMenuOpen, setIsMobileMenuOpen } = useBorsaty();
+  const [isVisible, setIsVisible] = useState(true);
 
   const isAr = language === 'ar';
+
+  useEffect(() => {
+    let previousY = window.scrollY;
+    let lastDirectionChangeY = previousY;
+    const handleScroll = () => {
+      const currentY = window.scrollY;
+      const delta = currentY - previousY;
+      if (Math.abs(delta) >= 8) {
+        if (Math.abs(currentY - lastDirectionChangeY) > 24) {
+          setIsVisible(currentY < 100 || delta < 0);
+          lastDirectionChangeY = currentY;
+        }
+        previousY = currentY;
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const navItems = [
     {
@@ -51,7 +70,7 @@ export default function MobileBottomNav() {
   return (
     <nav
       aria-label="Mobile Bottom Navigation"
-      className="fixed bottom-0 inset-x-0 z-40 md:hidden bg-white/90 dark:bg-[#0B1120]/90 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] px-2 py-1 pb-safe transition-colors h-16"
+      className={`fixed bottom-0 inset-x-0 z-40 md:hidden bg-white/90 dark:bg-[#0B1120]/90 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] px-2 py-1 pb-safe transition-transform duration-200 h-16 ${isVisible || isMobileMenuOpen ? 'translate-y-0' : 'translate-y-full'}`}
       style={{ backdropFilter: 'blur(12px)' }}
     >
       <div className="flex items-center justify-between h-full max-w-md mx-auto">
@@ -69,7 +88,7 @@ export default function MobileBottomNav() {
                 whileTap={{ scale: 0.95 }}
                 className={`flex flex-col items-center gap-0.5 transition-colors ${
                   active
-                    ? 'text-slate-900 dark:text-white font-extrabold'
+                    ? 'text-blue-600 dark:text-blue-400 font-extrabold'
                     : 'text-slate-500 dark:text-slate-400 font-medium hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
@@ -78,12 +97,12 @@ export default function MobileBottomNav() {
                   {active && (
                     <motion.span
                       layoutId="nav-pill"
-                      className="absolute -bottom-1 inset-x-0 h-0.5 bg-slate-900 dark:bg-white rounded-full"
+                      className="absolute -bottom-1 inset-x-0 h-0.5 bg-blue-600 dark:bg-blue-400 rounded-full"
                       transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                     />
                   )}
                 </div>
-                <span className="text-[10px] tracking-tight truncate max-w-[56px]">
+                <span className="text-xs tracking-tight truncate max-w-[56px]">
                   {item.label}
                 </span>
               </motion.div>
@@ -102,7 +121,7 @@ export default function MobileBottomNav() {
             whileTap={{ scale: 0.95 }}
             className={`flex flex-col items-center gap-0.5 transition-colors ${
               isMobileMenuOpen
-                ? 'text-slate-900 dark:text-white font-extrabold'
+                ? 'text-blue-600 dark:text-blue-400 font-extrabold'
                 : 'text-slate-500 dark:text-slate-400 font-medium hover:text-slate-900 dark:hover:text-white'
             }`}
           >
@@ -111,12 +130,12 @@ export default function MobileBottomNav() {
               {isMobileMenuOpen && (
                 <motion.span
                   layoutId="nav-pill"
-                  className="absolute -bottom-1 inset-x-0 h-0.5 bg-slate-900 dark:bg-white rounded-full"
+                  className="absolute -bottom-1 inset-x-0 h-0.5 bg-blue-600 dark:bg-blue-400 rounded-full"
                   transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                 />
               )}
             </div>
-            <span className="text-[10px] tracking-tight truncate max-w-[56px]">
+            <span className="text-xs tracking-tight truncate max-w-[56px]">
               {isAr ? 'المزيد' : 'More'}
             </span>
           </motion.div>

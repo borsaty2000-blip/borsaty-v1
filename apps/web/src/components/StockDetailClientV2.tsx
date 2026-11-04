@@ -1043,40 +1043,32 @@ export default function StockDetailClientV2({
           </AnimatePresence>
         </div>
 
-        {/* Mobile View: Vertical Accordion (Below 640px) */}
-        <div className="sm:hidden space-y-3">
-          {tabItems.map((tab) => {
-            const isOpen = mobileAccordionTab === tab.id;
-            return (
-              <div
+        {/* Mobile View: scrollable, snap-aligned tabs */}
+        <div className="sm:hidden space-y-4">
+          <div className="flex snap-x snap-mandatory gap-2 overflow-x-auto pb-2" role="tablist" aria-label={isAr ? 'أقسام التحليل' : 'Analysis sections'}>
+            {tabItems.map((tab) => (
+              <button
                 key={`mobile-${tab.id}`}
-                className="rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0f172a] shadow-sm overflow-hidden"
+                id={`mobile-tab-${tab.id}`}
+                type="button"
+                role="tab"
+                aria-selected={mobileAccordionTab === tab.id}
+                aria-controls="mobile-tab-panel"
+                onClick={() => setMobileAccordionTab(tab.id)}
+                className={`inline-flex min-h-11 shrink-0 snap-start items-center gap-2 rounded-full border px-4 text-sm font-semibold transition-colors ${
+                  mobileAccordionTab === tab.id
+                    ? 'border-slate-900 bg-slate-900 text-white dark:border-white dark:bg-white dark:text-slate-900'
+                    : 'border-slate-200 bg-white text-slate-600 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-300'
+                }`}
               >
-                <button
-                  type="button"
-                  onClick={() => setMobileAccordionTab(isOpen ? null : tab.id)}
-                  className="w-full p-4 flex items-center justify-between text-start cursor-pointer hover:bg-slate-50/70 dark:hover:bg-slate-900/50 transition-colors"
-                  aria-expanded={isOpen}
-                >
-                  <div className="flex items-center gap-2.5 font-bold text-sm text-slate-900 dark:text-white">
-                    {tab.icon}
-                    <span>{isAr ? tab.labelAr : tab.labelEn}</span>
-                  </div>
-                  <div className="text-slate-400">
-                    {isOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                  </div>
-                </button>
-
-                {isOpen && (
-                  <div className="p-4 pt-0 border-t border-slate-100 dark:border-slate-800/80">
-                    <div className="pt-3">
-                      {renderTabContent(tab.id)}
-                    </div>
-                  </div>
-                )}
-              </div>
-            );
-          })}
+                {tab.icon}
+                <span>{isAr ? tab.labelAr : tab.labelEn}</span>
+              </button>
+            ))}
+          </div>
+          <div id="mobile-tab-panel" role="tabpanel" aria-labelledby={`mobile-tab-${mobileAccordionTab || 'technical'}`}>
+            {renderTabContent(mobileAccordionTab || 'technical')}
+          </div>
         </div>
       </section>
 

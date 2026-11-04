@@ -199,10 +199,14 @@ export default function CommandPalette() {
       toast.info(
         language === 'ar' ? 'جاري تجهيز التقرير المؤسسي...' : 'Generating institutional report...'
       );
-      window.open(`/api/report/${activeSymbol}/pdf?lang=${language}`, '_blank');
+      window.open(
+        `/stock/${encodeURIComponent(activeSymbol)}/report?lang=${language}&download=1`,
+        '_blank',
+        'noopener,noreferrer'
+      );
       setTimeout(() => {
         toast.success(
-          language === 'ar' ? 'تم بدء تحميل التقرير المؤسسي' : 'Institutional report download initiated'
+          language === 'ar' ? 'تم فتح صفحة التقرير' : 'Report page opened'
         );
       }, 1200);
     }

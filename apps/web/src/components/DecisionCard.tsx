@@ -109,36 +109,23 @@ export function DecisionCard({
   const whyList = isAr ? decisionData.why_ar : decisionData.why_en;
   const risksList = isAr ? decisionData.risks_ar : decisionData.risks_en;
 
-  const handleDownloadPDF = async () => {
+  const handleDownloadPDF = () => {
     try {
       setDownloading(true);
       toast.info(
         isAr ? 'جاري تجهيز التقرير المؤسسي...' : 'Generating institutional report...'
       );
-      const res = await fetch(`/api/report/${symbol}/pdf?lang=${isAr ? 'ar' : 'en'}`);
-      if (res.ok) {
-        const blob = await res.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `BORSATY_${symbol}_REPORT_${isAr ? 'AR' : 'EN'}.pdf`;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        toast.success(
-          isAr ? 'تم تحميل التقرير المؤسسي بنجاح' : 'Institutional report downloaded'
-        );
-      } else {
-        toast.error(
-          isAr ? 'تعذر تحميل التقرير حالياً، يرجى المحاولة بعد قليل' : 'Failed to download report. Please try again.'
-        );
-      }
+      window.open(
+        `/stock/${encodeURIComponent(symbol)}/report?lang=${isAr ? 'ar' : 'en'}&download=1`,
+        '_blank',
+        'noopener,noreferrer'
+      );
     } catch {
       toast.error(
         isAr ? 'حدث خطأ أثناء تحميل التقرير' : 'An error occurred during report generation'
       );
     } finally {
-      setDownloading(false);
+      window.setTimeout(() => setDownloading(false), 1500);
     }
   };
 

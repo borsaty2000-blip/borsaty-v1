@@ -182,10 +182,14 @@ export default function HeroDecisionSection({
       toast.info(
         isAr ? 'جاري تجهيز التقرير المؤسسي...' : 'Generating institutional report...'
       );
-      window.open(`/api/report/${company.symbol}/pdf?lang=${isAr ? 'ar' : 'en'}`, '_blank');
+      window.open(
+        `/stock/${encodeURIComponent(company.symbol)}/report?lang=${isAr ? 'ar' : 'en'}&download=1`,
+        '_blank',
+        'noopener,noreferrer'
+      );
       setTimeout(() => {
         toast.success(
-          isAr ? 'تم بدء تحميل التقرير المؤسسي' : 'Institutional report download initiated'
+          isAr ? 'تم فتح صفحة التقرير' : 'Report page opened'
         );
       }, 1200);
     } catch {

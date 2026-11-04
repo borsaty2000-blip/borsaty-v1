@@ -240,3 +240,33 @@ def test_screener_dsl_validation_rejects_unauthorized():
     # Attempt unauthorized universe
     with pytest.raises(Exception):
         ScreenQuery(universe="HACKED_MARKET")
+
+
+def test_screener_arabic_query():
+    from main import app
+    from fastapi.testclient import TestClient
+    client = TestClient(app)
+
+    # 1. Standard Arabic query
+    res = client.post("/screener/query", json={"query": "أسهم مصرية فوق 200 يوم"})
+    assert res.status_code == 200
+    data = res.json()
+    assert data["interpreted"]["universe"] == "EGX"
+    assert len(data["results"]) > 0
+    assert data["total_matches"] > 0
+    assert "close > SMA_200" in data["interpreted_ar"]
+
+    # 2. Eastern Arabic numerals (Mobile keyboard input: ٢٠٠)
+    res_eastern = client.post("/screener/query", json={"query": "أسهم مصرية فوق ٢٠٠ يوم"})
+    assert res_eastern.status_code == 200
+    data_eastern = res_eastern.json()
+    assert data_eastern["interpreted"]["universe"] == "EGX"
+    assert len(data_eastern["results"]) > 0
+
+    # 3. Definite article prefix (فوق الـ 200 يوم)
+    res_def = client.post("/screener/query", json={"query": "أسهم مصرية فوق متوسط الـ 200 يوم"})
+    assert res_def.status_code == 200
+    data_def = res_def.json()
+    assert data_def["interpreted"]["universe"] == "EGX"
+    assert len(data_def["results"]) > 0
+

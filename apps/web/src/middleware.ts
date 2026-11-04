@@ -5,8 +5,6 @@ import { NextResponse } from "next/server";
 import { isIpBlocked, blockIp, checkRateLimit } from "@/lib/rateLimit";
 
 const isProtectedRoute = createRouteMatcher([
-  "/portfolio(.*)",
-  "/watchlist(.*)",
   "/api/portfolio(.*)",
   "/api/watchlist(.*)",
 ]);
@@ -61,13 +59,26 @@ export default clerkMiddleware(async (auth, req) => {
     let rateKey = `${clientIp}:${pathname}`;
 
     if (pathname.startsWith("/api/analysis")) {
-      rateLimitConfig = { maxRequests: 30, windowMs: 60000 }; // 30 req/min
+      rateLimitConfig = { maxRequests: 20, windowMs: 60000 }; // 20 req/min per IP
+      rateKey = `${clientIp}:analysis`;
+    } else if (pathname.startsWith("/api/decision")) {
+      rateLimitConfig = { maxRequests: 30, windowMs: 60000 }; // 30 req/min per IP
+      rateKey = `${clientIp}:decision`;
+    } else if (pathname.startsWith("/api/fundamental")) {
+      rateLimitConfig = { maxRequests: 30, windowMs: 60000 }; // 30 req/min per IP
+      rateKey = `${clientIp}:fundamental`;
+    } else if (pathname.startsWith("/api/strategies")) {
+      rateLimitConfig = { maxRequests: 20, windowMs: 60000 }; // 20 req/min per IP
+      rateKey = `${clientIp}:strategies`;
     } else if (pathname.startsWith("/api/screener/query")) {
       rateLimitConfig = { maxRequests: 10, windowMs: 60000 }; // 10 req/min
+      rateKey = `${clientIp}:screener`;
     } else if (pathname.startsWith("/api/technical-score")) {
       rateLimitConfig = { maxRequests: 60, windowMs: 60000 }; // 60 req/min
+      rateKey = `${clientIp}:technical-score`;
     } else if (pathname.startsWith("/api/calendar")) {
       rateLimitConfig = { maxRequests: 30, windowMs: 60000 }; // 30 req/min
+      rateKey = `${clientIp}:calendar`;
     } else if (pathname.startsWith("/api/portfolio")) {
       rateLimitConfig = { maxRequests: 100, windowMs: 60000 }; // 100 req/min per user/IP
       try {

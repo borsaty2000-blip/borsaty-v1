@@ -157,6 +157,32 @@ export default function StockDetailClientV2({
   const chartSectionRef = useRef<HTMLDivElement>(null);
   const heroSectionRef = useRef<HTMLElement>(null);
   const [isPastHero, setIsPastHero] = useState(false);
+  const [chartReady, setChartReady] = useState(false);
+
+  useEffect(() => {
+    if (chartReady) return;
+    if (typeof window !== 'undefined' && 'IntersectionObserver' in window) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          if (entries[0]?.isIntersecting) {
+            setChartReady(true);
+            observer.disconnect();
+          }
+        },
+        { rootMargin: '300px' }
+      );
+      if (chartSectionRef.current) {
+        observer.observe(chartSectionRef.current);
+      }
+      const timer = setTimeout(() => setChartReady(true), 1000);
+      return () => {
+        observer.disconnect();
+        clearTimeout(timer);
+      };
+    } else {
+      setChartReady(true);
+    }
+  }, [chartReady]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -862,14 +888,20 @@ export default function StockDetailClientV2({
         </div>
 
         {/* 1. Candlestick Chart (Defaults to Simple View: price + EMA 20/50 + S/R lines, 500px desktop / 300px mobile) */}
-        <ErrorBoundary fallbackTitleEn="Chart Display Error" fallbackTitleAr="تعذر عرض الرسم البياني">
-          <PriceChart
-            candles={candles}
-            symbol={company.symbol}
-            currency={company.currency}
-            initialViewMode="simple"
-          />
-        </ErrorBoundary>
+        {chartReady ? (
+          <ErrorBoundary fallbackTitleEn="Chart Display Error" fallbackTitleAr="تعذر عرض الرسم البياني">
+            <PriceChart
+              candles={candles}
+              symbol={company.symbol}
+              currency={company.currency}
+              initialViewMode="simple"
+            />
+          </ErrorBoundary>
+        ) : (
+          <div className="h-[340px] md:h-[440px] w-full rounded-lg bg-slate-100 dark:bg-slate-900/40 animate-pulse border border-slate-200 dark:border-slate-800 flex items-center justify-center text-xs text-slate-400">
+            {isAr ? 'جاري تحميل محرك الرسم البياني...' : 'Loading interactive chart engine...'}
+          </div>
+        )}
 
         {/* 2. The "What's Happening Now?" Box */}
         <div className="p-6 rounded-lg bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow space-y-3">

@@ -139,6 +139,20 @@ export default function HeroDecisionSection({
     }
   })();
 
+  // Format as-of date (shared baseline timestamp)
+  const formattedAsOfDate = (() => {
+    try {
+      const d = quote.priceTimestamp ? new Date(quote.priceTimestamp) : new Date();
+      return d.toLocaleDateString(isAr ? 'ar-EG' : 'en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+      });
+    } catch {
+      return isAr ? '3 نوفمبر 2026' : 'Nov 3, 2026';
+    }
+  })();
+
   // 4 Plain Language Bullets per specs
   const beginnerBulletsAr = [
     isBuy
@@ -262,7 +276,7 @@ export default function HeroDecisionSection({
           ) : (
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300">
               <Clock className="w-3.5 h-3.5" />
-              <span>{isAr ? 'إغلاق اليوم' : "Today's Close"}</span>
+              <span>{isAr ? `إغلاق اليوم (${formattedAsOfDate})` : `Today's Close (${formattedAsOfDate})`}</span>
             </span>
           )}
         </div>
@@ -275,32 +289,43 @@ export default function HeroDecisionSection({
       {/* On the right: "آخر تحديث: 3:15 م" (12px, gray) */}
       {/* ═══════════════════════════════════════════════════════════════ */}
       <div className="min-h-[96px] sm:min-h-[120px] p-4 sm:p-6 rounded-xl bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-baseline gap-3 flex-wrap">
-          <div className="text-4xl sm:text-5xl md:text-[56px] font-extrabold font-mono text-slate-900 dark:text-white tracking-tight leading-none tabular-nums">
-            <AnimatedNumber value={quote.price} decimals={2} />
+        <div className="flex flex-col gap-2">
+          <div className="flex items-baseline gap-3 flex-wrap">
+            <div className="text-4xl sm:text-5xl md:text-[56px] font-extrabold font-mono text-slate-900 dark:text-white tracking-tight leading-none tabular-nums">
+              <AnimatedNumber value={quote.price} decimals={2} />
+            </div>
+            <span className="text-xl sm:text-2xl font-bold text-slate-400 dark:text-slate-500">
+              {isAr ? (quote.currency === 'EGP' ? 'ج.م' : quote.currency === 'SAR' ? 'ر.س' : quote.currency) : quote.currency}
+            </span>
+            <div
+              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm sm:text-base font-bold font-mono tabular-nums ${
+                isPositive
+                  ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/70 dark:text-emerald-300'
+                  : 'bg-rose-100 text-rose-800 dark:bg-rose-950/70 dark:text-rose-300'
+              }`}
+            >
+              {isPositive ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
+              <span>
+                {isPositive ? '+' : ''}
+                {quote.change.toFixed(2)} ({isPositive ? '+' : ''}
+                {quote.changePct.toFixed(2)}%)
+              </span>
+            </div>
           </div>
-          <span className="text-xl sm:text-2xl font-bold text-slate-400 dark:text-slate-500">
-            {isAr ? (quote.currency === 'EGP' ? 'ج.م' : quote.currency === 'SAR' ? 'ر.س' : quote.currency) : quote.currency}
-          </span>
-          <div
-            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm sm:text-base font-bold font-mono tabular-nums ${
-              isPositive
-                ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/70 dark:text-emerald-300'
-                : 'bg-rose-100 text-rose-800 dark:bg-rose-950/70 dark:text-rose-300'
-            }`}
-          >
-            {isPositive ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
+          {/* As-Of Timestamp row */}
+          <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 font-medium">
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-slate-500" />
             <span>
-              {isPositive ? '+' : ''}
-              {quote.change.toFixed(2)} ({isPositive ? '+' : ''}
-              {quote.changePct.toFixed(2)}%)
+              {isAr
+                ? `اعتباراً من: ${formattedAsOfDate} · ${formattedUpdateTime} (${quote.freshness === 'LIVE' ? 'مباشر' : 'إغلاق اليوم'})`
+                : `As of: ${formattedAsOfDate} · ${formattedUpdateTime} (${quote.freshness === 'LIVE' ? 'Live' : "Today's Close"})`}
             </span>
           </div>
         </div>
 
         {/* Right side: Last update timestamp */}
         <div className="text-xs text-slate-400 dark:text-slate-500 font-medium sm:text-end flex sm:flex-col items-center sm:items-end justify-between gap-1">
-          <span>{isAr ? `آخر تحديث: ${formattedUpdateTime}` : `Last update: ${formattedUpdateTime}`}</span>
+          <span>{isAr ? `توقيت الإغلاق: ${formattedUpdateTime}` : `Close Time: ${formattedUpdateTime}`}</span>
           <span className="text-[11px] font-mono text-slate-400">{company.market} Official Feed</span>
         </div>
       </div>

@@ -55,8 +55,24 @@ class ScreenerNLU:
         return screen_query, explanation
 
     def _parse_deterministic(self, q: str) -> Tuple[Dict[str, Any], str]:
-        # Normalize Arabic characters and lowercase for universal case-insensitivity
-        q_norm = q.replace("أ", "ا").replace("إ", "ا").replace("آ", "ا").replace("ة", "ه").replace("ى", "ي").lower()
+        # 1. Map Eastern Arabic digits (٠-٩) and Persian digits (۰-۹) to standard ASCII (0-9)
+        arabic_digits_map = str.maketrans("٠١٢٣٤٥٦٧٨٩۰۱۲۳۴۵۶۷۸۹", "01234567890123456789")
+        q_clean = q.translate(arabic_digits_map)
+
+        # 2. Strip diacritics (tashkeel) and tatweel/kashida
+        q_clean = re.sub(r"[\u064B-\u065F\u0670\u0640]", "", q_clean)
+
+        # 3. Normalize Arabic characters and lowercase for universal case-insensitivity
+        q_norm = (
+            q_clean.replace("أ", "ا")
+            .replace("إ", "ا")
+            .replace("آ", "ا")
+            .replace("ة", "ه")
+            .replace("ى", "ي")
+            .replace("ئ", "ي")
+            .replace("ؤ", "و")
+            .lower()
+        )
         q_lower = q_norm
 
         universe = "ALL"
@@ -114,7 +130,7 @@ class ScreenerNLU:
             explanation_parts.append("قطاع الطاقة")
 
         # 4. Condition: Idiom "فوق 200" or "فوق 200 يوم" / "أعلى من متوسط 200" / "اعلى من SMA200"
-        if re.search(r"(فوق|اعلي من|تجاوز|اكبر من)\s*(200\s*يوم|200|متوسط\s*200|sma\s*200|sma200)", q_norm):
+        if re.search(r"(فوق|اعلي من|تجاوز|اكبر من|اعلى من)\s*(?:خط\s*|متوسط\s*)?(?:الـ?\s*)?(?:sma\s*|sma)?200(?:\s*يوم)?", q_norm):
             conditions.append({
                 "field": "close",
                 "operator": ">",
@@ -123,7 +139,7 @@ class ScreenerNLU:
             explanation_parts.append("السعر فوق متوسط 200 يوم (close > SMA_200)")
 
         # 5. Condition: Idiom "تحت 50" or "أقل من متوسط 50" / "دون متوسط 50"
-        if re.search(r"(تحت|اقل من|ادني من|دون)\s*(50\s*يوم|50|متوسط\s*50|sma\s*50|sma50)", q_norm):
+        if re.search(r"(تحت|اقل من|ادني من|دون)\s*(?:خط\s*|متوسط\s*)?(?:الـ?\s*)?(?:sma\s*|sma)?50(?:\s*يوم)?", q_norm):
             conditions.append({
                 "field": "close",
                 "operator": "<",

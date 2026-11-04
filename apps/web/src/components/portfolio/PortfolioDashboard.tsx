@@ -36,7 +36,11 @@ import {
   RefreshCw,
   Compass,
   ShieldAlert,
+  Lock,
+  LogIn,
+  UserPlus,
 } from 'lucide-react';
+import { useAuth, SignInButton, SignUpButton } from '@clerk/nextjs';
 import { useApp } from '@/context/AppContext';
 import { toast } from 'sonner';
 import dynamic from 'next/dynamic';
@@ -91,6 +95,7 @@ const PALETTE = ['#10b981', '#06b6d4', '#8b5cf6', '#f59e0b', '#ec4899', '#3b82f6
 export default function PortfolioDashboard() {
   const { language } = useApp();
   const isAr = language === 'ar';
+  const { isSignedIn, isLoaded } = useAuth();
 
   const [loading, setLoading] = useState(true);
   const [summary, setSummary] = useState<PortfolioSummary>({
@@ -109,6 +114,10 @@ export default function PortfolioDashboard() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const fetchPortfolio = useCallback(async () => {
+    if (!isSignedIn) {
+      setLoading(false);
+      return;
+    }
     try {
       setLoading(true);
       const res = await fetch('/api/portfolio');
@@ -124,11 +133,15 @@ export default function PortfolioDashboard() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [isSignedIn]);
 
   useEffect(() => {
-    fetchPortfolio();
-  }, [fetchPortfolio]);
+    if (isLoaded && isSignedIn) {
+      fetchPortfolio();
+    } else if (isLoaded && !isSignedIn) {
+      setLoading(false);
+    }
+  }, [isLoaded, isSignedIn, fetchPortfolio]);
 
   const handleDeleteTransaction = async (id: string) => {
     try {
@@ -196,6 +209,128 @@ export default function PortfolioDashboard() {
     riskScore === 0 ? 'لا توجد أصول نشطة' : riskScore > 70 ? 'مخاطرة تركيز مرتفعة' : riskScore > 40 ? 'مخاطرة متوازنة معتدلة' : 'مخاطرة منخفضة منوّعة';
   const riskColor =
     riskScore === 0 ? 'text-slate-400 bg-slate-500/10 border-slate-500/20' : riskScore > 70 ? 'text-rose-500 bg-rose-500/10 border-rose-500/20' : riskScore > 40 ? 'text-amber-500 bg-amber-500/10 border-amber-500/20' : 'text-emerald-500 bg-emerald-500/10 border-emerald-500/20';
+
+  if (!isLoaded) {
+    return (
+      <div className="space-y-6 animate-pulse py-6">
+        <div className="h-28 rounded-2xl bg-slate-100 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800" />
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="h-24 rounded-2xl bg-slate-100 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800" />
+          <div className="h-24 rounded-2xl bg-slate-100 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800" />
+          <div className="h-24 rounded-2xl bg-slate-100 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800" />
+          <div className="h-24 rounded-2xl bg-slate-100 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800" />
+        </div>
+        <div className="h-72 rounded-2xl bg-slate-100 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800" />
+      </div>
+    );
+  }
+
+  if (isLoaded && !isSignedIn) {
+    return (
+      <div className="py-12 max-w-4xl mx-auto px-4 space-y-10">
+        {/* Institutional Hero Banner */}
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0c0d0e] p-8 md:p-12 text-center shadow-sm relative overflow-hidden">
+          <div className="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 flex items-center justify-center mx-auto mb-6 shadow-xs">
+            <Briefcase className="w-8 h-8 text-slate-700 dark:text-slate-300" />
+          </div>
+
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 mb-4">
+            <Lock className="w-3.5 h-3.5 text-slate-500" />
+            <span>{isAr ? 'محفظة الأوراق المالية المؤسسية' : 'Institutional Portfolio Terminal'}</span>
+          </div>
+
+          <h1 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white tracking-tight mb-4">
+            {isAr ? 'ادخل إلى محفظتك' : 'Access Your Portfolio'}
+          </h1>
+          <p className="text-sm md:text-base text-slate-600 dark:text-slate-400 max-w-xl mx-auto leading-relaxed mb-8">
+            {isAr
+              ? 'سجّل الدخول لعرض مراكزك المالية المفتوحة، متابعة الأرباح والخسائر اللحظية، وتحليل مخاطر التوزيع القطاعي بدقة مؤسسية.'
+              : 'Sign in to view your holdings, track real-time P&L, analyze sector exposures, and manage your investment positions.'}
+          </p>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-md mx-auto">
+            <SignInButton mode="modal">
+              <button className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white dark:bg-white dark:text-black dark:hover:bg-slate-100 font-bold text-sm shadow-md transition-all hover:scale-[1.02]">
+                <LogIn className="w-4 h-4" />
+                <span>{isAr ? 'تسجيل الدخول' : 'Sign In'}</span>
+              </button>
+            </SignInButton>
+            <SignUpButton mode="modal">
+              <button className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-transparent hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-900 dark:text-white font-bold text-sm transition-all hover:scale-[1.02]">
+                <UserPlus className="w-4 h-4" />
+                <span>{isAr ? 'إنشاء حساب جديد' : 'Create Account'}</span>
+              </button>
+            </SignUpButton>
+          </div>
+        </div>
+
+        {/* Institutional Features Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="p-6 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0c0d0e] shadow-xs space-y-3">
+            <div className="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-800 dark:text-slate-200">
+              <PieIcon className="w-5 h-5" />
+            </div>
+            <h3 className="text-base font-bold text-slate-900 dark:text-white">
+              {isAr ? 'تحليل المخاطر والتوزيع' : 'Risk & Allocation Analytics'}
+            </h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              {isAr
+                ? 'فحص شامل لمحفظتك الاستثمارية (Portfolio X-Ray) وتنبيهات فورية عند تركز السيولة في قطاع واحد.'
+                : 'Deep portfolio X-Ray, sector concentration alerts, and multi-asset exposure tracking.'}
+            </p>
+          </div>
+
+          <div className="p-6 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0c0d0e] shadow-xs space-y-3">
+            <div className="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-800 dark:text-slate-200">
+              <TrendingUp className="w-5 h-5" />
+            </div>
+            <h3 className="text-base font-bold text-slate-900 dark:text-white">
+              {isAr ? 'تتبع الأرباح وتكلفة الأساس' : 'Real-Time P&L Tracking'}
+            </h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              {isAr
+                ? 'حساب تلقائي لمتوسط تكلفة الشراء والأرباح الرأسمالية المحققة وغير المحققة بأسعار السوق الحية.'
+                : 'Automated weighted-average cost basis and unrealized returns calculated with live market feeds.'}
+            </p>
+          </div>
+
+          <div className="p-6 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0c0d0e] shadow-xs space-y-3">
+            <div className="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-800 dark:text-slate-200">
+              <Layers className="w-5 h-5" />
+            </div>
+            <h3 className="text-base font-bold text-slate-900 dark:text-white">
+              {isAr ? 'إعادة التوازن المؤسسي' : 'Algorithmic Rebalancing'}
+            </h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
+              {isAr
+                ? 'تطبيق استراتيجيات كمية بنقرة واحدة لتعديل أوزان المحفظة تلقائياً وفقاً للمؤشرات الفنية المعتمدة.'
+                : 'Apply institutional quant strategies in one click to rebalance holdings to model portfolio targets.'}
+            </p>
+          </div>
+        </div>
+
+        {/* Dimmed Preview Mockup */}
+        <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0c0d0e] p-6 relative overflow-hidden shadow-xs">
+          <div className="absolute inset-0 bg-white/70 dark:bg-black/70 backdrop-blur-[2px] z-10 flex flex-col items-center justify-center gap-2">
+            <Lock className="w-6 h-6 text-slate-500" />
+            <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+              {isAr ? 'بيانات المحفظة مشفرة ومحمية — سجّل الدخول للوصول' : 'Portfolio data encrypted — Sign in to access'}
+            </span>
+          </div>
+          <div className="opacity-40 filter blur-[0.5px] pointer-events-none space-y-4">
+            <div className="h-8 w-48 bg-slate-200 dark:bg-slate-800 rounded" />
+            <div className="grid grid-cols-4 gap-4">
+              <div className="h-20 bg-slate-100 dark:bg-slate-800/60 rounded-xl" />
+              <div className="h-20 bg-slate-100 dark:bg-slate-800/60 rounded-xl" />
+              <div className="h-20 bg-slate-100 dark:bg-slate-800/60 rounded-xl" />
+              <div className="h-20 bg-slate-100 dark:bg-slate-800/60 rounded-xl" />
+            </div>
+            <div className="h-44 bg-slate-100 dark:bg-slate-800/40 rounded-xl" />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full space-y-6 pb-16">

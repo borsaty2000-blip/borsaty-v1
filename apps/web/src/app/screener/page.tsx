@@ -81,7 +81,8 @@ export default function ScreenerPage() {
       });
 
       if (!res.ok) {
-        throw new Error("فشل تنفيذ الاستعلام، يرجى المحاولة مرة أخرى");
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || "فشل تنفيذ الاستعلام، يرجى المحاولة مرة أخرى");
       }
 
       const rawData = await res.json();
@@ -89,8 +90,8 @@ export default function ScreenerPage() {
       const data = parsed.success ? parsed.data : rawData;
 
       setResults(data.results || []);
-      setExplanation(rawData.explanation || null);
-      setInterpretedDsl(rawData.interpreted_dsl || null);
+      setExplanation(rawData.interpreted_ar || rawData.explanation || null);
+      setInterpretedDsl(rawData.interpreted || rawData.interpreted_dsl || null);
       setExecutionMs(data.execution_ms || null);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : t("errors.fetchFailed");
@@ -257,7 +258,7 @@ export default function ScreenerPage() {
                             </span>
                           </td>
                           <td className="py-3 px-4 text-end font-bold tabular-nums text-slate-900 dark:text-white">
-                            {stk.close.toFixed(2)}
+                            {(typeof stk.close === "number" ? stk.close : Number(stk.close) || 0).toFixed(2)}
                           </td>
                           <td
                             className={`py-3 px-4 text-end font-bold tabular-nums ${

@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import { useBorsaty } from '@/context/BorsatyContext';
+import { ROUTES } from '@/lib/route-map';
 
 export default function MobileBottomNav() {
   const pathname = usePathname();
@@ -43,25 +44,25 @@ export default function MobileBottomNav() {
   const navItems = [
     {
       label: isAr ? 'الرئيسية' : 'Home',
-      href: '/',
+      href: ROUTES.home,
       icon: Home,
       isActive: pathname === '/',
     },
     {
       label: isAr ? 'الأسواق' : 'Markets',
-      href: '/signals',
+      href: ROUTES.signals,
       icon: TrendingUp,
       isActive: pathname.startsWith('/signals') || pathname.startsWith('/stock/'),
     },
     {
       label: isAr ? 'المصفي' : 'Screener',
-      href: '/screener',
+      href: ROUTES.screener,
       icon: SlidersHorizontal,
       isActive: pathname.startsWith('/screener'),
     },
     {
       label: isAr ? 'المحفظة' : 'Portfolio',
-      href: '/portfolio',
+      href: ROUTES.portfolio,
       icon: Briefcase,
       isActive: pathname.startsWith('/portfolio'),
     },

@@ -411,3 +411,52 @@ export type IncomeStatementItem = z.infer<typeof IncomeStatementItemSchema>;
 export type BalanceSheetItem = z.infer<typeof BalanceSheetItemSchema>;
 export type CashFlowItem = z.infer<typeof CashFlowItemSchema>;
 export type FinancialRatios = z.infer<typeof FinancialRatiosSchema>;
+
+export const AnalystConsensusResponseSchema = z.object({
+  symbol: z.string(),
+  available: z.boolean(),
+  reason: z.string().optional(),
+  message_ar: z.string().optional(),
+  message_en: z.string().optional(),
+  consensus: z.object({
+    recommendation: z.enum(["BUY", "HOLD", "SELL"]),
+    strength: z.enum(["STRONG", "MODERATE", "WEAK"]),
+    total_analysts: z.number(),
+    distribution: z.object({
+      strong_buy: z.number(),
+      buy: z.number(),
+      hold: z.number(),
+      sell: z.number(),
+      strong_sell: z.number(),
+    }),
+  }).optional(),
+  price_targets: z.object({
+    low: z.number().nullable().optional(),
+    average: z.number().nullable().optional(),
+    high: z.number().nullable().optional(),
+    current_price: z.number().nullable().optional(),
+    upside_pct: z.number().nullable().optional(),
+  }).optional(),
+  estimates: z.object({
+    eps_current_year: z.number().nullable().optional(),
+    eps_next_year: z.number().nullable().optional(),
+    revenue_current: z.number().nullable().optional(),
+    revenue_next: z.number().nullable().optional(),
+    growth_rate_pct: z.number().nullable().optional(),
+    eps_growth_pct: z.number().nullable().optional(),
+  }).optional(),
+  recent_actions: z.array(z.object({
+    date: z.string(),
+    firm: z.string(),
+    action: z.enum(["upgrade", "downgrade", "initiate"]),
+    from: z.string().nullable().optional(),
+    to: z.string().nullable().optional(),
+    target: z.number().nullable().optional(),
+  })).optional(),
+  data_quality: z.object({
+    source: z.string(),
+    last_updated: z.string(),
+  }).optional(),
+});
+
+export type ValidatedAnalystConsensusResponse = z.infer<typeof AnalystConsensusResponseSchema>;

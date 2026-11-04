@@ -40,6 +40,13 @@ const FairValueCard = dynamic(() => import('@/components/FairValueCard'), {
   ssr: false,
   loading: () => <div className="h-64 rounded-xl bg-slate-100 dark:bg-slate-900/40 animate-pulse border border-slate-200 dark:border-slate-800" />,
 });
+const AnalystConsensusCard = dynamic(
+  () => import('@/components/fundamental/AnalystConsensusCard'),
+  {
+    ssr: false,
+    loading: () => <div className="h-72 rounded-xl bg-slate-100 dark:bg-slate-900/40 animate-pulse border border-slate-200 dark:border-slate-800" />,
+  }
+);
 const EarningsInsightCard = dynamic(() => import('@/components/EarningsInsightCard'), {
   ssr: false,
   loading: () => <div className="h-64 rounded-xl bg-slate-100 dark:bg-slate-900/40 animate-pulse border border-slate-200 dark:border-slate-800" />,
@@ -783,6 +790,12 @@ export default function StockDetailClientV2({
       case 'financials':
         return (
           <div className="space-y-6">
+            <ErrorBoundary fallbackTitleEn="Fair Value Engine Error" fallbackTitleAr="تعذر عرض نموذج القيمة العادلة">
+              <FairValueCard symbol={company.symbol} currency={company.currency} />
+            </ErrorBoundary>
+            <ErrorBoundary fallbackTitleEn="Analyst Consensus Error" fallbackTitleAr="تعذر عرض إجماع المحللين">
+              <AnalystConsensusCard symbol={company.symbol} currency={company.currency} />
+            </ErrorBoundary>
             <ErrorBoundary fallbackTitleEn="Financial Statements Error" fallbackTitleAr="تعذر عرض القوائم المالية">
               <FinancialStatementsCard
                 symbol={company.symbol}

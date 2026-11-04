@@ -820,6 +820,7 @@ def history_endpoint(symbol: str, market: Optional[str] = "EGX", period: Optiona
 
 from fundamental.fair_value import global_fair_value_engine
 from fundamental.financials import global_financials_engine
+from fundamental.analyst_consensus import global_analyst_consensus_engine
 
 class FairValueRequest(BaseModel):
     symbol: str
@@ -877,6 +878,15 @@ def get_financials_endpoint(
     Fetch 3-year annual or quarterly financial statements and 20 fundamental ratios.
     """
     return global_financials_engine.get_financials(symbol, period=period, years=years, market=market)
+
+
+@app.get("/fundamental/analyst-consensus/{symbol}")
+def get_analyst_consensus_endpoint(symbol: str, market: str = "US"):
+    """Fetch analyst consensus, price targets, estimates, and recent rating actions."""
+    market_code = market.strip().upper()
+    if market_code not in {"US", "EGX", "TASI"}:
+        raise HTTPException(status_code=400, detail="market must be US, EGX, or TASI")
+    return global_analyst_consensus_engine.analyze(symbol, market_code).to_dict()
 
 
 

@@ -11,28 +11,29 @@ handler path.
 - **Explicit page-level ErrorBoundary wrappers:** 12 page modules
 - **Segment-specific `error.tsx` / `loading.tsx`:** 0
 - **Root fallbacks:** `app/error.tsx`, `app/loading.tsx`, and `app/not-found.tsx`
-- **APIs covered by middleware rate limiting:** 17
-- **Additional APIs with route-handler rate limiting:** 2
-- **APIs without a detected rate limiter:** 39
+- **APIs covered by middleware rate limiting:** 58
+- **Additional APIs with route-handler rate limiting:** 4 (some overlap middleware)
+- **APIs without a detected rate limiter:** 0
 - **Page transitions:** No global `template.tsx`; animations are component-level.
 
 ## Page Routes
 
 “Auth” describes route-level enforcement, not an informal expectation that a
-user sign in. Portfolio, watchlist, and alerts render client-side sign-in states
-but are not protected by middleware before their page response.
+user sign in. Portfolio, watchlist, and alerts page routes are protected by
+Clerk middleware. Their APIs rely on handler-level user checks to return 401
+JSON when signed out.
 
 | Route | Type | Auth | Rate Limit | Error Boundary | Motion |
 |---|---|---|---|---|---|
 | `/` | Page | Public | N/A | Root `error.tsx`; no page-source wrapper found | Component-level |
 | `/about` | Page | Public | N/A | Root `error.tsx`; explicit wrapper | Component-level |
-| `/alerts` | Page | Client-side sign-in gate | N/A | Root `error.tsx`; no page-source wrapper found | Component-level |
+| `/alerts` | Page | Middleware Clerk protection | N/A | Root `error.tsx`; no page-source wrapper found | Component-level |
 | `/calendar` | Page | Public | N/A | Root `error.tsx`; explicit wrapper | Component-level |
 | `/changelog` | Page | Public | N/A | Root `error.tsx`; explicit wrapper | Component-level |
 | `/compare` | Page | Public | N/A | Root `error.tsx`; explicit wrapper | Component-level |
 | `/docs` | Page | Public | N/A | Root `error.tsx`; explicit wrapper | Component-level |
 | `/news` | Page | Public | N/A | Root `error.tsx`; no page-source wrapper found | Component-level |
-| `/portfolio` | Page | Client-side sign-in gate | N/A | Root `error.tsx`; explicit page wrapper | Component-level |
+| `/portfolio` | Page | Middleware Clerk protection | N/A | Root `error.tsx`; explicit page wrapper | Component-level |
 | `/privacy` | Page | Public | N/A | Root `error.tsx`; explicit wrapper | Component-level |
 | `/screener` | Page | Public | N/A | Root `error.tsx`; explicit wrapper | Component-level |
 | `/signals` | Page | Public | N/A | Root `error.tsx`; no page-source wrapper found | Component-level |
@@ -44,7 +45,7 @@ but are not protected by middleware before their page response.
 | `/strategies` | Page | Public | N/A | Root `error.tsx`; no page-source wrapper found | Component-level |
 | `/strategies/[name]` | Page | Public | N/A | Root `error.tsx`; no page-source wrapper found | Component-level |
 | `/terms` | Page | Public | N/A | Root `error.tsx`; explicit wrapper | Component-level |
-| `/watchlist` | Page | Client-side sign-in gate | N/A | Root `error.tsx`; no page-source wrapper found | Component-level |
+| `/watchlist` | Page | Middleware Clerk protection | N/A | Root `error.tsx`; no page-source wrapper found | Component-level |
 
 The root `loading.tsx` is the only app loading boundary. There are no
 route-specific loading skeletons or `error.tsx` files. Root `error.tsx` does
@@ -58,57 +59,59 @@ Rate limits below reflect the current middleware and handler implementations.
 
 | Route(s) | Type | Auth | Rate Limit | Error Boundary | Motion |
 |---|---|---|---|---|---|
-| `/api/admin/call-provider`, `/api/admin/dlq`, `/api/admin/dlq/replay`, `/api/admin/dlq/stats`, `/api/admin/simulate-failure` (5) | API | Admin token; production routes return 404 unless `ALLOW_ADMIN_TESTS=true` | None detected | Route-level response handling | N/A |
-| `/api/ai-narrator` (1) | API | Public | None detected | Route-level response handling | N/A |
-| `/api/alerts`, `/api/alerts/[id]` (2) | API | User auth checked in handlers | None detected | Route-level response handling | N/A |
+| `/api/admin/call-provider`, `/api/admin/dlq`, `/api/admin/dlq/replay`, `/api/admin/dlq/stats`, `/api/admin/simulate-failure` (5) | API | Admin token; production routes return 404 unless `ALLOW_ADMIN_TESTS=true` | Middleware 10/min/IP | Route-level response handling | N/A |
+| `/api/ai-narrator` (1) | API | Public | Middleware 60/min/IP per route | Route-level response handling | N/A |
+| `/api/alerts`, `/api/alerts/[id]` (2) | API | User auth checked in handlers | Middleware 100/min/IP per route | Route-level response handling | N/A |
 | `/api/analysis/[symbol]/full` (1) | API | Public | Middleware 20/min/IP; handler also limits to 60/min/IP | Route-level response handling | N/A |
-| `/api/backtest/[symbol]`, `/api/backtest/leaderboard` (2) | API | Public | None detected | Route-level response handling | N/A |
+| `/api/backtest/[symbol]`, `/api/backtest/leaderboard` (2) | API | Public | Middleware 60/min/IP per route | Route-level response handling | N/A |
 | `/api/calendar` (1) | API | Public | Middleware 30/min/IP | Route-level response handling | N/A |
-| `/api/classical/[symbol]`, `/api/classical/[symbol]/near-misses` (2) | API | Public | None detected | Route-level response handling | N/A |
-| `/api/company` (1) | API | Public | None detected | Route-level response handling | N/A |
+| `/api/classical/[symbol]`, `/api/classical/[symbol]/near-misses` (2) | API | Public | Middleware 60/min/IP per route | Route-level response handling | N/A |
+| `/api/company` (1) | API | Public | Middleware 60/min/IP per route | Route-level response handling | N/A |
 | `/api/decision/[symbol]` (1) | API | Public | Middleware 30/min/IP | Route-level response handling | N/A |
-| `/api/elliott/[symbol]` (1) | API | Public | None detected | Route-level response handling | N/A |
+| `/api/elliott/[symbol]` (1) | API | Public | Middleware 60/min/IP per route | Route-level response handling | N/A |
 | `/api/fundamental/analyst-consensus/[symbol]`, `/api/fundamental/dividends/[symbol]`, `/api/fundamental/fair-value/[symbol]`, `/api/fundamental/fair-value/[symbol]/history`, `/api/fundamental/financials/[symbol]` (5) | API | Public | Middleware 30/min/IP | Route-level response handling | N/A |
-| `/api/harmonic/[symbol]`, `/api/harmonic/[symbol]/prz` (2) | API | Public | None detected | Route-level response handling | N/A |
-| `/api/health/data` (1) | API | Public | None detected | Route-level response handling | N/A |
-| `/api/historical` (1) | API | Public | None detected | Route-level response handling | N/A |
-| `/api/indicators/[symbol]` (1) | API | Public | None detected | Route-level response handling | N/A |
-| `/api/instruments`, `/api/instruments/[symbol]`, `/api/instruments/resolve` (3) | API | Public | None detected | Route-level response handling | N/A |
+| `/api/harmonic/[symbol]`, `/api/harmonic/[symbol]/prz` (2) | API | Public | Middleware 60/min/IP per route | Route-level response handling | N/A |
+| `/api/health/data` (1) | API | Public | Middleware 60/min/IP per route | Route-level response handling | N/A |
+| `/api/historical` (1) | API | Public | Middleware 60/min/IP per route | Route-level response handling | N/A |
+| `/api/indicators/[symbol]` (1) | API | Public | Middleware 60/min/IP per route | Route-level response handling | N/A |
+| `/api/instruments`, `/api/instruments/[symbol]`, `/api/instruments/resolve` (3) | API | Public | Middleware 60/min/IP per route | Route-level response handling | N/A |
 | `/api/intelligence/earnings/[symbol]` (1) | API | Public | Handler 20/min/IP (in-memory) | Route-level response handling | N/A |
-| `/api/intelligence/earnings/[symbol]/history`, `/api/intelligence/insider/[symbol]`, `/api/intelligence/insider/[symbol]/history` (3) | API | Public | None detected | Route-level response handling | N/A |
-| `/api/market/conviction`, `/api/market/overview`, `/api/market/pulse` (3) | API | Public | None detected | Route-level response handling | N/A |
+| `/api/intelligence/earnings/[symbol]/history`, `/api/intelligence/insider/[symbol]`, `/api/intelligence/insider/[symbol]/history` (3) | API | Public | Middleware 60/min/IP per route | Route-level response handling | N/A |
+| `/api/market/conviction`, `/api/market/overview`, `/api/market/pulse` (3) | API | Public | Middleware 60/min/IP per route | Route-level response handling | N/A |
 | `/api/metrics` (1) | API | Token/Basic Auth in production or when required by config | Handler 60/min/IP | Route-level response handling | N/A |
-| `/api/narrate/[symbol]` (1) | API | Public | None detected | Route-level response handling | N/A |
-| `/api/news/[symbol]`, `/api/news/market` (2) | API | Public | None detected | Route-level response handling | N/A |
-| `/api/opportunities` (1) | API | Public | None detected | Route-level response handling | N/A |
-| `/api/pivots/[symbol]` (1) | API | Public | None detected | Route-level response handling | N/A |
-| `/api/portfolio`, `/api/portfolio/transaction`, `/api/portfolio/transaction/[id]` (3) | API | Middleware `auth.protect()` and handler user checks | Middleware 100/min/user or IP | Route-level response handling | N/A |
-| `/api/quotes` (1) | API | Public | None detected | Route-level response handling | N/A |
-| `/api/report/[symbol]/pdf` (1) | API | Public | None detected; endpoint currently returns 410 | Route-level response handling | N/A |
+| `/api/narrate/[symbol]` (1) | API | Public | Middleware 60/min/IP per route | Route-level response handling | N/A |
+| `/api/news/[symbol]`, `/api/news/market` (2) | API | Public | Middleware 20/min/IP, shared across news routes | Route-level response handling | N/A |
+| `/api/opportunities` (1) | API | Public | Middleware 60/min/IP per route | Route-level response handling | N/A |
+| `/api/pivots/[symbol]` (1) | API | Public | Middleware 60/min/IP per route | Route-level response handling | N/A |
+| `/api/portfolio`, `/api/portfolio/transaction`, `/api/portfolio/transaction/[id]` (3) | API | Handler user checks (401 JSON when signed out) | Middleware 100/min/user or IP | Route-level response handling | N/A |
+| `/api/quotes` (1) | API | Public | Middleware 60/min/IP per route | Route-level response handling | N/A |
+| `/api/report/[symbol]/pdf` (1) | API | Public | Middleware 60/min/IP per route; endpoint currently returns 410 | Route-level response handling | N/A |
 | `/api/screener/query` (1) | API | Public | Middleware 10/min/IP; handler 10/min/user and 30/min/IP | Route-level response handling | N/A |
-| `/api/signals` (1) | API | Public | None detected | Route-level response handling | N/A |
+| `/api/signals` (1) | API | Public | Middleware 60/min/IP per route | Route-level response handling | N/A |
 | `/api/strategies`, `/api/strategies/[strategy]`, `/api/strategies/[strategy]/backtest`, `/api/strategies/[strategy]/picks` (4) | API | Public | Middleware 20/min/IP | Route-level response handling | N/A |
 | `/api/technical-score/[symbol]` (1) | API | Public | Middleware 60/min/IP | Route-level response handling | N/A |
-| `/api/trade-plan/[symbol]` (1) | API | Public | None detected | Route-level response handling | N/A |
-| `/api/watchlist`, `/api/watchlist/[symbol]` (2) | API | Middleware `auth.protect()` and handler user checks | None detected | Route-level response handling | N/A |
+| `/api/trade-plan/[symbol]` (1) | API | Public | Middleware 60/min/IP per route | Route-level response handling | N/A |
+| `/api/watchlist`, `/api/watchlist/[symbol]` (2) | API | Handler user checks (401 JSON when signed out) | Middleware 100/min/IP per route | Route-level response handling | N/A |
 
 ## Phase 1 Findings
 
-1. **API rate-limit coverage is incomplete.** 17 of 58 handlers match
-   middleware rate limits; earnings intelligence and metrics add handler-local
-   limits. 39 handlers have no rate limiter detected. Some internal limits
-   are process-local or explicitly fail open when the backing store fails.
-2. **Client-side page gates are not route protection.** Portfolio, watchlist,
-   and alerts show sign-in flows in the client but are absent from
-   `isProtectedRoute`. APIs perform user checks; page responses remain public.
-3. **Client IP is taken from `x-forwarded-for` first.** The middleware uses its
-   first value directly as the firewall/rate-limit identity. Ensure the edge
-   proxy overwrites or sanitizes this header; otherwise clients may influence
-   their rate-limit key.
-4. **Admin behavior differs from the proposed contract.** Existing admin APIs
-   return 401 for a missing/invalid token (or 404 when production test routes
-   are disabled), not 403. They are guarded in middleware; no separate admin
-   route matcher is used.
+1. **API rate limits now cover all handlers.** The middleware matches every
+   `/api/*` route. Existing endpoint-specific limits remain; otherwise the
+   middleware applies a 60/min/IP per-route baseline. News uses a shared
+   20/min/IP bucket and admin endpoints use 10/min/IP. Four handlers also
+   enforce route-local limits. The backing limiter can still fall back to
+   process-local memory if Redis is unavailable.
+2. **Account pages now require Clerk authentication in middleware.**
+   Portfolio, watchlist, and alerts redirect signed-out page requests.
+   Account APIs keep their handler-level identity checks and return 401 JSON
+   for unauthenticated callers.
+3. **Rate-limit identity uses trusted-edge headers only.** `CF-Connecting-IP`
+   and `X-Real-IP` are accepted after IP-address validation. The
+   client-controlled `X-Forwarded-For` header is ignored; requests without a
+   trusted address share a conservative `unknown` bucket. Origin access should
+   remain restricted to the configured edge proxy.
+4. **Admin credential failures consistently return 403.** A disabled admin
+   test route still returns 404 in production to keep that endpoint hidden.
 5. **Fallback coverage is global, not segment-specific.** All routes share
    root `loading.tsx`, `error.tsx`, and `not-found.tsx`; only 12 page modules
    contain an explicit ErrorBoundary wrapper. Pages that need targeted recovery

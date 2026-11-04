@@ -8,6 +8,8 @@ failover cascades, and data safety net filters across EGX, TASI, US, and Global 
 from __future__ import annotations
 
 import logging
+import math
+import numbers
 import os
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
@@ -55,6 +57,24 @@ class RealDataFetcher:
         self.eodhd_key = eodhd_api_key or os.getenv("EODHD_API_KEY", "")
 
     @staticmethod
+    def _optional_positive_float(value: Any) -> Optional[float]:
+        if not isinstance(value, numbers.Real):
+            return None
+        number = float(value)
+        return number if math.isfinite(number) and number > 0 else None
+
+    @staticmethod
+    def _is_quote_within_52w_range(quote: Dict[str, Any]) -> bool:
+        price = RealDataFetcher._optional_positive_float(quote.get("price"))
+        high_52w = RealDataFetcher._optional_positive_float(quote.get("high_52w"))
+        low_52w = RealDataFetcher._optional_positive_float(quote.get("low_52w"))
+        if price is None or high_52w is None or low_52w is None:
+            return True
+        if low_52w > high_52w:
+            return False
+        return low_52w * 0.95 <= price <= high_52w * 1.05
+
+    @staticmethod
     def map_yfinance_symbol(symbol: str, market: str) -> str:
         """Map Borsaty ticker to yfinance ticker symbol."""
         sym = symbol.upper().strip()
@@ -95,6 +115,8 @@ class RealDataFetcher:
                 change = price - prev_close
                 change_pct = (change / prev_close) * 100 if prev_close > 0 else 0.0
                 volume = float(getattr(fast_info, "last_volume", 0.0) or 0.0)
+                high_52w = self._optional_positive_float(getattr(fast_info, "year_high", None))
+                low_52w = self._optional_positive_float(getattr(fast_info, "year_low", None))
 
                 # Check if ticker has history and if last candle is > 2 days old
                 try:
@@ -122,6 +144,8 @@ class RealDataFetcher:
                     "change": round(change, 4),
                     "change_pct": round(change_pct, 4),
                     "volume": volume,
+                    "high_52w": high_52w,
+                    "low_52w": low_52w,
                     "price_timestamp": now_utc.isoformat(),
                     "freshness": "TODAY_CLOSE",
                     "source": "yfinance",
@@ -157,11 +181,19 @@ class RealDataFetcher:
         }
         payload = {
             "symbols": {"tickers": [ticker]},
-            "columns": ["close", "change", "change_abs", "volume"],
+            "columns": [
+                "close",
+                "change",
+                "change_abs",
+                "volume",
+                "price_52_week_high",
+                "price_52_week_low",
+            ],
         }
 
         try:
             resp = requests.post(url, json=payload, headers=headers, timeout=4)
+            logger.debug("TradingView raw quote response for %s: %s", ticker, resp.text)
             if resp.status_code == 200:
                 data = resp.json()
                 items = data.get("data", [])
@@ -182,6 +214,8 @@ class RealDataFetcher:
                             "change": round(change, 4),
                             "change_pct": round(change_pct, 4),
                             "volume": volume,
+                            "high_52w": self._optional_positive_float(d[4]) if len(d) > 4 else None,
+                            "low_52w": self._optional_positive_float(d[5]) if len(d) > 5 else None,
                             "price_timestamp": now_utc.isoformat(),
                             "freshness": freshness,
                             "source": "tradingview_scanner",
@@ -246,16 +280,25 @@ class RealDataFetcher:
         mkt = market.upper().strip()
 
         quote = None
-        # 1. Try yfinance first (with staleness check)
-        quote = self._fetch_yfinance(sym, mkt)
-
-        # 2. If yfinance failed or returned stale data (> 2 days old), fall back to TradingView scanner
-        if not quote:
-            quote = self._fetch_tradingview_scanner(sym, mkt)
-
-        # 3. Fall back to EODHD
-        if not quote:
-            quote = self._fetch_eodhd(sym, mkt)
+        providers = (
+            self._fetch_yfinance,
+            self._fetch_tradingview_scanner,
+            self._fetch_eodhd,
+        )
+        for provider in providers:
+            candidate = provider(sym, mkt)
+            if candidate and self._is_quote_within_52w_range(candidate):
+                quote = candidate
+                break
+            if candidate:
+                logger.warning(
+                    "[DATA INTEGRITY ALERT] Rejecting %s quote for %s: price %s is inconsistent with its 52-week range [%s, %s].",
+                    candidate.get("source", "unknown"),
+                    sym,
+                    candidate.get("price"),
+                    candidate.get("low_52w"),
+                    candidate.get("high_52w"),
+                )
 
         # 4. Safety Net Validation: Verify against known baseline
         ref = KNOWN_REFERENCE_PRICES.get(sym)

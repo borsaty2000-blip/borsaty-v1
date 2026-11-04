@@ -35,13 +35,14 @@ interface ApiEndpoint {
 const API_ENDPOINTS: ApiEndpoint[] = [
   {
     method: "GET",
-    path: "/api/quotes?symbol={symbol}",
-    titleEn: "Live Market Quote",
-    titleAr: "الأسعار اللحظية وبيانات جودة التغذية",
-    descriptionEn: "Retrieve real-time asset pricing, 52-week metrics, and data quality provenance.",
-    descriptionAr: "جلب الأسعار اللحظية ومؤشرات 52 أسبوعاً مع تدقيق مصدر البيانات وخلوها من التزييف.",
+    path: "/api/quotes?symbol={symbol} or ?symbols={symbols}",
+    titleEn: "Market Quote",
+    titleAr: "أحدث أسعار السوق وجودة البيانات",
+    descriptionEn: "Retrieve the latest available asset pricing, 52-week metrics, and data quality provenance. Use symbols for a comma-separated list; that response is an array.",
+    descriptionAr: "جلب أحدث الأسعار المتاحة ومؤشرات 52 أسبوعاً مع معلومات جودة ومصدر البيانات. استخدم symbols لقائمة مفصولة بفواصل؛ وتكون الاستجابة مصفوفة.",
     params: [
-      { name: "symbol", type: "string", required: true, descEn: "Stock ticker (e.g. COMI, 2222, AAPL)", descAr: "رمز السهم (مثل COMI أو 2222 أو AAPL)" },
+      { name: "symbol", type: "string", required: false, descEn: "One stock ticker (e.g. COMI, 2222, AAPL); returns one quote object.", descAr: "رمز سهم واحد (مثل COMI أو 2222 أو AAPL)؛ وتعيد كائن سعر واحداً." },
+      { name: "symbols", type: "string", required: false, descEn: "Comma-separated tickers (e.g. COMI,SWDY,AAPL); returns an array of quote objects.", descAr: "رموز أسهم مفصولة بفواصل (مثل COMI,SWDY,AAPL)؛ وتعيد مصفوفة من كائنات الأسعار." },
     ],
     responseSample: {
       symbol: "COMI",
@@ -53,8 +54,9 @@ const API_ENDPOINTS: ApiEndpoint[] = [
       market: "EGX",
       currency: "EGP",
       dataQuality: {
-        provider: "Live Data Feed",
-        isRealtime: true,
+        provider: "Market Data Feed",
+        isRealtime: false,
+        freshness: "TODAY_CLOSE",
         verifiedAt: "2026-11-02T18:00:00Z",
       },
     },

@@ -26,6 +26,55 @@ class TestRealDataFetcher:
         assert fetcher.map_yfinance_symbol("AAPL", "US") == "AAPL"
         assert fetcher.map_yfinance_symbol("MSFT", "NASDAQ") == "MSFT"
 
+    @patch("data.real_fetcher.requests.post")
+    def test_fetch_tradingview_quote_includes_52w_range(self, mock_post, fetcher):
+        response = MagicMock()
+        response.status_code = 200
+        response.text = '{"data":[{"d":[331.9,-1.89,-6.42,63159216,351.73,243.42]}]}'
+        response.json.return_value = {
+            "data": [{"d": [331.9, -1.89, -6.42, 63159216, 351.73, 243.42]}
+            ]
+        }
+        mock_post.return_value = response
+
+        quote = fetcher._fetch_tradingview_scanner("AAPL", "US")
+
+        assert quote is not None
+        assert quote["price"] == 331.9
+        assert quote["high_52w"] == 351.73
+        assert quote["low_52w"] == 243.42
+        assert mock_post.call_args.kwargs["json"]["symbols"]["tickers"] == ["NASDAQ:AAPL"]
+        assert mock_post.call_args.kwargs["json"]["columns"][-2:] == [
+            "price_52_week_high",
+            "price_52_week_low",
+        ]
+
+    @patch.object(RealDataFetcher, "_fetch_eodhd")
+    @patch.object(RealDataFetcher, "_fetch_tradingview_scanner")
+    @patch.object(RealDataFetcher, "_fetch_yfinance")
+    def test_fetch_quote_rejects_price_outside_provider_range(
+        self, mock_yfinance, mock_tradingview, mock_eodhd, fetcher
+    ):
+        mock_yfinance.return_value = {
+            "symbol": "AAPL",
+            "price": 400.0,
+            "high_52w": 351.73,
+            "low_52w": 243.42,
+            "source": "yfinance",
+        }
+        mock_tradingview.return_value = {
+            "symbol": "AAPL",
+            "price": 331.9,
+            "high_52w": 351.73,
+            "low_52w": 243.42,
+            "source": "tradingview_scanner",
+        }
+
+        quote = fetcher.fetch_quote("AAPL", "US")
+
+        assert quote["source"] == "tradingview_scanner"
+        mock_eodhd.assert_not_called()
+
     def test_fetch_quote_fallback_graceful(self, fetcher):
         # Even if network is blocked or ticker invalid, must not raise and return valid dict
         quote = fetcher.fetch_quote("INVALID_TICKER_XYZ", "EGX")

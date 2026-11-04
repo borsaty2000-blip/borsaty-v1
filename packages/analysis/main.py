@@ -821,6 +821,7 @@ def history_endpoint(symbol: str, market: Optional[str] = "EGX", period: Optiona
 from fundamental.fair_value import global_fair_value_engine
 from fundamental.financials import global_financials_engine
 from fundamental.analyst_consensus import global_analyst_consensus_engine
+from news.news_engine import global_news_engine
 
 class FairValueRequest(BaseModel):
     symbol: str
@@ -887,6 +888,18 @@ def get_analyst_consensus_endpoint(symbol: str, market: str = "US"):
     if market_code not in {"US", "EGX", "TASI"}:
         raise HTTPException(status_code=400, detail="market must be US, EGX, or TASI")
     return global_analyst_consensus_engine.analyze(symbol, market_code).to_dict()
+
+
+@app.get("/news/market")
+def get_market_news_endpoint(category: str = "all", limit: int = 20):
+    """Fetch recent market headlines from RSS providers."""
+    return global_news_engine.get_market_news(category=category, limit=limit)
+
+
+@app.get("/news/{symbol}")
+def get_stock_news_endpoint(symbol: str, market: str = "US", limit: int = 10):
+    """Fetch RSS articles matching the requested stock."""
+    return global_news_engine.get_stock_news(symbol=symbol, market=market, limit=limit)
 
 
 

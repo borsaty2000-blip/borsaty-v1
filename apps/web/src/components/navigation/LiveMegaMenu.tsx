@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import {
   TrendingUp,
   SlidersHorizontal,
@@ -42,6 +42,7 @@ export default function LiveMegaMenu({ language, onLinkClick }: LiveMegaMenuProp
   const [activeMenu, setActiveMenu] = useState<'markets' | 'tools' | 'research' | null>(null);
   const [menuData, setMenuData] = useState<MegaMenuData>(DEFAULT_MEGA_MENU_DATA);
   const isAr = language === 'ar';
+  const shouldReduceMotion = useReducedMotion();
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Fetch updated market overview once on mount (cached for 60s)
@@ -114,7 +115,7 @@ export default function LiveMegaMenu({ language, onLinkClick }: LiveMegaMenuProp
       <div className="relative" onMouseEnter={() => handleMouseEnter('markets')}>
         <button
           onClick={() => setActiveMenu(activeMenu === 'markets' ? null : 'markets')}
-          className={`flex items-center gap-1.5 px-3 py-2 rounded-lg transition-colors cursor-pointer focus-visible:outline-none ${
+          className={`mega-menu-trigger relative flex items-center gap-1.5 px-3 py-2 rounded-lg transition-colors cursor-pointer focus-visible:outline-none ${
             activeMenu === 'markets'
               ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white'
               : 'hover:bg-slate-100/80 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white'
@@ -135,7 +136,7 @@ export default function LiveMegaMenu({ language, onLinkClick }: LiveMegaMenuProp
       <div className="relative" onMouseEnter={() => handleMouseEnter('tools')}>
         <button
           onClick={() => setActiveMenu(activeMenu === 'tools' ? null : 'tools')}
-          className={`flex items-center gap-1.5 px-3 py-2 rounded-lg transition-colors cursor-pointer focus-visible:outline-none ${
+          className={`mega-menu-trigger relative flex items-center gap-1.5 px-3 py-2 rounded-lg transition-colors cursor-pointer focus-visible:outline-none ${
             activeMenu === 'tools'
               ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white'
               : 'hover:bg-slate-100/80 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white'
@@ -156,7 +157,7 @@ export default function LiveMegaMenu({ language, onLinkClick }: LiveMegaMenuProp
       <div className="relative" onMouseEnter={() => handleMouseEnter('research')}>
         <button
           onClick={() => setActiveMenu(activeMenu === 'research' ? null : 'research')}
-          className={`flex items-center gap-1.5 px-3 py-2 rounded-lg transition-colors cursor-pointer focus-visible:outline-none ${
+          className={`mega-menu-trigger relative flex items-center gap-1.5 px-3 py-2 rounded-lg transition-colors cursor-pointer focus-visible:outline-none ${
             activeMenu === 'research'
               ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white'
               : 'hover:bg-slate-100/80 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white'
@@ -208,11 +209,15 @@ export default function LiveMegaMenu({ language, onLinkClick }: LiveMegaMenuProp
       <AnimatePresence>
         {activeMenu && (
           <motion.div
-            initial={{ opacity: 0, y: -8 }}
+            initial={shouldReduceMotion ? false : { opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.15, ease: 'easeOut' }}
-            className={`absolute top-full mt-2 z-50 bg-white dark:bg-[#0f172a] border border-[#e5e7eb] dark:border-[#334155] rounded-xl shadow-2xl overflow-hidden ${
+            exit={shouldReduceMotion ? undefined : { opacity: 0, y: -8 }}
+            transition={
+              shouldReduceMotion
+                ? { duration: 0 }
+                : { type: 'spring', stiffness: 300, damping: 30 }
+            }
+            className={`mega-menu-panel absolute top-full mt-2 z-50 bg-white/95 dark:bg-[#0f172a]/95 backdrop-blur-xl border border-[#e5e7eb] dark:border-[#334155] rounded-xl shadow-2xl overflow-hidden ${
               activeMenu === 'markets'
                 ? 'w-[960px] -start-8'
                 : activeMenu === 'tools'
@@ -225,7 +230,7 @@ export default function LiveMegaMenu({ language, onLinkClick }: LiveMegaMenuProp
             {/* ═══════════════════════════════════════════════════ */}
             {activeMenu === 'markets' && (
               <div className="p-8">
-                <div className="grid grid-cols-4 gap-6">
+                <div className="menu-stagger grid grid-cols-4 gap-6">
                   {/* Column 1: Indices */}
                   <div className="space-y-4">
                     <div className="text-xs font-semibold uppercase tracking-wider text-slate-500 pb-2 border-b border-slate-200 dark:border-slate-800 flex items-center gap-2">
@@ -454,7 +459,7 @@ export default function LiveMegaMenu({ language, onLinkClick }: LiveMegaMenuProp
             {/* ═══════════════════════════════════════════════════ */}
             {activeMenu === 'tools' && (
               <div className="p-8">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="menu-stagger grid grid-cols-2 gap-4">
                   {/* Card 1: Stock Screener */}
                   <Link
                     href="/screener"

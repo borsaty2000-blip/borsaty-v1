@@ -76,7 +76,7 @@ export default function Header() {
             <Menu className="w-5 h-5" />
           </button>
 
-          <Link href="/" className="flex items-center gap-2.5 whitespace-nowrap group">
+          <Link href="/" className="flex items-center gap-2.5 whitespace-nowrap group transition-transform duration-200 hover:scale-[1.02]">
             <Logo variant="primary" size={32} showText={true} className="dark:hidden" />
             <Logo variant="white" size={32} showText={true} className="hidden dark:block" />
             {isAr && (
@@ -97,7 +97,7 @@ export default function Header() {
           {/* Prominent Search Trigger: Compact, bg-slate-50, border border-slate-200 */}
           <button
             onClick={() => setIsCommandPaletteOpen(true)}
-            className="group flex items-center justify-between w-36 sm:w-48 md:w-56 h-9 px-3 bg-slate-50 dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800/80 border border-slate-200 dark:border-slate-800 rounded-md text-sm text-slate-500 dark:text-slate-400 transition-all shadow-xs cursor-pointer"
+            className="group btn-press flex items-center justify-between w-36 sm:w-48 md:w-56 h-9 px-3 bg-slate-50 dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800/80 border border-slate-200 dark:border-slate-800 rounded-md text-sm text-slate-500 dark:text-slate-400 transition-all shadow-xs cursor-pointer"
             aria-label="Search markets (Ctrl+K)"
           >
             <div className="flex items-center gap-2 truncate">

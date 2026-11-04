@@ -8,15 +8,14 @@ import {
   ArrowUpRight,
   ChevronRight,
   ChevronLeft,
-  Clock,
   BarChart2,
   Newspaper,
   Layers,
   ArrowUpDown,
-  ExternalLink,
 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { useApp } from '@/context/AppContext';
+import { NewsArticle, NewsResponseSchema } from '@/lib/schemas';
 import { DataWrapper } from '@/components/ui/DataWrapper';
 import OpportunityScanner from '@/components/OpportunityScanner';
 import ProPicksHomeSection from '@/components/ProPicksHomeSection';
@@ -29,6 +28,11 @@ const SectorHeatmap = dynamic(() => import('@/components/SectorHeatmap'), {
       Loading Market Sector Heatmap...
     </div>
   ),
+});
+
+const HomeNewsFeed = dynamic(() => import('@/components/news/NewsFeed'), {
+  ssr: false,
+  loading: () => <div className="h-52 rounded-xl bg-slate-100 dark:bg-slate-900/40 animate-pulse border border-slate-200 dark:border-slate-800" />,
 });
 
 // Mini SVG Sparkline Component
@@ -86,25 +90,12 @@ interface StockItem {
   confluenceScore?: number;
 }
 
-interface NewsItem {
-  id: string;
-  titleEn: string;
-  titleAr: string;
-  source: string;
-  category?: string;
-  timeAgoEn: string;
-  timeAgoAr: string;
-  url: string;
-  imageUrl?: string;
-}
-
 interface OverviewData {
   indices: MarketIndexItem[];
   topGainers: StockItem[];
   topLosers: StockItem[];
   priorityStocks?: StockItem[];
   featuredAnalyses?: StockItem[];
-  news?: NewsItem[];
   updatedAt: string;
 }
 
@@ -115,6 +106,10 @@ export default function HomeClient() {
   const [overviewData, setOverviewData] = useState<OverviewData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [newsArticles, setNewsArticles] = useState<NewsArticle[]>([]);
+  const [newsLoading, setNewsLoading] = useState(true);
+  const [newsError, setNewsError] = useState(false);
+  const [newsRetry, setNewsRetry] = useState(0);
 
   // Table sorting & pagination
   const [sortField, setSortField] = useState<'symbol' | 'price' | 'changePct' | 'volume' | 'rsi'>('volume');
@@ -143,6 +138,30 @@ export default function HomeClient() {
   useEffect(() => {
     fetchOverview();
   }, []);
+
+  useEffect(() => {
+    let active = true;
+    async function fetchLatestNews() {
+      setNewsLoading(true);
+      setNewsError(false);
+      try {
+        const response = await fetch('/api/news/market?category=all&limit=5');
+        if (!response.ok) throw new Error(`News request failed: ${response.status}`);
+        const parsed = NewsResponseSchema.safeParse(await response.json());
+        if (!parsed.success || parsed.data.data_quality.error) throw new Error('News data is unavailable');
+        if (active) setNewsArticles(parsed.data.articles);
+      } catch {
+        if (active) {
+          setNewsArticles([]);
+          setNewsError(true);
+        }
+      } finally {
+        if (active) setNewsLoading(false);
+      }
+    }
+    void fetchLatestNews();
+    return () => { active = false; };
+  }, [newsRetry]);
 
   // Pre-configured indices ticker items
   const tickerIndices: MarketIndexItem[] = useMemo(() => {
@@ -221,45 +240,6 @@ export default function HomeClient() {
       setSortOrder('desc');
     }
   };
-
-  // Mock News if missing
-  const newsItems: NewsItem[] = useMemo(() => {
-    if (overviewData?.news && overviewData.news.length >= 3) {
-      return overviewData.news.slice(0, 3);
-    }
-    return [
-      {
-        id: 'n1',
-        titleAr: 'البنك المركزي المصري يثبت أسعار الفائدة وسط انحسار الضغوط التضخمية وتدفقات استثمارية قوية',
-        titleEn: 'Central Bank of Egypt Holds Benchmark Rates as Inflationary Pressures Ease',
-        source: 'Reuters Financial',
-        category: 'السياسة النقدية',
-        timeAgoAr: 'منذ ساعتين',
-        timeAgoEn: '2 hours ago',
-        url: '/calendar',
-      },
-      {
-        id: 'n2',
-        titleAr: 'السويدي إليكتريك تعلن عن توقيع عقود مشروعات بنية تحتية وطاقة جديدة بقيمة 4.2 مليار جنيه',
-        titleEn: 'Elsewedy Electric Secures Major Infrastructure Contracts Valued at EGP 4.2 Billion',
-        source: 'MENA Markets',
-        category: 'صفقات الشركات',
-        timeAgoAr: 'منذ 4 ساعات',
-        timeAgoEn: '4 hours ago',
-        url: '/stock/SWDY',
-      },
-      {
-        id: 'n3',
-        titleAr: 'مؤشر EGX 30 يختبر مستويات المقاومة التاريخية مدفوعاً بطلب مؤسسي على قطاعي البنوك والأسمدة',
-        titleEn: 'EGX 30 Tests Key Technical Resistance Driven by Institutional Inflows into Banking',
-        source: 'Borsaty Research',
-        category: 'تقرير السوق',
-        timeAgoAr: 'منذ 6 ساعات',
-        timeAgoEn: '6 hours ago',
-        url: '/screener',
-      },
-    ];
-  }, [overviewData?.news]);
 
   return (
     <div className="w-full space-y-10 pb-20">
@@ -438,6 +418,27 @@ export default function HomeClient() {
             })}
           </div>
         </div>
+      </section>
+
+      <section className="space-y-4 rounded-xl border border-slate-200 bg-white p-5 dark:border-slate-800 dark:bg-[#0f172a] sm:p-6">
+        <div className="flex items-center justify-between gap-3 border-b border-slate-100 pb-3 dark:border-slate-800">
+          <div className="flex items-center gap-2">
+            <Newspaper className="h-4 w-4 text-slate-500" />
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300">
+              {isAr ? "آخر الأخبار" : "Latest News"}
+            </h2>
+          </div>
+          <Link href="/news" className="text-xs font-semibold text-slate-600 hover:text-black dark:text-slate-300 dark:hover:text-white">
+            {isAr ? "جميع الأخبار" : "All news"}
+          </Link>
+        </div>
+        <HomeNewsFeed
+          articles={newsArticles}
+          variant="horizontal-scroll"
+          loading={newsLoading}
+          error={newsError}
+          onRetry={() => setNewsRetry((value) => value + 1)}
+        />
       </section>
 
       {/* ═══════════════════════════════════════════════════════════════ */}
@@ -666,64 +667,6 @@ export default function HomeClient() {
         </div>
       </section>
 
-      {/* ═══════════════════════════════════════════════════════════════ */}
-      {/* ROW 5: LATEST NEWS (3-Card Grid) */}
-      {/* Card: Image / Tag + Title + Time + "اقرأ المزيد →" */}
-      {/* ═══════════════════════════════════════════════════════════════ */}
-      <section className="space-y-4">
-        <div className="flex items-center justify-between pb-2 border-b border-slate-200 dark:border-slate-800">
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-2">
-            <Newspaper className="w-4 h-4 text-slate-500" />
-            <span>{isAr ? 'آخر الأخبار والتقارير المالية' : 'LATEST MARKET NEWS & RESEARCH'}</span>
-          </h2>
-          <Link
-            href="/calendar"
-            className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
-          >
-            <span>{isAr ? 'الأجندة الاقتصادية' : 'Economic Calendar'}</span>
-            <ChevronRight className="w-3.5 h-3.5" />
-          </Link>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {newsItems.map((item, idx) => (
-            <div
-              key={item.id}
-              className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0f172a] shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col justify-between"
-            >
-              {/* Top Banner with Category */}
-              <div className="h-28 bg-gradient-to-br from-slate-900 to-slate-800 p-4 text-white flex flex-col justify-between relative overflow-hidden">
-                <div className="w-24 h-24 rounded-full bg-white/5 absolute -end-6 -bottom-6 pointer-events-none" />
-                <span className="text-[11px] font-mono uppercase tracking-wider px-2 py-0.5 rounded bg-white/10 border border-white/15 w-fit font-bold">
-                  {item.category || (isAr ? 'أخبار الأسواق' : 'Market Wire')}
-                </span>
-                <span className="text-xs text-white/70 font-semibold">{item.source}</span>
-              </div>
-
-              {/* Body */}
-              <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
-                <h3 className="font-bold text-sm text-slate-900 dark:text-white leading-snug line-clamp-3">
-                  {isAr ? item.titleAr : item.titleEn}
-                </h3>
-
-                <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800 text-xs">
-                  <span className="flex items-center gap-1 text-slate-400 font-mono">
-                    <Clock className="w-3.5 h-3.5" />
-                    <span>{isAr ? item.timeAgoAr : item.timeAgoEn}</span>
-                  </span>
-
-                  <Link
-                    href={item.url}
-                    className="font-bold text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
-                  >
-                    <span>{isAr ? 'اقرأ المزيد ←' : 'Read More →'}</span>
-                  </Link>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
     </div>
   );
 }

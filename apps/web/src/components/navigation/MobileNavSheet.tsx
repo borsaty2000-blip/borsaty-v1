@@ -25,6 +25,7 @@ import {
   FileDown,
   Settings,
   ShieldCheck,
+  Newspaper,
 } from 'lucide-react';
 import AuthButton from '@/components/AuthButton';
 import Logo from '@/components/branding/Logo';
@@ -305,6 +306,20 @@ export default function MobileNavSheet({
                       transition={{ duration: 0.2 }}
                       className="px-3 pb-3 space-y-2 overflow-hidden"
                     >
+                      <Link
+                        href="/news"
+                        onClick={onClose}
+                        className="flex items-center gap-3 min-h-[48px] px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/60 text-xs font-semibold hover:border-slate-400 transition-colors"
+                      >
+                        <Newspaper className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+                        <div>
+                          <div className="font-bold">{isAr ? 'أخبار السوق' : 'Market News'}</div>
+                          <div className="text-[11px] text-slate-400 font-normal">
+                            {isAr ? 'آخر الأخبار المالية من مصادر متعددة' : 'Latest financial news from multiple sources'}
+                          </div>
+                        </div>
+                      </Link>
+
                       <Link
                         href="/signals"
                         onClick={onClose}

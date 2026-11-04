@@ -21,6 +21,7 @@ import {
   ArrowDownRight,
   Flame,
   Globe2,
+  Newspaper,
 } from 'lucide-react';
 import { Language } from '@/context/AppContext';
 import MiniSparkline from './MiniSparkline';
@@ -563,6 +564,27 @@ export default function LiveMegaMenu({ language, onLinkClick }: LiveMegaMenuProp
             {activeMenu === 'research' && (
               <div className="p-8">
                 <div className="grid grid-cols-2 gap-4">
+                  <Link
+                    href="/news"
+                    prefetch
+                    onClick={() => {
+                      setActiveMenu(null);
+                      onLinkClick?.();
+                    }}
+                    className="group p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-slate-400 dark:hover:border-slate-600 bg-slate-50/50 dark:bg-slate-900/40 hover:bg-slate-100/60 dark:hover:bg-slate-800/50 transition-all flex items-start gap-3.5"
+                  >
+                    <div className="w-9 h-9 rounded-lg bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-900 dark:text-white shrink-0">
+                      <Newspaper className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold text-slate-900 dark:text-white">
+                        {isAr ? 'أخبار السوق' : 'Market News'}
+                      </div>
+                      <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                        {isAr ? 'آخر أخبار الأسواق من مصادر متعددة' : 'Latest stories from market news sources'}
+                      </div>
+                    </div>
+                  </Link>
                   <Link
                     href="/changelog"
                     prefetch

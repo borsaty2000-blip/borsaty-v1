@@ -95,9 +95,9 @@ const TechnicalSummaryCard = dynamic(() => import('@/components/TechnicalSummary
   loading: () => <div className="h-48 rounded-lg bg-slate-100 dark:bg-slate-900/40 animate-pulse" />,
 });
 
-const NewsFeed = dynamic(() => import('@/components/news/NewsFeed'), {
+const NewsTab = dynamic(() => import('@/components/news/NewsTab'), {
   ssr: false,
-  loading: () => <div className="h-48 rounded-lg bg-slate-100 dark:bg-slate-900/40 animate-pulse" />,
+  loading: () => <div className="h-72 rounded-lg bg-slate-100 dark:bg-slate-900/40 animate-pulse" />,
 });
 
 const EarningsCard = dynamic(() => import('@/components/intelligence/EarningsCard'), {
@@ -135,7 +135,7 @@ interface StockDetailClientProps {
   candles: CandleDataPoint[];
 }
 
-export type AdvancedTabType = 'technical' | 'patterns' | 'multitf' | 'tradePlan' | 'financials' | 'earnings' | 'insider';
+export type AdvancedTabType = 'technical' | 'patterns' | 'multitf' | 'tradePlan' | 'financials' | 'news' | 'earnings' | 'insider';
 
 export default function StockDetailClientV2({
   company,
@@ -396,6 +396,7 @@ export default function StockDetailClientV2({
     { id: 'multitf', labelAr: 'الفريمات', labelEn: 'Timeframes', icon: <Layers className="w-3.5 h-3.5" /> },
     { id: 'tradePlan', labelAr: 'تفاصيل الصفقة', labelEn: 'Trade Details', icon: <Target className="w-3.5 h-3.5" /> },
     { id: 'financials', labelAr: 'القوائم والنسب المالية', labelEn: 'Financials', icon: <FileText className="w-3.5 h-3.5" /> },
+    { id: 'news', labelAr: 'الأخبار', labelEn: 'News', icon: <Newspaper className="w-3.5 h-3.5" /> },
     { id: 'earnings', labelAr: 'تحليل الأرباح', labelEn: 'Earnings', icon: <Sparkles className="w-3.5 h-3.5" /> },
     { id: 'insider', labelAr: 'حركة المطلعين', labelEn: 'Insider Activity', icon: <Building2 className="w-3.5 h-3.5" /> },
   ];
@@ -782,8 +783,6 @@ export default function StockDetailClientV2({
               </p>
             </div>
 
-            {/* 4. Financial News Wire */}
-            <NewsFeed symbol={company.symbol} />
           </div>
         );
 
@@ -804,6 +803,9 @@ export default function StockDetailClientV2({
             </ErrorBoundary>
           </div>
         );
+
+      case 'news':
+        return <NewsTab symbol={company.symbol} market={company.market} />;
 
       case 'earnings':
         return (

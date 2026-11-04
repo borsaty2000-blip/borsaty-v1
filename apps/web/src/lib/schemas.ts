@@ -460,3 +460,37 @@ export const AnalystConsensusResponseSchema = z.object({
 });
 
 export type ValidatedAnalystConsensusResponse = z.infer<typeof AnalystConsensusResponseSchema>;
+
+export const NewsArticleSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  summary: z.string(),
+  source: z.string(),
+  source_url: z.string(),
+  url: z.string(),
+  image_url: z.string().nullable(),
+  published_at: z.string(),
+  language: z.enum(["ar", "en"]),
+  sentiment: z.object({
+    label: z.enum(["positive", "negative", "neutral"]),
+    score: z.number().min(-1).max(1),
+  }),
+  symbols: z.array(z.string()),
+  market: z.enum(["EGX", "TASI", "US", "crypto", "forex", "commodities"]),
+});
+
+export const NewsResponseSchema = z.object({
+  market: z.enum(["EGX", "TASI", "US", "crypto", "forex", "commodities", "all"]),
+  symbol: z.string().optional(),
+  articles: z.array(NewsArticleSchema),
+  count: z.number().int().nonnegative(),
+  data_quality: z.object({
+    sources_fetched: z.array(z.string()).default([]),
+    sources_failed: z.array(z.string()).default([]),
+    last_updated: z.string().optional(),
+    error: z.string().optional(),
+  }),
+});
+
+export type NewsArticle = z.infer<typeof NewsArticleSchema>;
+export type NewsResponse = z.infer<typeof NewsResponseSchema>;

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { findCompany, getStockCandles } from "@borsaty/db";
+import { findCompany } from "@borsaty/db";
 import { getPythonServiceUrl } from "@/lib/config";
 
 export async function GET(
@@ -16,10 +16,8 @@ export async function GET(
 
   const sym = symbol.toUpperCase();
   const company = await findCompany(sym);
-  const candles = await getStockCandles(sym);
-  const currentPrice = company?.currentPrice || (candles.length > 0 ? candles[candles.length - 1].close : 86.5);
-  const currency = company?.currency || "EGP";
-  const market = company?.market || "EGX";
+  const market = company?.market || (sym.length === 4 && /^\d+$/.test(sym) ? "TASI" : "US");
+  const currency = company?.currency || (market === "EGX" ? "EGP" : market === "TASI" ? "SAR" : "USD");
   const companyName = lang === "en" 
     ? (company?.nameEn || company?.nameAr || sym)
     : (company?.nameAr || company?.nameEn || sym);
@@ -33,12 +31,11 @@ export async function GET(
       body: JSON.stringify({
         symbol: sym,
         company_name: companyName,
-        current_price: currentPrice,
         currency,
         market,
         lang,
       }),
-      signal: AbortSignal.timeout(12000),
+      signal: AbortSignal.timeout(30000),
     });
 
     if (res.ok) {
@@ -50,12 +47,16 @@ export async function GET(
         },
       });
     }
-  } catch {
-    // If analysis service offline, generate using fallback
+    const error = await res.json().catch(() => null);
+    return NextResponse.json(
+      { error: error?.detail || error?.error || `PDF service returned ${res.status}.` },
+      { status: res.status }
+    );
+  } catch (error) {
+    console.error(`PDF generation failed for ${sym}:`, error);
+    return NextResponse.json(
+      { error: "PDF service is unavailable. Please try again later." },
+      { status: 503 }
+    );
   }
-
-  return NextResponse.json(
-    { error: "PDF Generation engine is initializing. Please try again in a few moments." },
-    { status: 503 }
-  );
 }

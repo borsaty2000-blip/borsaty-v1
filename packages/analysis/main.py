@@ -1,4 +1,7 @@
 import os
+import logging
+import math
+from datetime import date
 from dotenv import load_dotenv
 
 # Load local environment variables from .env if present
@@ -30,6 +33,8 @@ from screener.nlu import global_screener_nlu
 from screener.builder import global_screener_engine
 from trade_plan.engine import global_trade_plan_engine, TradePlanEngine
 from datetime import datetime, timezone
+
+logger = logging.getLogger(__name__)
 
 app = FastAPI(
     title="Borsaty Deterministic Analysis Engine",
@@ -720,14 +725,21 @@ class PDFReportRequest(BaseModel):
     symbol: str
     company_name: Optional[str] = None
     current_price: Optional[float] = None
-    currency: Optional[str] = "EGP"
-    market: Optional[str] = "EGX"
+    change_pct: Optional[float] = None
+    currency: Optional[str] = None
+    market: Optional[str] = None
+    candles: Optional[List[Dict[str, Any]]] = None
     decision_data: Optional[Dict[str, Any]] = None
     lang: Optional[str] = "ar"
 
 @app.post("/report/{symbol}/pdf")
 @app.get("/report/{symbol}/pdf")
-def generate_pdf_report_endpoint(symbol: str, lang: str = "ar", payload: Optional[PDFReportRequest] = None):
+def generate_pdf_report_endpoint(
+    symbol: str,
+    lang: str = "ar",
+    market: Optional[str] = None,
+    payload: Optional[PDFReportRequest] = None,
+):
     try:
         from reports.pdf_generator import global_pdf_generator
     except ImportError:
@@ -739,27 +751,76 @@ def generate_pdf_report_endpoint(symbol: str, lang: str = "ar", payload: Optiona
 
     sym = symbol.upper()
     comp_name = (payload.company_name if payload else None) or sym
-    price = (payload.current_price if payload else None) or 86.0
-    curr = (payload.currency if payload else None) or "EGP"
-    mkt = (payload.market if payload else None) or "EGX"
-    
-    dec_dict = (payload.decision_data if payload else None)
-    if not dec_dict:
-        # generate on the fly
-        fake_analysis = {
-            "confluence": {"score": 0.68, "direction": "bullish"},
-            "trade_plan": {
-                "status": "actionable_setup",
-                "direction": "bullish",
-                "entry_zone": [price * 0.995, price * 1.005],
-                "stop_loss": price * 0.955,
-                "primary_target": price * 1.07,
-                "targets": [{"price": price * 1.07}, {"price": price * 1.12}],
-                "primary_rr": 1.71,
+    mkt = ((payload.market if payload else None) or market or ("TASI" if sym.isdigit() else "US")).upper()
+    curr = (payload.currency if payload else None) or {"EGX": "EGP", "TASI": "SAR", "US": "USD"}.get(mkt, "USD")
+
+    candles = payload.candles if payload else None
+    if not candles:
+        try:
+            import yfinance as yf
+            provider_symbol = global_real_data_fetcher.map_yfinance_symbol(sym, mkt)
+            history = yf.Ticker(provider_symbol).history(period="1y", interval="1d", auto_adjust=False)
+            if history is not None and not history.empty:
+                candles = [
+                    {
+                        "time": index.strftime("%Y-%m-%d"),
+                        "open": float(row["Open"]),
+                        "high": float(row["High"]),
+                        "low": float(row["Low"]),
+                        "close": float(row["Close"]),
+                        "volume": float(row.get("Volume", 0) or 0),
+                    }
+                    for index, row in history.iterrows()
+                ]
+        except Exception as exc:
+            logger.warning("Could not retrieve report price history for %s: %s", sym, exc)
+    if not candles:
+        raise HTTPException(status_code=503, detail="Real price history is unavailable for this symbol")
+
+    valid_candles = []
+    for candle in candles:
+        try:
+            normalized = {
+                **candle,
+                "open": float(candle["open"]),
+                "high": float(candle["high"]),
+                "low": float(candle["low"]),
+                "close": float(candle["close"]),
+                "volume": float(candle.get("volume", 0) or 0),
             }
-        }
-        dec_obj = global_decision_engine.decide(sym, fake_analysis)
-        dec_dict = dataclasses.asdict(dec_obj)
+            if all(math.isfinite(normalized[key]) for key in ("open", "high", "low", "close", "volume")) and normalized["close"] > 0:
+                valid_candles.append(normalized)
+        except (KeyError, TypeError, ValueError):
+            continue
+    if len(valid_candles) < 5:
+        raise HTTPException(status_code=503, detail="Insufficient valid real price history to generate a report")
+    candles = valid_candles
+    try:
+        last_data_date = date.fromisoformat(str(candles[-1].get("time", ""))[:10])
+    except ValueError:
+        raise HTTPException(status_code=503, detail="The latest market candle has no valid date")
+    if (date.today() - last_data_date).days > 4:
+        raise HTTPException(status_code=503, detail="The latest market history is stale")
+
+    latest_close = candles[-1]["close"]
+    price = payload.current_price if payload and payload.current_price is not None else latest_close
+    if not math.isfinite(price) or price <= 0:
+        raise HTTPException(status_code=503, detail="A valid current market price is unavailable")
+
+    change_pct = payload.change_pct if payload else None
+    if change_pct is None and len(candles) > 1:
+        previous_close = float(candles[-2].get("close") or 0)
+        if math.isfinite(previous_close) and previous_close > 0:
+            change_pct = (price - previous_close) / previous_close * 100
+
+    full_analysis = global_orchestrator.run(sym, "1D", candles, fast_mode=False)
+    dec_dict = payload.decision_data if payload else None
+    if not dec_dict:
+        if full_analysis.get("status") != "available":
+            raise HTTPException(status_code=503, detail="Insufficient real market data to generate an analysis report")
+        dec_dict = dataclasses.asdict(global_decision_engine.decide(sym, full_analysis))
+    dec_dict["change_pct"] = change_pct
+    dec_dict["data_as_of"] = str(candles[-1]["time"])[:10]
 
     effective_lang = (payload.lang if payload and payload.lang else None) or lang or "ar"
     pdf_bytes = global_pdf_generator.generate(
@@ -768,6 +829,7 @@ def generate_pdf_report_endpoint(symbol: str, lang: str = "ar", payload: Optiona
         current_price=price,
         currency=curr,
         decision_data=dec_dict,
+        full_analysis=full_analysis,
         market=mkt,
         lang=effective_lang,
     )

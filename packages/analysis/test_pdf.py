@@ -1,5 +1,7 @@
 import io
+import sys
 import time
+from types import SimpleNamespace
 import pytest
 from pypdf import PdfReader
 from reports.pdf_generator import PdfReportGenerator, global_pdf_generator
@@ -111,3 +113,50 @@ def test_missing_fields_validation():
             current_price=10.0,
             decision_data={},
         )
+
+
+def test_report_uses_supplied_market_data_and_marks_missing_plan_values():
+    pdf_bytes = PdfReportGenerator().generate(
+        symbol="AAPL",
+        company_name="Apple Inc.",
+        current_price=123.45,
+        currency="USD",
+        decision_data={
+            "decision": "WAIT",
+            "direction": "neutral",
+            "change_pct": -2.4,
+            "why_en": ["No complete technical setup is currently detected."],
+            "risks_en": ["Market data may be delayed."],
+        },
+        market="US",
+        lang="en",
+    )
+    text = "\n".join(page.extract_text() or "" for page in PdfReader(io.BytesIO(pdf_bytes)).pages)
+
+    assert "123.45" in text
+    assert "-2.40%" in text
+    assert "No complete technical setup is currently detected." in text
+    assert "Unavailable" in text
+    assert "+1.66%" not in text
+    assert "58.4" not in text
+
+
+def test_pdf_endpoint_returns_unavailable_without_real_history(monkeypatch):
+    from fastapi import HTTPException
+    import main
+
+    fake_yfinance = SimpleNamespace(
+        Ticker=lambda _: SimpleNamespace(history=lambda **_: None)
+    )
+    monkeypatch.setitem(sys.modules, "yfinance", fake_yfinance)
+    monkeypatch.setattr(
+        main.global_real_data_fetcher,
+        "map_yfinance_symbol",
+        lambda symbol, market: symbol,
+    )
+
+    with pytest.raises(HTTPException) as error:
+        main.generate_pdf_report_endpoint("NO_DATA", market="US")
+
+    assert error.value.status_code == 503
+    assert "Real price history is unavailable" in error.value.detail

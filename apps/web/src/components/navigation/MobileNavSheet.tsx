@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import {
   X,
   Search,
@@ -31,6 +31,7 @@ import AuthButton from '@/components/AuthButton';
 import Logo from '@/components/branding/Logo';
 import { Language } from '@/context/AppContext';
 import { DEFAULT_MEGA_MENU_DATA } from './marketMenuData';
+import { AnimatedIcon } from '@/components/ui/AnimatedIcon';
 
 interface MobileNavSheetProps {
   isOpen: boolean;
@@ -55,6 +56,7 @@ export default function MobileNavSheet({
 }: MobileNavSheetProps) {
   const [expandedSection, setExpandedSection] = useState<SectionKey | null>('markets');
   const isAr = language === 'ar';
+  const shouldReduceMotion = useReducedMotion();
 
   const toggleSection = (section: SectionKey) => {
     setExpandedSection(expandedSection === section ? null : section);
@@ -63,11 +65,15 @@ export default function MobileNavSheet({
   const menuVariants = {
     closed: {
       x: isAr ? '100%' : '-100%',
-      transition: { type: 'spring' as const, damping: 28, stiffness: 240 },
+      transition: shouldReduceMotion
+        ? { duration: 0 }
+        : { type: 'spring' as const, damping: 28, stiffness: 240 },
     },
     open: {
       x: 0,
-      transition: { type: 'spring' as const, damping: 28, stiffness: 240, staggerChildren: 0.05, delayChildren: 0.1 },
+      transition: shouldReduceMotion
+        ? { duration: 0 }
+        : { type: 'spring' as const, damping: 28, stiffness: 240, staggerChildren: 0.05, delayChildren: 0.1 },
     },
   };
 
@@ -77,9 +83,10 @@ export default function MobileNavSheet({
         <div className="fixed inset-0 z-50 md:hidden flex">
           {/* Backdrop */}
           <motion.div
-            initial={{ opacity: 0 }}
+            initial={shouldReduceMotion ? false : { opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            exit={shouldReduceMotion ? undefined : { opacity: 0 }}
+            transition={{ duration: shouldReduceMotion ? 0 : 0.2 }}
             onClick={onClose}
             className="fixed inset-0 bg-slate-950/70 backdrop-blur-md"
           />
@@ -117,7 +124,7 @@ export default function MobileNavSheet({
                 className="w-full flex items-center justify-between min-h-[48px] px-3.5 bg-slate-100/90 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 rounded-xl text-xs text-slate-600 dark:text-slate-300 hover:border-blue-500/40 transition-all cursor-pointer shadow-xs"
               >
                 <div className="flex items-center gap-2.5">
-                  <Search className="w-4 h-4 text-slate-500 dark:text-slate-400 shrink-0" />
+                  <AnimatedIcon icon={Search} animation="rotate" size={16} className="text-slate-500 dark:text-slate-400" />
                   <span className="font-medium">
                     {isAr ? 'ابحث عن سهم، أداة، أو مؤشر...' : 'Search stocks, tools, indicators...'}
                   </span>
@@ -152,8 +159,8 @@ export default function MobileNavSheet({
                     <motion.div
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.2 }}
+                      exit={shouldReduceMotion ? undefined : { height: 0, opacity: 0 }}
+                      transition={{ duration: shouldReduceMotion ? 0 : 0.2 }}
                       className="px-3 pb-3 space-y-2 overflow-hidden"
                     >
                       {DEFAULT_MEGA_MENU_DATA.indices.map((idx) => {
@@ -187,7 +194,7 @@ export default function MobileNavSheet({
                         className="mt-1 w-full min-h-[48px] flex items-center justify-center gap-1.5 text-xs font-bold text-white bg-slate-900 dark:bg-slate-800 rounded-xl hover:bg-slate-800 transition-colors"
                       >
                         <span>{isAr ? 'عرض خريطة السوق' : 'Open Market Heatmap'}</span>
-                        <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" />
+                        <AnimatedIcon icon={ArrowRight} animation="slide" rtl={isAr} size={14} className="rtl:rotate-180" />
                       </Link>
                     </motion.div>
                   )}
@@ -216,8 +223,8 @@ export default function MobileNavSheet({
                     <motion.div
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.2 }}
+                      exit={shouldReduceMotion ? undefined : { height: 0, opacity: 0 }}
+                      transition={{ duration: shouldReduceMotion ? 0 : 0.2 }}
                       className="px-3 pb-3 space-y-2 overflow-hidden"
                     >
                       <Link
@@ -302,8 +309,8 @@ export default function MobileNavSheet({
                     <motion.div
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.2 }}
+                      exit={shouldReduceMotion ? undefined : { height: 0, opacity: 0 }}
+                      transition={{ duration: shouldReduceMotion ? 0 : 0.2 }}
                       className="px-3 pb-3 space-y-2 overflow-hidden"
                     >
                       <Link
@@ -339,7 +346,7 @@ export default function MobileNavSheet({
                         onClick={onClose}
                         className="flex items-center gap-3 min-h-[48px] px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/60 text-xs font-semibold hover:border-slate-400 transition-colors"
                       >
-                        <Star className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+                        <AnimatedIcon icon={Star} animation="rotate" size={16} className="text-slate-500 dark:text-slate-400" />
                         <div>
                           <div className="font-bold">{isAr ? 'قائمة المتابعة الخاصة' : 'Personal Watchlist'}</div>
                           <div className="text-[11px] text-slate-400 font-normal">
@@ -353,7 +360,7 @@ export default function MobileNavSheet({
                         onClick={onClose}
                         className="flex items-center gap-3 min-h-[48px] px-3 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800/60 text-xs font-semibold hover:border-slate-400 transition-colors"
                       >
-                        <Bell className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+                        <AnimatedIcon icon={Bell} animation="shake" size={16} className="text-slate-500 dark:text-slate-400" />
                         <div>
                           <div className="font-bold">{isAr ? 'مركز التنبيهات الذكية' : 'Smart Alert Center'}</div>
                           <div className="text-[11px] text-slate-400 font-normal">
@@ -402,8 +409,8 @@ export default function MobileNavSheet({
                     <motion.div
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.2 }}
+                      exit={shouldReduceMotion ? undefined : { height: 0, opacity: 0 }}
+                      transition={{ duration: shouldReduceMotion ? 0 : 0.2 }}
                       className="px-3 pb-3 space-y-2 overflow-hidden"
                     >
                       <button
@@ -462,8 +469,8 @@ export default function MobileNavSheet({
                     <motion.div
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.2 }}
+                      exit={shouldReduceMotion ? undefined : { height: 0, opacity: 0 }}
+                      transition={{ duration: shouldReduceMotion ? 0 : 0.2 }}
                       className="px-3 pb-3 space-y-2 overflow-hidden"
                     >
                       <Link

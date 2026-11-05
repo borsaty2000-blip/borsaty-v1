@@ -9,14 +9,12 @@ import {
   Briefcase,
   Calendar,
   Bell,
-  Star,
   GitCompare,
   History,
   Activity,
   FileCode,
   Info,
   ChevronDown,
-  ArrowRight,
   ArrowUpRight,
   ArrowDownRight,
   Flame,
@@ -26,6 +24,7 @@ import {
 import { Language } from '@/context/AppContext';
 import MiniSparkline from './MiniSparkline';
 import { DEFAULT_MEGA_MENU_DATA, MegaMenuData } from './marketMenuData';
+import { AnimatedIcon } from '@/components/ui/AnimatedIcon';
 
 interface LiveMegaMenuProps {
   language: Language;
@@ -122,7 +121,7 @@ export default function LiveMegaMenu({ language, onLinkClick }: LiveMegaMenuProp
           }`}
           aria-expanded={activeMenu === 'markets'}
         >
-          <TrendingUp className="w-4 h-4 text-slate-900 dark:text-white" />
+          <AnimatedIcon icon={TrendingUp} animation="rotate" size={16} className="text-slate-900 dark:text-white" />
           <span>{isAr ? 'الأسواق' : 'Markets'}</span>
           <ChevronDown
             className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${
@@ -143,7 +142,7 @@ export default function LiveMegaMenu({ language, onLinkClick }: LiveMegaMenuProp
           }`}
           aria-expanded={activeMenu === 'tools'}
         >
-          <SlidersHorizontal className="w-4 h-4 text-slate-900 dark:text-white" />
+          <AnimatedIcon icon={SlidersHorizontal} animation="rotate" size={16} className="text-slate-900 dark:text-white" />
           <span>{isAr ? 'الأدوات' : 'Tools'}</span>
           <ChevronDown
             className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${
@@ -164,7 +163,7 @@ export default function LiveMegaMenu({ language, onLinkClick }: LiveMegaMenuProp
           }`}
           aria-expanded={activeMenu === 'research'}
         >
-          <Activity className="w-4 h-4 text-slate-900 dark:text-white" />
+          <AnimatedIcon icon={Activity} animation="pulse" size={16} className="text-slate-900 dark:text-white" />
           <span>{isAr ? 'الأبحاث والتوثيق' : 'Research'}</span>
           <ChevronDown
             className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${

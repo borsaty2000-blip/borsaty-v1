@@ -14,6 +14,7 @@ import {
 import { useApp } from '@/context/AppContext';
 import { useBorsaty } from '@/context/BorsatyContext';
 import { ROUTES } from '@/lib/route-map';
+import { AnimatedIcon } from '@/components/ui/AnimatedIcon';
 
 export default function MobileBottomNav() {
   const pathname = usePathname();
@@ -94,7 +95,11 @@ export default function MobileBottomNav() {
                 }`}
               >
                 <div className="relative">
-                  <Icon className={`w-6 h-6 ${active ? 'stroke-[2.4px]' : 'stroke-[1.8px]'}`} />
+                  <AnimatedIcon
+                    icon={Icon}
+                    size={24}
+                    className={active ? 'stroke-[2.4px]' : 'stroke-[1.8px]'}
+                  />
                   {active && (
                     <motion.span
                       layoutId="nav-pill"

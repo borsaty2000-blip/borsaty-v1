@@ -3,6 +3,7 @@
 import React from 'react';
 import { AlertCircle, RefreshCw, Inbox } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
+import { AnimatedIcon } from '@/components/ui/AnimatedIcon';
 
 export interface DataWrapperProps<T> {
   isLoading: boolean;
@@ -57,7 +58,7 @@ export function DataWrapper<T>({
               onClick={onRetry}
               className="mt-2 sm:mt-0 px-4 py-2 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-semibold text-xs flex items-center gap-2 shadow-sm transition-colors cursor-pointer"
             >
-              <RefreshCw className="w-3.5 h-3.5" />
+              <AnimatedIcon icon={RefreshCw} animation="rotate" trigger="click" size={14} />
               <span>{t('common.retry')}</span>
             </button>
           )}
@@ -96,9 +97,9 @@ export function DataWrapper<T>({
 
 export function DefaultSkeletonLoader() {
   return (
-    <div className="w-full space-y-4 my-4 animate-pulse">
+    <div className="w-full space-y-4 my-4">
       {/* Top Header skeleton */}
-      <div className="h-8 bg-slate-200 dark:bg-slate-800 rounded-lg w-1/3"></div>
+      <div className="skeleton-shimmer h-8 bg-slate-200 dark:bg-slate-800 rounded-lg w-1/3"></div>
       
       {/* Metric Cards Grid skeleton */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -107,21 +108,21 @@ export function DefaultSkeletonLoader() {
             key={i}
             className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/80 space-y-3"
           >
-            <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded w-1/2"></div>
-            <div className="h-7 bg-slate-300 dark:bg-slate-700 rounded w-3/4"></div>
-            <div className="h-3 bg-slate-100 dark:bg-slate-800/60 rounded w-1/3"></div>
+            <div className="skeleton-shimmer h-4 bg-slate-200 dark:bg-slate-800 rounded w-1/2"></div>
+            <div className="skeleton-shimmer h-7 bg-slate-300 dark:bg-slate-700 rounded w-3/4"></div>
+            <div className="skeleton-shimmer h-3 bg-slate-100 dark:bg-slate-800/60 rounded w-1/3"></div>
           </div>
         ))}
       </div>
 
       {/* Big Chart / Content Box skeleton */}
-      <div className="h-72 bg-slate-100 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-xl p-4 flex flex-col justify-end space-y-3">
-        <div className="h-4 bg-slate-200 dark:bg-slate-800 rounded w-1/4"></div>
+      <div className="skeleton-shimmer h-72 bg-slate-100 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-xl p-4 flex flex-col justify-end space-y-3">
+        <div className="skeleton-shimmer h-4 bg-slate-200 dark:bg-slate-800 rounded w-1/4"></div>
         <div className="h-full flex items-end gap-2 pt-6">
           {[40, 65, 30, 80, 55, 90, 70, 85, 60, 95, 75, 88].map((h, idx) => (
             <div
               key={idx}
-              className="flex-1 bg-slate-200 dark:bg-slate-800 rounded-t"
+              className="skeleton-shimmer flex-1 bg-slate-200 dark:bg-slate-800 rounded-t"
               style={{ height: `${h}%` }}
             ></div>
           ))}

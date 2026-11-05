@@ -14,6 +14,7 @@ import { useApp } from '@/context/AppContext';
 import { useBorsaty } from '@/context/BorsatyContext';
 import LiveMegaMenu from '@/components/navigation/LiveMegaMenu';
 import MobileNavSheet from '@/components/navigation/MobileNavSheet';
+import { AnimatedIcon } from '@/components/ui/AnimatedIcon';
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -101,7 +102,7 @@ export default function Header() {
             aria-label="Search markets (Ctrl+K)"
           >
             <div className="flex items-center gap-2 truncate">
-              <Search className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-200 transition-colors shrink-0" />
+              <AnimatedIcon icon={Search} animation="rotate" size={14} className="text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-200 transition-colors" />
               <span className="truncate text-sm text-slate-500 dark:text-slate-400 font-normal">
                 {isAr ? 'ابحث في الأسواق...' : 'Search markets...'}
               </span>

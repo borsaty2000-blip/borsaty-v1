@@ -26,6 +26,7 @@ import {
   Trash2,
 } from 'lucide-react';
 import { useBorsaty } from '@/context/BorsatyContext';
+import { AnimatedIcon } from '@/components/ui/AnimatedIcon';
 import { useApp } from '@/context/AppContext';
 import { toast } from 'sonner';
 
@@ -233,7 +234,7 @@ export default function CommandPalette() {
         >
           {/* Search Input Bar */}
           <div className="flex items-center px-4 border-b border-slate-200 dark:border-slate-800 gap-3">
-            <Search className="w-5 h-5 text-slate-500 dark:text-slate-400 shrink-0" />
+            <AnimatedIcon icon={Search} animation="rotate" size={20} className="text-slate-500 dark:text-slate-400" />
             <Command.Input
               value={query}
               onValueChange={setQuery}
@@ -298,7 +299,7 @@ export default function CommandPalette() {
                       <span className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-slate-100 dark:bg-slate-800 text-slate-500">
                         {stock.market}
                       </span>
-                      <ArrowRight className="w-3.5 h-3.5 text-slate-400 rtl:rotate-180" />
+                      <AnimatedIcon icon={ArrowRight} animation="slide" rtl={language === 'ar'} size={14} className="text-slate-400 rtl:rotate-180" />
                     </div>
                   </Command.Item>
                 ))}
@@ -335,7 +336,7 @@ export default function CommandPalette() {
                     <span className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-slate-100 dark:bg-slate-800 text-slate-500">
                       {stock.market}
                     </span>
-                    <ArrowRight className="w-3.5 h-3.5 text-slate-400 rtl:rotate-180" />
+                    <AnimatedIcon icon={ArrowRight} animation="slide" rtl={language === 'ar'} size={14} className="text-slate-400 rtl:rotate-180" />
                   </div>
                 </Command.Item>
               ))}
@@ -413,7 +414,7 @@ export default function CommandPalette() {
                 className="flex items-center justify-between px-3 py-2.5 rounded-xl cursor-pointer text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors aria-selected:bg-slate-100 dark:aria-selected:bg-slate-800"
               >
                 <div className="flex items-center gap-3">
-                  <Star className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+                  <AnimatedIcon icon={Star} animation="rotate" size={16} className="text-slate-500 dark:text-slate-400" />
                   <span>{isAr ? 'قائمة المتابعة (Watchlist)' : 'Persistent Watchlist'}</span>
                 </div>
                 <kbd className="text-[10px] text-slate-400 font-mono">G + W</kbd>

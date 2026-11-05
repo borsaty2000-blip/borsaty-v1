@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Target, ArrowUpRight, TrendingUp, Sparkles, ShieldCheck } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
+import { AnimatedIcon } from '@/components/ui/AnimatedIcon';
 import { OpportunityItem } from '@/app/api/opportunities/route';
 
 const FALLBACK_OPPORTUNITIES: OpportunityItem[] = [
@@ -151,7 +152,7 @@ export default function OpportunityScanner() {
           className="text-xs font-semibold text-slate-700 dark:text-slate-300 hover:text-black dark:hover:text-white flex items-center gap-1 transition-colors self-start sm:self-auto"
         >
           <span>{isAr ? 'عرض كافة الإشارات' : 'All Signals'}</span>
-          <ArrowUpRight className="w-3.5 h-3.5 rtl:rotate-180" />
+          <AnimatedIcon icon={ArrowUpRight} animation="slide" rtl={isAr} size={14} className="rtl:rotate-180" />
         </Link>
       </div>
 
@@ -269,7 +270,7 @@ export default function OpportunityScanner() {
                 className="w-full py-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer text-center"
               >
                 <span>{isAr ? 'عرض التحليل المؤسسي' : 'View Institutional Analysis'}</span>
-                <ArrowUpRight className="w-3.5 h-3.5 rtl:rotate-180" />
+                <AnimatedIcon icon={ArrowUpRight} animation="slide" rtl={isAr} size={16} className="rtl:rotate-180" />
               </Link>
             </div>
           );

@@ -5,6 +5,7 @@ import { useAuth, useClerk } from "@clerk/nextjs";
 import { Bell, Loader2, X, Check, Target, TrendingUp, TrendingDown } from "lucide-react";
 import { toast } from "sonner";
 import { useApp } from "@/context/AppContext";
+import { AnimatedIcon } from "@/components/ui/AnimatedIcon";
 
 interface AlertButtonProps {
   symbol: string;
@@ -107,7 +108,7 @@ export default function AlertButton({
         title={isAr ? "تعيين تنبيه سعري" : "Set Price Alert"}
         className={`btn-press group inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all shadow-sm bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-700 ${className}`}
       >
-        <Bell className="w-3.5 h-3.5 text-slate-500 group-hover:text-black dark:group-hover:text-white transition-colors" />
+        <AnimatedIcon icon={Bell} animation="shake" size={14} className="text-slate-500 group-hover:text-black dark:group-hover:text-white transition-colors" />
         {showLabel && (
           <span>{isAr ? "تنبيه" : "Alert"}</span>
         )}
